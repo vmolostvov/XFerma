@@ -404,7 +404,7 @@ class xFerma:
                 if 9 <= hour < 23:
                 # if 0 <= hour < 23:
                     logger.info(f"[LIFE] Активный режим MOSCOW {now:%Y-%m-%d %H:%M:%S}")
-                    for x_working_acc in self.x_accounts_data:
+                    for x_working_acc in self.x_accounts_data.copy():
                         timeline = self.get_timeline(x_working_acc)
                         if timeline:
                             res = self.view_all_tweets(timeline, x_working_acc)
@@ -610,7 +610,7 @@ class xFerma:
         try:
             return twitter_search.get_latest_timeline(x_working_acc)
         except Exception as e:
-            logger.exception(f"[VIEW] Критическая ошибка в multiple_views: {e}")
+            logger.exception(f"[VIEW] Критическая ошибка в get_timeline: {e}")
 
     def clear_acc_info_if_banned(self, acc_data, delete=False):
         if acc_data["avatar"]:

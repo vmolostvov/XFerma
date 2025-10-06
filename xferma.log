@@ -1,2 +1,426 @@
 2025-10-06 17:00:09 [INFO] INIT: mode=set_up, загружаю аккаунты и запускаю set_up_new_accounts()
 2025-10-06 17:01:05 [INFO] INIT: mode=set_up, загружаю аккаунты и запускаю set_up_new_accounts()
+2025-10-06 17:23:57 [INFO] INIT: mode=work, загружаю аккаунты и запускаю ferma_lifecycle()
+2025-10-06 17:23:57 [INFO] [LIFE] Активный режим MOSCOW 2025-10-06 15:23:57
+2025-10-06 17:23:57 [ERROR] [VIEW] Критическая ошибка в multiple_views: 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/x_ferma.py", line 612, in get_timeline
+    return twitter_search.get_latest_timeline(x_working_acc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/twitter_search.py", line 1347, in get_latest_timeline
+    instructions = js["data"]["home"]["home_timeline_urt"]["instructions"]
+                   ~~^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+2025-10-06 17:23:58 [ERROR] [VIEW] Критическая ошибка в multiple_views: 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/x_ferma.py", line 612, in get_timeline
+    return twitter_search.get_latest_timeline(x_working_acc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/twitter_search.py", line 1347, in get_latest_timeline
+    instructions = js["data"]["home"]["home_timeline_urt"]["instructions"]
+                   ~~^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+2025-10-06 17:23:59 [INFO] [LIFE] Пауза 7976s
+2025-10-06 17:56:09 [INFO] [LOAD] batch 1/6: accounts 1-10 of 57
+2025-10-06 17:56:13 [INFO] [ACC] @drumboys011 successfully logged in
+2025-10-06 17:56:13 [INFO] [ACC] @julieannamos2 successfully logged in
+2025-10-06 17:56:13 [INFO] [ACC] @priyankamadake1 successfully logged in
+2025-10-06 17:56:13 [INFO] [ACC] @ayumi465 successfully logged in
+2025-10-06 17:56:13 [INFO] [ACC] @muhd21590 successfully logged in
+2025-10-06 17:56:13 [INFO] [ACC] @tao_cooktao2 successfully logged in
+2025-10-06 17:56:13 [INFO] [ACC] @ykeepsmilee successfully logged in
+2025-10-06 17:56:13 [INFO] [ACC] @moliko_nnana successfully logged in
+2025-10-06 17:56:13 [INFO] [ACC] @markogarciaquir successfully logged in
+2025-10-06 17:56:14 [INFO] [ACC] @julieannamos2 session is OK
+2025-10-06 17:56:14 [INFO] [ACC] @drumboys011 session is OK
+2025-10-06 17:56:14 [INFO] [ACC] @ykeepsmilee session is OK
+2025-10-06 17:56:14 [INFO] [ACC] @ayumi465 session is OK
+2025-10-06 17:56:14 [INFO] [ACC] @tao_cooktao2 session is OK
+2025-10-06 17:56:14 [INFO] [ACC] @muhd21590 session is OK
+2025-10-06 17:56:14 [INFO] [ACC] @markogarciaquir session is OK
+2025-10-06 17:56:14 [INFO] [ACC] @priyankamadake1 session is OK
+2025-10-06 17:56:14 [INFO] [ACC] @moliko_nnana session is OK
+2025-10-06 17:56:19 [INFO] [LOAD][batch 1] ok=9 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=1
+2025-10-06 17:56:19 [INFO] [LOAD] batch 2/6: accounts 11-20 of 57
+2025-10-06 17:56:23 [INFO] [ACC] @larrymandaperra successfully logged in
+2025-10-06 17:56:23 [INFO] [ACC] @soniase69091018 successfully logged in
+2025-10-06 17:56:23 [INFO] [ACC] @nikkopi successfully logged in
+2025-10-06 17:56:24 [INFO] [ACC] @martama28231784 successfully logged in
+2025-10-06 17:56:24 [INFO] [ACC] @junio_delfino successfully logged in
+2025-10-06 17:56:24 [INFO] [ACC] @solomon_girmay successfully logged in
+2025-10-06 17:56:24 [INFO] [ACC] @katelynn_fergie successfully logged in
+2025-10-06 17:56:24 [INFO] [ACC] @817rahul successfully logged in
+2025-10-06 17:56:24 [INFO] [ACC] @vkumral successfully logged in
+2025-10-06 17:56:24 [INFO] [ACC] @faby1192 successfully logged in
+2025-10-06 17:56:24 [INFO] [ACC] @junio_delfino session is OK
+2025-10-06 17:56:24 [INFO] [ACC] @soniase69091018 session is OK
+2025-10-06 17:56:24 [INFO] [ACC] @faby1192 session is OK
+2025-10-06 17:56:24 [INFO] [ACC] @817rahul session is OK
+2025-10-06 17:56:24 [INFO] [ACC] @vkumral session is OK
+2025-10-06 17:56:24 [INFO] [ACC] @larrymandaperra session is OK
+2025-10-06 17:56:24 [INFO] [ACC] @nikkopi session is OK
+2025-10-06 17:56:24 [INFO] [ACC] @solomon_girmay session is OK
+2025-10-06 17:56:24 [INFO] [ACC] @katelynn_fergie session is OK
+2025-10-06 17:56:25 [INFO] [ACC] @martama28231784 session is OK
+2025-10-06 17:56:25 [INFO] [LOAD][batch 2] ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-06 17:56:25 [INFO] [LOAD] batch 3/6: accounts 21-30 of 57
+2025-10-06 17:56:28 [INFO] [ACC] @qwer26064326 successfully logged in
+2025-10-06 17:56:28 [INFO] [ACC] @jhedelera successfully logged in
+2025-10-06 17:56:28 [INFO] [ACC] @aggaainalonne successfully logged in
+2025-10-06 17:56:28 [INFO] [ACC] @novia_ariyani successfully logged in
+2025-10-06 17:56:28 [INFO] [ACC] @amurray7allan successfully logged in
+2025-10-06 17:56:28 [INFO] [ACC] @mammiejoyce successfully logged in
+2025-10-06 17:56:28 [INFO] [ACC] @shinecharaya3 successfully logged in
+2025-10-06 17:56:29 [INFO] [ACC] @amurray7allan session is OK
+2025-10-06 17:56:29 [INFO] [ACC] @jhedelera session is OK
+2025-10-06 17:56:29 [INFO] [ACC] @aggaainalonne session is OK
+2025-10-06 17:56:29 [INFO] [ACC] @novia_ariyani session is OK
+2025-10-06 17:56:29 [INFO] [ACC] @qwer26064326 session is OK
+2025-10-06 17:56:29 [INFO] [ACC] @shinecharaya3 session is OK
+2025-10-06 17:56:29 [INFO] [ACC] @mammiejoyce session is OK
+2025-10-06 17:56:42 [INFO] [ACC] @kgs442 successfully logged in
+2025-10-06 17:56:43 [INFO] [ACC] @kgs442 session is OK
+2025-10-06 17:56:47 [INFO] [ACC] @maniloveyou23 successfully logged in
+2025-10-06 17:56:48 [INFO] [ACC] @maniloveyou23 session is OK
+2025-10-06 17:56:50 [INFO] [ACC] @chiruchiru_03 successfully logged in
+2025-10-06 17:56:51 [INFO] [ACC] @chiruchiru_03 session is OK
+2025-10-06 17:56:51 [INFO] [LOAD][batch 3] ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-06 17:56:51 [INFO] [LOAD] batch 4/6: accounts 31-40 of 57
+2025-10-06 17:56:55 [INFO] [ACC] @adsamuelmarques successfully logged in
+2025-10-06 17:56:55 [INFO] [ACC] @mohanappu4 successfully logged in
+2025-10-06 17:56:55 [INFO] [ACC] @sak02222540 successfully logged in
+2025-10-06 17:56:55 [INFO] [ACC] @saixt89 successfully logged in
+2025-10-06 17:56:55 [INFO] [ACC] @xindemingzi successfully logged in
+2025-10-06 17:56:55 [INFO] [ACC] @sulaiman_bayu successfully logged in
+2025-10-06 17:56:55 [INFO] [ACC] @robyn_ann_tomli successfully logged in
+2025-10-06 17:56:55 [INFO] [ACC] @donvery30 successfully logged in
+2025-10-06 17:56:55 [INFO] [ACC] @lovechrstjulia successfully logged in
+2025-10-06 17:56:55 [INFO] [ACC] @lucianamerighi successfully logged in
+2025-10-06 17:56:56 [INFO] [ACC] @adsamuelmarques session is OK
+2025-10-06 17:56:56 [INFO] [ACC] @mohanappu4 session is OK
+2025-10-06 17:56:56 [INFO] [ACC] @sak02222540 session is OK
+2025-10-06 17:56:56 [INFO] [ACC] @saixt89 session is OK
+2025-10-06 17:56:56 [INFO] [ACC] @robyn_ann_tomli session is OK
+2025-10-06 17:56:56 [INFO] [ACC] @xindemingzi session is OK
+2025-10-06 17:56:56 [INFO] [ACC] @lovechrstjulia session is OK
+2025-10-06 17:56:56 [INFO] [ACC] @donvery30 session is OK
+2025-10-06 17:56:56 [INFO] [ACC] @sulaiman_bayu session is OK
+2025-10-06 17:56:56 [INFO] [ACC] @lucianamerighi session is OK
+2025-10-06 17:56:56 [INFO] [LOAD][batch 4] ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-06 17:56:56 [INFO] [LOAD] batch 5/6: accounts 41-50 of 57
+2025-10-06 17:57:00 [INFO] [ACC] @gcini21 successfully logged in
+2025-10-06 17:57:00 [INFO] [ACC] @joaovitorbonito successfully logged in
+2025-10-06 17:57:01 [INFO] [ACC] @renecontreras72 successfully logged in
+2025-10-06 17:57:01 [INFO] [ACC] @manuela_mol successfully logged in
+2025-10-06 17:57:01 [INFO] [ACC] @luisavmedranoa successfully logged in
+2025-10-06 17:57:01 [INFO] [ACC] @mika_03_04 successfully logged in
+2025-10-06 17:57:01 [INFO] [ACC] @aprilia_devii successfully logged in
+2025-10-06 17:57:01 [INFO] [ACC] @zidi_1 successfully logged in
+2025-10-06 17:57:01 [INFO] [ACC] @can56704145 successfully logged in
+2025-10-06 17:57:01 [INFO] [ACC] @aycanak17 successfully logged in
+2025-10-06 17:57:01 [INFO] [ACC] @gcini21 session is OK
+2025-10-06 17:57:01 [INFO] [ACC] @joaovitorbonito session is OK
+2025-10-06 17:57:02 [INFO] [ACC] @renecontreras72 session is OK
+2025-10-06 17:57:02 [INFO] [ACC] @manuela_mol session is OK
+2025-10-06 17:57:02 [INFO] [ACC] @aprilia_devii session is OK
+2025-10-06 17:57:02 [INFO] [ACC] @luisavmedranoa session is OK
+2025-10-06 17:57:02 [INFO] [ACC] @zidi_1 session is OK
+2025-10-06 17:57:02 [INFO] [ACC] @mika_03_04 session is OK
+2025-10-06 17:57:02 [INFO] [ACC] @aycanak17 session is OK
+2025-10-06 17:57:02 [INFO] [ACC] @can56704145 session is OK
+2025-10-06 17:57:02 [INFO] [LOAD][batch 5] ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-06 17:57:02 [INFO] [LOAD] batch 6/6: accounts 51-57 of 57
+2025-10-06 17:57:05 [INFO] [ACC] @dock109 successfully logged in
+2025-10-06 17:57:05 [INFO] [ACC] @turanadanali successfully logged in
+2025-10-06 17:57:05 [INFO] [ACC] @khallid1993 successfully logged in
+2025-10-06 17:57:05 [INFO] [ACC] @zegdumdele successfully logged in
+2025-10-06 17:57:05 [INFO] [ACC] @izaqute successfully logged in
+2025-10-06 17:57:06 [INFO] [ACC] @iyannorth successfully logged in
+2025-10-06 17:57:06 [INFO] [ACC] @dock109 session is OK
+2025-10-06 17:57:06 [INFO] [ACC] @zegdumdele session is OK
+2025-10-06 17:57:06 [INFO] [ACC] @turanadanali session is OK
+2025-10-06 17:57:06 [INFO] [ACC] @izaqute session is OK
+2025-10-06 17:57:06 [INFO] [ACC] @khallid1993 session is OK
+2025-10-06 17:57:07 [INFO] [ACC] @iyannorth session is OK
+2025-10-06 17:57:07 [INFO] [LOAD][batch 6] ok=6 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-06 17:57:07 [INFO] [LOAD][TOTAL] accounts=57 | ok=55 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=1 | ready_to_work=56
+2025-10-06 17:57:07 [INFO] INIT: mode=work, загружаю аккаунты и запускаю ferma_lifecycle()
+2025-10-06 17:57:07 [INFO] [LIFE] Активный режим MOSCOW 2025-10-06 15:57:07
+2025-10-06 17:57:07 [ERROR] [VIEW] Критическая ошибка в get_timeline: 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/x_ferma.py", line 613, in get_timeline
+    return twitter_search.get_latest_timeline(x_working_acc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/twitter_search.py", line 1347, in get_latest_timeline
+    instructions = js["data"]["home"]["home_timeline_urt"]["instructions"]
+                   ~~^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+2025-10-06 17:57:08 [ERROR] [VIEW] Критическая ошибка в get_timeline: 'NoneType' object is not subscriptable
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/x_ferma.py", line 613, in get_timeline
+    return twitter_search.get_latest_timeline(x_working_acc)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/twitter_search.py", line 1347, in get_latest_timeline
+    instructions = js["data"]["home"]["home_timeline_urt"]["instructions"]
+                   ~~^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+2025-10-06 17:57:09 [INFO] [LIFE] Пауза 4022s
+2025-10-06 18:05:24 [INFO] [LOAD] batch 1/6: accounts 1-10 of 57
+2025-10-06 18:05:29 [INFO] [ACC] @moliko_nnana successfully logged in
+2025-10-06 18:05:29 [INFO] [ACC] @priyankamadake1 successfully logged in
+2025-10-06 18:05:29 [INFO] [ACC] @markogarciaquir successfully logged in
+2025-10-06 18:05:29 [INFO] [ACC] @julieannamos2 successfully logged in
+2025-10-06 18:05:29 [INFO] [ACC] @ykeepsmilee successfully logged in
+2025-10-06 18:05:29 [INFO] [ACC] @drumboys011 successfully logged in
+2025-10-06 18:05:29 [INFO] [ACC] @ayumi465 successfully logged in
+2025-10-06 18:05:29 [INFO] [ACC] @tao_cooktao2 successfully logged in
+2025-10-06 18:05:29 [INFO] [ACC] @muhd21590 successfully logged in
+2025-10-06 18:05:30 [INFO] [ACC] @markogarciaquir session is OK
+2025-10-06 18:05:30 [INFO] [ACC] @moliko_nnana session is OK
+2025-10-06 18:05:30 [INFO] [ACC] @davidgarforth58 successfully logged in
+2025-10-06 18:05:30 [INFO] [ACC] @julieannamos2 session is OK
+2025-10-06 18:05:30 [INFO] [ACC] @ykeepsmilee session is OK
+2025-10-06 18:05:30 [INFO] [ACC] @priyankamadake1 session is OK
+2025-10-06 18:05:30 [INFO] [ACC] @ayumi465 session is OK
+2025-10-06 18:05:30 [INFO] [ACC] @drumboys011 session is OK
+2025-10-06 18:05:30 [INFO] [ACC] @muhd21590 session is OK
+2025-10-06 18:05:31 [INFO] [ACC] @tao_cooktao2 session is OK
+2025-10-06 18:05:32 [INFO] [ACC] @davidgarforth58 session is OK
+2025-10-06 18:05:32 [INFO] [LOAD][batch 1] ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-06 18:05:32 [INFO] [LOAD] batch 2/6: accounts 11-20 of 57
+2025-10-06 18:05:36 [INFO] [ACC] @soniase69091018 successfully logged in
+2025-10-06 18:05:36 [INFO] [ACC] @nikkopi successfully logged in
+2025-10-06 18:05:36 [INFO] [ACC] @817rahul successfully logged in
+2025-10-06 18:05:36 [INFO] [ACC] @vkumral successfully logged in
+2025-10-06 18:05:36 [INFO] [ACC] @martama28231784 successfully logged in
+2025-10-06 18:05:36 [INFO] [ACC] @exo3040 successfully logged in
+2025-10-06 18:05:36 [INFO] [ACC] @solomon_girmay successfully logged in
+2025-10-06 18:05:36 [INFO] [ACC] @faby1192 successfully logged in
+2025-10-06 18:05:36 [INFO] [ACC] @katelynn_fergie successfully logged in
+2025-10-06 18:05:36 [INFO] [ACC] @larrymandaperra successfully logged in
+2025-10-06 18:05:37 [INFO] [ACC] @soniase69091018 session is OK
+2025-10-06 18:05:37 [INFO] [ACC] @817rahul session is OK
+2025-10-06 18:05:37 [INFO] [ACC] @nikkopi session is OK
+2025-10-06 18:05:37 [INFO] [ACC] @faby1192 session is OK
+2025-10-06 18:05:37 [INFO] [ACC] @exo3040 session is OK
+2025-10-06 18:05:37 [INFO] [ACC] @vkumral session is OK
+2025-10-06 18:05:37 [INFO] [ACC] @katelynn_fergie session is OK
+2025-10-06 18:05:37 [INFO] [ACC] @martama28231784 session is OK
+2025-10-06 18:05:37 [INFO] [ACC] @solomon_girmay session is OK
+2025-10-06 18:05:37 [INFO] [ACC] @larrymandaperra session is OK
+2025-10-06 18:05:37 [INFO] [LOAD][batch 2] ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-06 18:05:37 [INFO] [LOAD] batch 3/6: accounts 21-30 of 57
+2025-10-06 18:05:41 [INFO] [ACC] @junio_delfino successfully logged in
+2025-10-06 18:05:41 [INFO] [ACC] @qwer26064326 successfully logged in
+2025-10-06 18:05:41 [INFO] [ACC] @mammiejoyce successfully logged in
+2025-10-06 18:05:41 [INFO] [ACC] @shinecharaya3 successfully logged in
+2025-10-06 18:05:41 [INFO] [ACC] @jhedelera successfully logged in
+2025-10-06 18:05:41 [INFO] [ACC] @aggaainalonne successfully logged in
+2025-10-06 18:05:41 [INFO] [ACC] @novia_ariyani successfully logged in
+2025-10-06 18:05:42 [INFO] [ACC] @junio_delfino session is OK
+2025-10-06 18:05:42 [INFO] [ACC] @qwer26064326 session is OK
+2025-10-06 18:05:42 [INFO] [ACC] @mammiejoyce session is OK
+2025-10-06 18:05:42 [INFO] [ACC] @aggaainalonne session is OK
+2025-10-06 18:05:42 [INFO] [ACC] @jhedelera session is OK
+2025-10-06 18:05:42 [INFO] [ACC] @shinecharaya3 session is OK
+2025-10-06 18:05:42 [INFO] [ACC] @kgs442 successfully logged in
+2025-10-06 18:05:42 [INFO] [ACC] @novia_ariyani session is OK
+2025-10-06 18:05:43 [INFO] [ACC] @maniloveyou23 successfully logged in
+2025-10-06 18:05:43 [INFO] [ACC] @kgs442 session is OK
+2025-10-06 18:05:43 [INFO] [ACC] @maniloveyou23 session is OK
+2025-10-06 18:05:44 [INFO] [ACC] @chiruchiru_03 successfully logged in
+2025-10-06 18:05:44 [INFO] [ACC] @chiruchiru_03 session is OK
+2025-10-06 18:05:44 [INFO] [LOAD][batch 3] ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-06 18:05:44 [INFO] [LOAD] batch 4/6: accounts 31-40 of 57
+2025-10-06 18:05:49 [INFO] [ACC] @amurray7allan successfully logged in
+2025-10-06 18:05:49 [INFO] [ACC] @lucianamerighi successfully logged in
+2025-10-06 18:05:49 [INFO] [ACC] @mohanappu4 successfully logged in
+2025-10-06 18:05:49 [INFO] [ACC] @donvery30 successfully logged in
+2025-10-06 18:05:49 [INFO] [ACC] @robyn_ann_tomli successfully logged in
+2025-10-06 18:05:49 [INFO] [ACC] @lovechrstjulia successfully logged in
+2025-10-06 18:05:49 [INFO] [ACC] @adsamuelmarques successfully logged in
+2025-10-06 18:05:49 [INFO] [ACC] @sak02222540 successfully logged in
+2025-10-06 18:05:49 [INFO] [ACC] @xindemingzi successfully logged in
+2025-10-06 18:05:49 [INFO] [ACC] @saixt89 successfully logged in
+2025-10-06 18:05:50 [INFO] [ACC] @amurray7allan session is OK
+2025-10-06 18:05:50 [INFO] [ACC] @lucianamerighi session is OK
+2025-10-06 18:05:50 [INFO] [ACC] @robyn_ann_tomli session is OK
+2025-10-06 18:05:50 [INFO] [ACC] @donvery30 session is OK
+2025-10-06 18:05:50 [INFO] [ACC] @lovechrstjulia session is OK
+2025-10-06 18:05:50 [INFO] [ACC] @xindemingzi session is OK
+2025-10-06 18:05:50 [INFO] [ACC] @adsamuelmarques session is OK
+2025-10-06 18:05:50 [INFO] [ACC] @sak02222540 session is OK
+2025-10-06 18:05:50 [INFO] [ACC] @mohanappu4 session is OK
+2025-10-06 18:05:50 [INFO] [ACC] @saixt89 session is OK
+2025-10-06 18:05:50 [INFO] [LOAD][batch 4] ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-06 18:05:50 [INFO] [LOAD] batch 5/6: accounts 41-50 of 57
+2025-10-06 18:05:54 [INFO] [ACC] @aprilia_devii successfully logged in
+2025-10-06 18:05:54 [INFO] [ACC] @manuela_mol successfully logged in
+2025-10-06 18:05:54 [INFO] [ACC] @mika_03_04 successfully logged in
+2025-10-06 18:05:54 [INFO] [ACC] @can56704145 successfully logged in
+2025-10-06 18:05:54 [INFO] [ACC] @luisavmedranoa successfully logged in
+2025-10-06 18:05:54 [INFO] [ACC] @zidi_1 successfully logged in
+2025-10-06 18:05:54 [INFO] [ACC] @joaovitorbonito successfully logged in
+2025-10-06 18:05:54 [INFO] [ACC] @sulaiman_bayu successfully logged in
+2025-10-06 18:05:54 [INFO] [ACC] @aycanak17 successfully logged in
+2025-10-06 18:05:54 [INFO] [ACC] @gcini21 successfully logged in
+2025-10-06 18:05:54 [INFO] [ACC] @manuela_mol session is OK
+2025-10-06 18:05:54 [INFO] [ACC] @mika_03_04 session is OK
+2025-10-06 18:05:55 [INFO] [ACC] @zidi_1 session is OK
+2025-10-06 18:05:55 [INFO] [ACC] @luisavmedranoa session is OK
+2025-10-06 18:05:55 [INFO] [ACC] @can56704145 session is OK
+2025-10-06 18:05:55 [INFO] [ACC] @aprilia_devii session is OK
+2025-10-06 18:05:55 [INFO] [ACC] @aycanak17 session is OK
+2025-10-06 18:05:55 [INFO] [ACC] @joaovitorbonito session is OK
+2025-10-06 18:05:55 [INFO] [ACC] @gcini21 session is OK
+2025-10-06 18:05:55 [INFO] [ACC] @sulaiman_bayu session is OK
+2025-10-06 18:05:55 [INFO] [LOAD][batch 5] ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-06 18:05:55 [INFO] [LOAD] batch 6/6: accounts 51-57 of 57
+2025-10-06 18:05:58 [INFO] [ACC] @zegdumdele successfully logged in
+2025-10-06 18:05:58 [INFO] [ACC] @khallid1993 successfully logged in
+2025-10-06 18:05:58 [INFO] [ACC] @turanadanali successfully logged in
+2025-10-06 18:05:59 [INFO] [ACC] @iyannorth successfully logged in
+2025-10-06 18:05:59 [INFO] [ACC] @renecontreras72 successfully logged in
+2025-10-06 18:05:59 [INFO] [ACC] @izaqute successfully logged in
+2025-10-06 18:05:59 [INFO] [ACC] @dock109 successfully logged in
+2025-10-06 18:05:59 [INFO] [ACC] @zegdumdele session is OK
+2025-10-06 18:05:59 [INFO] [ACC] @turanadanali session is OK
+2025-10-06 18:05:59 [INFO] [ACC] @khallid1993 session is OK
+2025-10-06 18:06:00 [INFO] [ACC] @izaqute session is OK
+2025-10-06 18:06:00 [INFO] [ACC] @iyannorth session is OK
+2025-10-06 18:06:00 [INFO] [ACC] @renecontreras72 session is OK
+2025-10-06 18:06:00 [INFO] [ACC] @dock109 session is OK
+2025-10-06 18:06:00 [INFO] [LOAD][batch 6] ok=7 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-06 18:06:00 [INFO] [LOAD][TOTAL] accounts=57 | ok=57 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0 | ready_to_work=57
+2025-10-06 18:06:00 [INFO] INIT: mode=work, загружаю аккаунты и запускаю ferma_lifecycle()
+2025-10-06 18:06:00 [INFO] [LIFE] Активный режим MOSCOW 2025-10-06 16:06:00
+2025-10-06 18:06:04 [INFO] [VIEW] Аккаунт davidgarforth58 вероятно забанен!
+2025-10-06 18:06:11 [INFO] [VIEW] Аккаунт drumboys011 вероятно забанен!
+2025-10-06 18:06:16 [INFO] [VIEW] Аккаунт markogarciaquir вероятно забанен!
+2025-10-06 18:06:22 [INFO] [VIEW] Аккаунт ykeepsmilee вероятно забанен!
+2025-10-06 18:06:28 [INFO] [VIEW] Аккаунт tao_cooktao2 вероятно забанен!
+2025-10-06 18:06:34 [INFO] [VIEW] Аккаунт exo3040 вероятно забанен!
+2025-10-06 18:06:39 [INFO] [VIEW] Аккаунт nikkopi вероятно забанен!
+2025-10-06 18:06:45 [INFO] [VIEW] Аккаунт vkumral вероятно забанен!
+2025-10-06 18:06:50 [INFO] [VIEW] Аккаунт 817rahul вероятно забанен!
+2025-10-06 18:06:56 [INFO] [VIEW] Аккаунт soniase69091018 вероятно забанен!
+2025-10-06 18:07:02 [INFO] [VIEW] Аккаунт junio_delfino вероятно забанен!
+2025-10-06 18:07:07 [INFO] [VIEW] Аккаунт chiruchiru_03 вероятно забанен!
+2025-10-06 18:07:12 [INFO] [VIEW] Аккаунт kgs442 вероятно забанен!
+2025-10-06 18:07:18 [INFO] [VIEW] Аккаунт aggaainalonne вероятно забанен!
+2025-10-06 18:07:24 [INFO] [VIEW] Аккаунт shinecharaya3 вероятно забанен!
+2025-10-06 18:07:29 [INFO] [VIEW] Аккаунт amurray7allan вероятно забанен!
+2025-10-06 18:07:35 [INFO] [VIEW] Аккаунт robyn_ann_tomli вероятно забанен!
+2025-10-06 18:07:41 [INFO] [VIEW] Аккаунт sak02222540 вероятно забанен!
+2025-10-06 18:07:47 [INFO] [VIEW] Аккаунт saixt89 вероятно забанен!
+2025-10-06 18:07:53 [INFO] [VIEW] Аккаунт lovechrstjulia вероятно забанен!
+2025-10-06 18:07:58 [INFO] [VIEW] Аккаунт sulaiman_bayu вероятно забанен!
+2025-10-06 18:08:04 [INFO] [VIEW] Аккаунт luisavmedranoa вероятно забанен!
+2025-10-06 18:08:10 [INFO] [VIEW] Аккаунт manuela_mol вероятно забанен!
+2025-10-06 18:08:16 [INFO] [VIEW] Аккаунт aycanak17 вероятно забанен!
+2025-10-06 18:08:22 [INFO] [VIEW] Аккаунт mika_03_04 вероятно забанен!
+2025-10-06 18:08:28 [INFO] [VIEW] Аккаунт renecontreras72 вероятно забанен!
+2025-10-06 18:08:54 [INFO] [VIEW-ALL] Просмотрено твитов: 25 из 25 для @iyannorth
+2025-10-06 18:08:56 [INFO] [LIKE] Обработано твитов: 2 для @iyannorth
+2025-10-06 18:09:01 [INFO] [VIEW] Аккаунт turanadanali вероятно забанен!
+2025-10-06 18:09:08 [INFO] [VIEW] Аккаунт izaqute вероятно забанен!
+2025-10-06 18:09:11 [INFO] [LIFE] Пауза 9159s
+2025-10-06 18:17:07 [INFO] [LOAD] batch 1/3: accounts 1-10 of 29
+2025-10-06 18:17:11 [INFO] [ACC] @priyankamadake1 successfully logged in
+2025-10-06 18:17:11 [INFO] [ACC] @martama28231784 successfully logged in
+2025-10-06 18:17:11 [INFO] [ACC] @solomon_girmay successfully logged in
+2025-10-06 18:17:11 [INFO] [ACC] @katelynn_fergie successfully logged in
+2025-10-06 18:17:11 [INFO] [ACC] @larrymandaperra successfully logged in
+2025-10-06 18:17:12 [INFO] [ACC] @ayumi465 successfully logged in
+2025-10-06 18:17:12 [INFO] [ACC] @moliko_nnana successfully logged in
+2025-10-06 18:17:12 [INFO] [ACC] @faby1192 successfully logged in
+2025-10-06 18:17:12 [INFO] [ACC] @julieannamos2 successfully logged in
+2025-10-06 18:17:12 [INFO] [ACC] @muhd21590 successfully logged in
+2025-10-06 18:17:12 [INFO] [ACC] @priyankamadake1 session is OK
+2025-10-06 18:17:12 [INFO] [ACC] @martama28231784 session is OK
+2025-10-06 18:17:12 [INFO] [ACC] @larrymandaperra session is OK
+2025-10-06 18:17:12 [INFO] [ACC] @katelynn_fergie session is OK
+2025-10-06 18:17:12 [INFO] [ACC] @solomon_girmay session is OK
+2025-10-06 18:17:13 [INFO] [ACC] @faby1192 session is OK
+2025-10-06 18:17:13 [INFO] [ACC] @moliko_nnana session is OK
+2025-10-06 18:17:13 [INFO] [ACC] @julieannamos2 session is OK
+2025-10-06 18:17:13 [INFO] [ACC] @ayumi465 session is OK
+2025-10-06 18:17:13 [INFO] [ACC] @muhd21590 session is OK
+2025-10-06 18:17:13 [INFO] [LOAD][batch 1] ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-06 18:17:13 [INFO] [LOAD] batch 2/3: accounts 11-20 of 29
+2025-10-06 18:17:17 [INFO] [ACC] @qwer26064326 successfully logged in
+2025-10-06 18:17:17 [INFO] [ACC] @mammiejoyce successfully logged in
+2025-10-06 18:17:17 [INFO] [ACC] @lucianamerighi successfully logged in
+2025-10-06 18:17:17 [INFO] [ACC] @mohanappu4 successfully logged in
+2025-10-06 18:17:17 [INFO] [ACC] @donvery30 successfully logged in
+2025-10-06 18:17:17 [INFO] [ACC] @novia_ariyani successfully logged in
+2025-10-06 18:17:17 [INFO] [ACC] @jhedelera successfully logged in
+2025-10-06 18:17:17 [INFO] [ACC] @xindemingzi successfully logged in
+2025-10-06 18:17:17 [INFO] [ACC] @adsamuelmarques successfully logged in
+2025-10-06 18:17:18 [INFO] [ACC] @qwer26064326 session is OK
+2025-10-06 18:17:18 [INFO] [ACC] @novia_ariyani session is OK
+2025-10-06 18:17:18 [INFO] [ACC] @mohanappu4 session is OK
+2025-10-06 18:17:18 [INFO] [ACC] @jhedelera session is OK
+2025-10-06 18:17:18 [INFO] [ACC] @adsamuelmarques session is OK
+2025-10-06 18:17:18 [INFO] [ACC] @mammiejoyce session is OK
+2025-10-06 18:17:18 [INFO] [ACC] @xindemingzi session is OK
+2025-10-06 18:17:18 [INFO] [ACC] @donvery30 session is OK
+2025-10-06 18:17:18 [INFO] [ACC] @lucianamerighi session is OK
+2025-10-06 18:17:18 [INFO] [ACC] @maniloveyou23 successfully logged in
+2025-10-06 18:17:19 [INFO] [ACC] @maniloveyou23 session is OK
+2025-10-06 18:17:19 [INFO] [LOAD][batch 2] ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-06 18:17:19 [INFO] [LOAD] batch 3/3: accounts 21-29 of 29
+2025-10-06 18:17:24 [INFO] [ACC] @aprilia_devii successfully logged in
+2025-10-06 18:17:25 [INFO] [ACC] @gcini21 successfully logged in
+2025-10-06 18:17:25 [INFO] [ACC] @can56704145 successfully logged in
+2025-10-06 18:17:25 [INFO] [ACC] @dock109 successfully logged in
+2025-10-06 18:17:25 [INFO] [ACC] @iyannorth successfully logged in
+2025-10-06 18:17:25 [INFO] [ACC] @khallid1993 successfully logged in
+2025-10-06 18:17:25 [INFO] [ACC] @zidi_1 successfully logged in
+2025-10-06 18:17:25 [INFO] [ACC] @zegdumdele successfully logged in
+2025-10-06 18:17:25 [INFO] [ACC] @joaovitorbonito successfully logged in
+2025-10-06 18:17:26 [INFO] [ACC] @aprilia_devii session is OK
+2025-10-06 18:17:26 [INFO] [ACC] @can56704145 session is OK
+2025-10-06 18:17:26 [INFO] [ACC] @zidi_1 session is OK
+2025-10-06 18:17:26 [INFO] [ACC] @iyannorth session is OK
+2025-10-06 18:17:26 [INFO] [ACC] @zegdumdele session is OK
+2025-10-06 18:17:26 [INFO] [ACC] @gcini21 session is OK
+2025-10-06 18:17:26 [INFO] [ACC] @dock109 session is OK
+2025-10-06 18:17:26 [INFO] [ACC] @joaovitorbonito session is OK
+2025-10-06 18:17:26 [INFO] [ACC] @khallid1993 session is OK
+2025-10-06 18:17:26 [INFO] [LOAD][batch 3] ok=9 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-06 18:17:26 [INFO] [LOAD][TOTAL] accounts=29 | ok=29 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0 | ready_to_work=29
+2025-10-06 18:17:26 [INFO] INIT: mode=work, загружаю аккаунты и запускаю ferma_lifecycle()
+2025-10-06 18:17:26 [INFO] [LIFE] Активный режим MOSCOW 2025-10-06 16:17:26
+2025-10-06 18:17:30 [INFO] [VIEW] Аккаунт priyankamadake1 вероятно забанен!
+2025-10-06 18:17:37 [INFO] [VIEW] Аккаунт julieannamos2 вероятно забанен!
+2025-10-06 18:17:43 [INFO] [VIEW] Аккаунт moliko_nnana вероятно забанен!
+2025-10-06 18:17:48 [INFO] [VIEW] Аккаунт muhd21590 вероятно забанен!
+2025-10-06 18:17:53 [INFO] [VIEW] Аккаунт ayumi465 вероятно забанен!
+2025-10-06 18:18:03 [INFO] [VIEW] Аккаунт martama28231784 вероятно забанен!
+2025-10-06 18:18:09 [INFO] [VIEW] Аккаунт katelynn_fergie вероятно забанен!
+2025-10-06 18:18:15 [INFO] [VIEW] Аккаунт solomon_girmay вероятно забанен!
+2025-10-06 18:18:20 [INFO] [VIEW] Аккаунт faby1192 вероятно забанен!
+2025-10-06 18:18:26 [INFO] [VIEW] Аккаунт larrymandaperra вероятно забанен!
+2025-10-06 18:18:32 [INFO] [VIEW] Аккаунт jhedelera вероятно забанен!
+2025-10-06 18:18:38 [INFO] [VIEW] Аккаунт maniloveyou23 вероятно забанен!
+2025-10-06 18:18:43 [INFO] [VIEW] Аккаунт qwer26064326 вероятно забанен!
+2025-10-06 18:18:49 [INFO] [VIEW] Аккаунт mammiejoyce вероятно забанен!
+2025-10-06 18:18:55 [INFO] [VIEW] Аккаунт novia_ariyani вероятно забанен!
+2025-10-06 18:19:00 [INFO] [VIEW] Аккаунт mohanappu4 вероятно забанен!
+2025-10-06 18:19:06 [INFO] [VIEW] Аккаунт adsamuelmarques вероятно забанен!
+2025-10-06 18:19:12 [INFO] [VIEW] Аккаунт lucianamerighi вероятно забанен!
+2025-10-06 18:19:17 [INFO] [VIEW] Аккаунт xindemingzi вероятно забанен!
+2025-10-06 18:19:23 [INFO] [VIEW] Аккаунт donvery30 вероятно забанен!
+2025-10-06 18:19:29 [INFO] [VIEW] Аккаунт can56704145 вероятно забанен!
+2025-10-06 18:19:34 [INFO] [VIEW] Аккаунт joaovitorbonito вероятно забанен!
+2025-10-06 18:19:40 [INFO] [VIEW] Аккаунт aprilia_devii вероятно забанен!
+2025-10-06 18:19:46 [INFO] [VIEW] Аккаунт gcini21 вероятно забанен!
+2025-10-06 18:19:52 [INFO] [VIEW] Аккаунт zidi_1 вероятно забанен!
+2025-10-06 18:20:18 [INFO] [VIEW-ALL] Просмотрено твитов: 24 из 24 для @khallid1993
+2025-10-06 18:20:21 [INFO] [LIKE] Обработано твитов: 5 для @khallid1993
+2025-10-06 18:20:49 [INFO] [VIEW-ALL] Просмотрено твитов: 26 из 26 для @iyannorth
+2025-10-06 18:20:52 [INFO] [LIKE] Обработано твитов: 2 для @iyannorth
+2025-10-06 18:20:57 [INFO] [VIEW] Аккаунт zegdumdele вероятно забанен!
+2025-10-06 18:21:03 [INFO] [VIEW] Аккаунт dock109 вероятно забанен!
+2025-10-06 18:21:05 [INFO] [LIFE] Пауза 2260s

@@ -1,4 +1,4 @@
-import pickle, json, time
+import pickle, json, time, logging
 import traceback
 
 from tweeterpy import TweeterPy
@@ -12,6 +12,7 @@ from concurrent.futures import ThreadPoolExecutor
 from math import ceil
 
 db = Database()
+logger = logging.getLogger("xFerma")
 
 def initialize_client(proxy=None, screen_name=None):
     for i in range(3):
@@ -95,80 +96,155 @@ def save_cookies_and_sess(outdated_session=None):
         return tw_cl
 
 def process_account(acc):
-    proxy = get_proxies_for_twitter_account(acc)
-    tw_cl = initialize_client(proxy=proxy)
+    """Возвращает dict: {"status": <ok|session_refreshed|login_failed|banned|conn_error|init_failed>, "account": acc_or_None}"""
+    try:
+        proxy = get_proxies_for_twitter_account(acc)
+        tw_cl = initialize_client(proxy=proxy)
+    except Exception:
+        logger.exception(f"[ACC] init client failed for @{acc.get('screen_name')}")
+        return {"status": "init_failed", "account": None}
 
-    if tw_cl:
+    if not tw_cl:
+        return {"status": "init_failed", "account": None}
+
+    try:
         tw_cl = load_session(tw_cl, acc["screen_name"])
         # tw_cl.generate_session(acc["auth_token"])
         if tw_cl.logged_in():
-            print(f'Account {acc["screen_name"]} successfully logged in!')
+            logger.info(f"[ACC] @{acc['screen_name']} successfully logged in")
         else:
-            print(f'Can\'t log in! Account {acc["screen_name"]}')
+            logger.warning(f"[ACC] Can't log in @{acc['screen_name']}")
             time.sleep(3)
-            return
+            return {"status": "login_failed", "account": None}
 
-        for i in range(2):
+        session_refreshed = False
+
+        for _ in range(2):
             try:
                 tw_cl.get_user_data('elonmusk')
-                print(f'Account\'s {acc["screen_name"]} session is OK!')
+                logger.info(f"[ACC] @{acc['screen_name']} session is OK")
                 break
             except ConnectionError:
                 trace = traceback.format_exc()
                 if 'Connection aborted' in trace and 'Remote end closed connection without response' in trace:
-                    print(f'Account\'s {acc["screen_name"]} session is outdated! Trying to generate new session...')
-                    new_tw_cl = save_cookies_and_sess(outdated_session=acc)
-                    tw_cl = new_tw_cl
-                    time.sleep(5)
+                    logger.warning(f"[ACC] @{acc['screen_name']} session outdated → refreshing…")
+                    try:
+                        new_tw_cl = save_cookies_and_sess(outdated_session=acc)
+                        tw_cl = new_tw_cl
+                        session_refreshed = True
+                        time.sleep(5)
+                    except Exception:
+                        logger.exception(f"[ACC] refresh session failed for @{acc['screen_name']}")
+                        return {"status": "conn_error", "account": None}
+                else:
+                    logger.exception(f"[ACC] connection error for @{acc['screen_name']}")
+                    return {"status": "conn_error", "account": None}
             except KeyError:
-                print(f"Аккаунт {acc['screen_name']} вероятно забанен!")
+                logger.warning(f"[ACC] @{acc['screen_name']} вероятно забанен")
                 try:
                     db.update_is_banned(acc["uid"])
-                except:
-                    pass
-                return
+                except Exception:
+                    logger.exception("[ACC] update_is_banned failed")
+                return {"status": "banned", "account": None}
+            # except AttributeError:
+            #     trace = traceback.format_exc()
+            #     if "'Retry' object has no attribute 'backoff_max'" in trace:
+            #         logger.warning(f"[ACC] @{acc['screen_name']} вероятно забанен")
+            #         try:
+            #             db.update_is_banned(acc["uid"])
+            #         except Exception:
+            #             logger.exception("[ACC] update_is_banned failed")
+            #         return {"status": "banned", "account": None}
+            #     else:
+            #         logger.exception(f"[ACC] connection error for @{acc['screen_name']}")
+            #         return {"status": "conn_error", "account": None}
 
         acc['session'] = tw_cl
-        return acc
+        return {"status": "session_refreshed" if session_refreshed else "ok", "account": acc}
 
-    else:
-        return
+    except Exception:
+        logger.exception(f"[ACC] unexpected error for @{acc.get('screen_name')}")
+        return {"status": "init_failed", "account": None}
 
 
 def load_accounts_tweeterpy(mode, how_many_accounts=None, load_cookies=False):
     """
-        mode = "set_up" - set up new accounts, parsing file with new data
-        mode = "work" - getting working accounts from db
+    mode = "set_up" - set up new accounts, parsing file with new data
+    mode = "work"   - getting working accounts from db
+    Возвращает список аккаунтов (готовых к работе) и словарь со статистикой.
     """
-
     if mode == 'work':
         twitter_working_accounts = db.get_working_accounts(how_many_accounts)
     elif mode == 'set_up':
         twitter_working_accounts = parse_accounts_to_list()
+    else:
+        twitter_working_accounts = []
 
-    if len(twitter_working_accounts) > 10:
-        # Прогреваем TweeterPy до многопоточности
-        _ = initialize_client(proxy=get_proxies_for_twitter_account(twitter_working_accounts[0]))
+    total = len(twitter_working_accounts)
+    if total == 0:
+        logger.info("[LOAD] нет аккаунтов для загрузки")
+        return []
+
+    # прогрев
+    if total > 10:
+        try:
+            _ = initialize_client(proxy=get_proxies_for_twitter_account(twitter_working_accounts[0]))
+        except Exception:
+            logger.exception("[LOAD] Warmup client failed")
 
     batch_size = 10
-    total = len(twitter_working_accounts)
     batches = ceil(total / batch_size)
 
+    # глобальные счётчики
+    stats = {"total": total, "ok": 0, "session_refreshed": 0, "login_failed": 0, "banned": 0, "conn_error": 0, "init_failed": 0}
+
+    # будем заменять элементы исходного списка результатами сессий
     for i in range(batches):
         start = i * batch_size
         end = min(start + batch_size, total)
         accounts_batch = twitter_working_accounts[start:end]
 
+        logger.info(f"[LOAD] batch {i+1}/{batches}: accounts {start+1}-{end} of {total}")
+
         with ThreadPoolExecutor(max_workers=10) as executor:
             results = list(executor.map(process_account, accounts_batch))
-            results = [x for x in results if x is not None]
 
-        # Обновляем исходный список (если нужно сохранить сессии обратно)
-        twitter_working_accounts[start:end] = results
+        # обновим статистику по батчу
+        for r in results:
+            stats[r["status"]] += 1
+
+        # оставим только успешные (есть account с session)
+        ready_accounts = [r["account"] for r in results if r["account"] is not None]
+
+        # запишем обратно в основной список только готовые
+        twitter_working_accounts[start:end] = ready_accounts
+
+        logger.info(
+            f"[LOAD][batch {i+1}] ok={sum(1 for r in results if r['status']=='ok')} | "
+            f"refreshed={sum(1 for r in results if r['status']=='session_refreshed')} | "
+            f"login_failed={sum(1 for r in results if r['status']=='login_failed')} | "
+            f"banned={sum(1 for r in results if r['status']=='banned')} | "
+            f"conn_error={sum(1 for r in results if r['status']=='conn_error')} | "
+            f"init_failed={sum(1 for r in results if r['status']=='init_failed')}"
+        )
+
+    # сплющим список (после замены батчами могут быть "дыры")
+    twitter_working_accounts = [acc for acc in twitter_working_accounts if acc]
 
     if load_cookies:
         for acc in twitter_working_accounts:
-            acc['cookies_dict'] = load_cookies_for_twitter_account_from_file(f'x_accs_cookies/{acc["screen_name"]}.json')
+            try:
+                acc['cookies_dict'] = load_cookies_for_twitter_account_from_file(
+                    f'x_accs_cookies/{acc["screen_name"]}.json'
+                )
+            except Exception:
+                logger.exception(f"[LOAD] cookies load failed for @{acc.get('screen_name')}")
+
+    logger.info(
+        f"[LOAD][TOTAL] accounts={stats['total']} | ok={stats['ok']} | refreshed={stats['session_refreshed']} | "
+        f"login_failed={stats['login_failed']} | banned={stats['banned']} | conn_error={stats['conn_error']} | "
+        f"init_failed={stats['init_failed']} | ready_to_work={len(twitter_working_accounts)}"
+    )
 
     return twitter_working_accounts
 

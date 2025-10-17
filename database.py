@@ -161,7 +161,7 @@ class Database:
 
     def fetch_all_accounts(self):
         with self._conn() as conn, conn.cursor() as cur:
-            cur.execute("SELECT id, screen_name FROM accounts WHERE is_banned IS NOT TRUE;")
+            cur.execute("SELECT id, screen_name FROM X_FERMA WHERE is_banned IS NOT TRUE;")
             return [{"id": r[0], "screen_name": r[1]} for r in cur.fetchall()]
 
     def fetch_influencers_with_uid(self, path="influencers.jsonl"):
@@ -326,7 +326,7 @@ class Database:
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute("""
                 SELECT a.uid
-                FROM accounts a
+                FROM X_FERMA a
                 WHERE a.is_new = TRUE
                   AND NOT EXISTS (
                         SELECT 1 FROM follow_edges fe

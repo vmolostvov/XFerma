@@ -326,6 +326,23 @@ def load_accounts_tweeterpy(mode, how_many_accounts=None, load_cookies=False):
         f"init_failed={stats['init_failed']} | ready_to_work={len(twitter_working_accounts)}"
     )
 
+    # --- после вывода общей статистики ---
+    logger.info("=" * 80)
+    logger.info("🧠 [LOAD COMPLETE] Проверка статистики перед запуском фермы")
+    logger.info("-" * 80)
+    logger.info(f"📊 Всего аккаунтов:        {stats['total']}")
+    logger.info(f"✅ Успешно загружено:      {stats['ok']}")
+    logger.info(f"♻️  Обновлено сессий:       {stats['session_refreshed']}")
+    logger.info(f"⚠️  Ошибок входа:           {stats['login_failed']}")
+    logger.info(f"🚫 Забанено:               {stats['banned']}")
+    logger.info(f"🌐 Ошибки соединения:       {stats['conn_error']}")
+    logger.info(f"💀 Ошибки инициализации:    {stats['init_failed']}")
+    logger.info(f"🟩 Готово к работе:         {len(twitter_working_accounts)}")
+    logger.info("=" * 80)
+
+    input("\n🔸 Проверь статистику выше и нажми Enter, чтобы запустить ферму... ")
+    logger.info("🚀 Запуск фермы...")
+
     return twitter_working_accounts
 
 

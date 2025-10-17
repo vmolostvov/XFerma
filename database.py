@@ -310,7 +310,10 @@ class Database:
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute("""
                 UPDATE follow_edges
-                SET status='done', last_error=NULL, updated_at=NOW()
+                SET status='done',
+                    last_error=NULL,
+                    updated_at=NOW(),
+                    done_at=NOW()
                 WHERE src_id=%s AND dst_id=%s;
             """, (src_id, dst_id))
 

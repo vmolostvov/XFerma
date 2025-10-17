@@ -22,6 +22,12 @@ def initialize_client(proxy=None, screen_name=None, max_attempts=3):
             logger.warning(f"[INIT] @{screen_name} init fail (attempt {i+1}/{max_attempts}) proxy={proxy} err={e}")
             time.sleep(3)
             proxy = get_random_mob_proxy()
+        except Exception as e:
+            if 'raise Exception("invalid response")' in traceback.format_exc():
+                logger.warning(f"[INIT] @{screen_name} init fail (attempt {i + 1}/{max_attempts}) proxy={proxy} err={e}")
+                time.sleep(3)
+                proxy = get_random_mob_proxy()
+
     return None
 
 def load_accounts():

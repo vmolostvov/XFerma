@@ -178,7 +178,7 @@ class Database:
         seen, uniq = set(), []
         for d in data:
             sn = d.get("screen_name", "").strip().lstrip("@")
-            uid = d.get("uid")
+            uid = int(d.get("uid"))
             if sn and sn not in seen:
                 uniq.append({"screen_name": sn, "uid": uid})
                 seen.add(sn)
@@ -342,4 +342,4 @@ class Database:
 
 if __name__ == '__main__':
     db = Database()
-    print(db.fetch_all_accounts())
+    print(db.fetch_influencers_with_uid())

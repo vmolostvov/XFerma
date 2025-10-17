@@ -495,6 +495,7 @@ class xFerma:
 
                     # жизнь аккаунтов
                     for x_working_acc in self.x_accounts_data.copy():
+                        logger.info(f"[ACC-LIFE] Работаю с аккаунтом ({x_working_acc['screen_name']}) !")
                         timeline = self.get_timeline(x_working_acc)
                         if timeline:
                             res = self.view_all_tweets(timeline, x_working_acc)
@@ -986,8 +987,8 @@ def update_influencers_jsonl_resilient(
 
 if __name__ == '__main__':
     ferma = xFerma(mode='work')
-    # accs = load_accounts_tweeterpy(mode='set_up')
+    # accs = load_accounts_tweeterpy(mode='work', how_many_accounts=1)
     # for acc in accs:
-    #     print(ferma.like(acc, 1978183328223441057))
+    #     tl = ferma.get_timeline(acc)
     #     time.sleep(1)
     # update_influencers_jsonl_resilient(get_id_fn=get_user_id_by_sn)

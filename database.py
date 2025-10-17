@@ -79,7 +79,7 @@ class Database:
             return cur.fetchone() is not None
 
     def update_is_banned_by_sn(self, screen_name: str) -> bool:
-        sql = "UPDATE X_FERMA SET is_banned = TRUE WHERE screen_name = %s RETURNING screen_name;"
+        sql = "UPDATE X_FERMA SET is_banned = TRUE WHERE username = %s RETURNING username;"
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute(sql, (screen_name,))
             return cur.fetchone() is not None
@@ -162,7 +162,7 @@ class Database:
     def fetch_all_accounts(self):
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute("SELECT uid, username FROM X_FERMA WHERE is_banned IS NOT TRUE;")
-            return [{"id": r[0], "screen_name": r[1]} for r in cur.fetchall()]
+            return [{"id": r['uid'], "screen_name": r['username']} for r in cur.fetchall()]
 
     def fetch_influencers_with_uid(self, path="influencers.jsonl"):
         try:
@@ -185,7 +185,6 @@ class Database:
         return uniq
 
     def count_done_today(self, src_id):
-        # границы «сегодня» в EU:
         now_eu = datetime.now(MOS_TZ)
         start_local = now_eu.replace(hour=0, minute=0, second=0, microsecond=0)
         end_local = start_local + timedelta(days=1)
@@ -194,19 +193,22 @@ class Database:
 
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute("""
-                SELECT COUNT(*) FROM follow_edges
+                SELECT COUNT(*) AS cnt
+                FROM follow_edges
                 WHERE src_id=%s AND status='done' AND done_at >= %s AND done_at < %s;
             """, (src_id, start_utc, end_utc))
-            return cur.fetchone()[0]
+            row = cur.fetchone()
+            return row["cnt"] if row else 0
 
     def count_pending_today(self, src_id):
-        # можно ограничить по created_at в пределах суток NY, но обычно pending = сегодняшние
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute("""
-                SELECT COUNT(*) FROM follow_edges
+                SELECT COUNT(*) AS cnt
+                FROM follow_edges
                 WHERE src_id=%s AND status='pending';
             """, (src_id,))
-            return cur.fetchone()[0]
+            row = cur.fetchone()
+            return row["cnt"] if row else 0
 
     def set_daily_quota_if_absent(self, src_id, plan_date, quota_min=3, quota_max=10):
         quota = random.randint(quota_min, quota_max)
@@ -220,28 +222,29 @@ class Database:
     def get_daily_quota(self, src_id, plan_date, quota_min=3, quota_max=10):
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute("""
-                SELECT quota FROM follow_daily_plan
+                SELECT quota AS q FROM follow_daily_plan
                 WHERE src_id=%s AND plan_date=%s;
             """, (src_id, plan_date))
             row = cur.fetchone()
             if row:
-                return row[0]
+                return row["q"]
         # нет строки — создадим
         self.set_daily_quota_if_absent(src_id, plan_date, quota_min, quota_max)
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute("""
-                SELECT quota FROM follow_daily_plan
+                SELECT quota AS q FROM follow_daily_plan
                 WHERE src_id=%s AND plan_date=%s;
             """, (src_id, plan_date))
-            return cur.fetchone()[0]
+            return cur.fetchone()["q"]
 
     def fetch_followed_or_pending_dst_ids(self, src_id):
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute("""
-                SELECT dst_id FROM follow_edges
+                SELECT dst_id
+                FROM follow_edges
                 WHERE src_id=%s AND status IN ('pending','done');
             """, (src_id,))
-            return {r[0] for r in cur.fetchall()}
+            return {r["dst_id"] for r in cur.fetchall()}
 
     def bulk_upsert_follow_edges(self, pairs):
         if not pairs:
@@ -339,4 +342,4 @@ class Database:
 
 if __name__ == '__main__':
     db = Database()
-    print(db.get_banned_accounts())
+    print(db.fetch_all_accounts())

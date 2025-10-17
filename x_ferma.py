@@ -401,6 +401,7 @@ class xFerma:
         """
         exclude_list = ['iyannorth', 'khallid1993']
         influencers = db.fetch_influencers_with_uid(influencers_file)
+        db.ensure_influencers_present(influencers)
 
         accounts = db.fetch_all_accounts()
         if not accounts:
@@ -986,9 +987,10 @@ def update_influencers_jsonl_resilient(
     }
 
 if __name__ == '__main__':
-    ferma = xFerma(mode='work')
-    # accs = load_accounts_tweeterpy(mode='work', how_many_accounts=1)
-    # for acc in accs:
-    #     tl = ferma.get_timeline(acc)
-    #     time.sleep(1)
-    # update_influencers_jsonl_resilient(get_id_fn=get_user_id_by_sn)
+    ferma = xFerma(mode='test')
+    accs = load_accounts_tweeterpy(mode='work')
+    for acc in accs:
+        if acc['screen_name'] == 'HVLxANTONIO':
+            tl = ferma.get_timeline(acc)
+            time.sleep(1)
+    update_influencers_jsonl_resilient(get_id_fn=get_user_id_by_sn)

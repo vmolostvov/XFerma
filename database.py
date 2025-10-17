@@ -129,6 +129,7 @@ class Database:
             SELECT uid, username AS screen_name, ua, proxy
             FROM X_FERMA
             WHERE is_banned IS NOT TRUE
+            AND is_influencer IS NOT TRUE
             ORDER BY addition_date DESC
         """
 
@@ -161,7 +162,7 @@ class Database:
 
     def fetch_all_accounts(self):
         with self._conn() as conn, conn.cursor() as cur:
-            cur.execute("SELECT uid, username FROM X_FERMA WHERE is_banned IS NOT TRUE;")
+            cur.execute("SELECT uid, username FROM X_FERMA WHERE is_banned IS NOT TRUE AND is_influencer IS NOT TRUE;")
             return [{"id": r['uid'], "screen_name": r['username']} for r in cur.fetchall()]
 
     def fetch_influencers_with_uid(self, path="influencers.jsonl"):
@@ -261,7 +262,8 @@ class Database:
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute("SELECT uid, username AS screen_name, is_new, ua, proxy FROM X_FERMA "
                         "WHERE is_banned IS NOT TRUE "
-                        "AND is_new IS TRUE;")
+                        "AND is_new IS TRUE"
+                        "AND is_influencer IS NOT TRUE;")
             return list(cur.fetchall())
 
     def fetch_accounts_by_ids(self, ids: Set[str]) -> List[dict]:
@@ -334,6 +336,7 @@ class Database:
                 SELECT a.uid
                 FROM X_FERMA a
                 WHERE a.is_new = TRUE
+                  AND a.is_influencer IS NOT TRUE
                   AND NOT EXISTS (
                         SELECT 1 FROM follow_edges fe
                         WHERE (fe.src_id = a.uid OR fe.dst_id = a.uid)
@@ -341,6 +344,19 @@ class Database:
                   );
             """)
             return [r["uid"] for r in cur.fetchall()]
+
+    def ensure_influencers_present(self, infls: list[dict]) -> int:
+        """
+        infls: [{"uid": "...", "screen_name": "..."}]
+        """
+        sql = """
+        INSERT INTO X_FERMA (uid, username, is_influencer, addition_date)
+        VALUES (%s, %s, TRUE, NOW())
+        ON CONFLICT (uid) DO NOTHING;
+        """
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.executemany(sql, [(i["uid"], i["screen_name"]) for i in infls])
+            return cur.rowcount
 
 
 if __name__ == '__main__':

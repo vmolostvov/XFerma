@@ -424,3 +424,1142 @@ TypeError: 'NoneType' object is not subscriptable
 2025-10-06 18:20:57 [INFO] [VIEW] Аккаунт zegdumdele вероятно забанен!
 2025-10-06 18:21:03 [INFO] [VIEW] Аккаунт dock109 вероятно забанен!
 2025-10-06 18:21:05 [INFO] [LIFE] Пауза 2260s
+2025-10-16 17:11:43 [INFO] [LOAD] нет аккаунтов для загрузки
+2025-10-16 17:11:44 [INFO] INIT: mode=set_up, загружаю аккаунты и запускаю set_up_new_accounts()
+2025-10-16 17:11:44 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Degen #5522_5522.png
+2025-10-16 17:11:44 [INFO] [DESC] UNMARK used для biquantietou
+2025-10-16 17:11:46 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Shredding Sassy #1021_1021.png
+2025-10-16 17:11:46 [INFO] [DESC] UNMARK used для StefanieMaritz9
+2025-10-16 17:11:47 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_DarkMonad #1107_1107.png
+2025-10-16 17:11:47 [INFO] [DESC] UNMARK used для EvansGerg
+2025-10-16 17:11:48 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Bons #1014_1014.png
+2025-10-16 17:11:48 [INFO] [DESC] UNMARK used для Rizal3274026826
+2025-10-16 18:22:50 [ERROR] Ошибка в get_id_fn!
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/x_ferma.py", line 955, in update_influencers_jsonl
+    uid = get_id_fn(sn)
+          ^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 308, in get_user_id_by_sn
+    return tw_cl.get_user_id(sn)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 311, in get_user_id
+    return self.get_user_data(username).get('rest_id')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 347, in get_user_data
+    return response['data']['user']['result']
+           ~~~~~~~~^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+2025-10-16 18:29:55 [ERROR] Ошибка в get_id_fn!
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/response.py", line 779, in _error_catcher
+    yield
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/response.py", line 904, in _raw_read
+    data = self._fp_read(amt, read1=read1) if not fp_closed else b""
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/response.py", line 887, in _fp_read
+    return self._fp.read(amt) if amt is not None else self._fp.read()
+           ^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/http/client.py", line 465, in read
+    s = self.fp.read(amt)
+        ^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py", line 705, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/ssl.py", line 1278, in recv_into
+    return self.read(nbytes, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/ssl.py", line 1134, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: DECRYPTION_FAILED_OR_BAD_RECORD_MAC] decryption failed or bad record mac (_ssl.c:2546)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/models.py", line 820, in generate
+    yield from self.raw.stream(chunk_size, decode_content=True)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/response.py", line 1091, in stream
+    data = self.read(amt=amt, decode_content=decode_content)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/response.py", line 980, in read
+    data = self._raw_read(amt)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/response.py", line 903, in _raw_read
+    with self._error_catcher():
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/response.py", line 790, in _error_catcher
+    raise SSLError(e) from e
+urllib3.exceptions.SSLError: [SSL: DECRYPTION_FAILED_OR_BAD_RECORD_MAC] decryption failed or bad record mac (_ssl.c:2546)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/x_ferma.py", line 955, in update_influencers_jsonl
+    uid = get_id_fn(sn)
+          ^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 307, in get_user_id_by_sn
+    tw_cl = TweeterPy()
+            ^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 41, in __init__
+    self.generate_session()
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 193, in generate_session
+    ondemand_file_response = util.get_ondemand_file_response(
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 100, in get_ondemand_file_response
+    ondemand_file = session.request(url=ondemand_file_url, method="GET")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/sessions.py", line 746, in send
+    r.content
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/models.py", line 902, in content
+    self._content = b"".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b""
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/models.py", line 828, in generate
+    raise RequestsSSLError(e)
+requests.exceptions.SSLError: [SSL: DECRYPTION_FAILED_OR_BAD_RECORD_MAC] decryption failed or bad record mac (_ssl.c:2546)
+2025-10-16 18:49:50 [INFO] Account ErickSerek successfully logged in!
+2025-10-16 18:50:33 [INFO] Account EileenJohnsons successfully logged in!
+2025-10-16 18:50:49 [INFO] Account Filou3939 successfully logged in!
+2025-10-16 18:51:02 [INFO] Account FallenAngel6993 successfully logged in!
+2025-10-16 18:51:17 [INFO] Account FlorenciaFerste successfully logged in!
+2025-10-16 18:55:14 [INFO] Account GMenochelli successfully logged in!
+2025-10-16 18:55:28 [INFO] Account FredOrtiz10 successfully logged in!
+2025-10-16 18:55:42 [INFO] Account ILoveHarryL successfully logged in!
+2025-10-16 18:55:56 [INFO] Account Igor31 successfully logged in!
+2025-10-16 18:56:08 [INFO] Account HVLxANTONIO successfully logged in!
+2025-10-16 18:56:08 [INFO] [LOAD] batch 1/1: accounts 1-5 of 5
+2025-10-16 18:56:15 [INFO] [ACC] @FredOrtiz10 successfully logged in
+2025-10-16 18:56:15 [INFO] [ACC] @HVLxANTONIO successfully logged in
+2025-10-16 18:56:15 [INFO] [ACC] @ILoveHarryL successfully logged in
+2025-10-16 18:56:15 [INFO] [ACC] @Igor31 successfully logged in
+2025-10-16 18:56:16 [ERROR] [ACC] unexpected error for @HVLxANTONIO
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-16 18:56:17 [ERROR] [ACC] unexpected error for @FredOrtiz10
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-16 18:56:17 [ERROR] [ACC] unexpected error for @ILoveHarryL
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-16 18:56:17 [ERROR] [ACC] unexpected error for @Igor31
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-16 19:00:11 [INFO] [LOAD] batch 1/1: accounts 1-10 of 10
+2025-10-16 19:00:17 [INFO] [ACC] @FredOrtiz10 successfully logged in
+2025-10-16 19:00:17 [INFO] [ACC] @HVLxANTONIO successfully logged in
+2025-10-16 19:00:17 [INFO] [ACC] @Igor31 successfully logged in
+2025-10-16 19:00:18 [INFO] [ACC] @ILoveHarryL successfully logged in
+2025-10-16 19:00:18 [INFO] [ACC] @ErickSerek successfully logged in
+2025-10-16 19:00:19 [INFO] [ACC] @GMenochelli successfully logged in
+2025-10-16 19:00:19 [INFO] [ACC] @FlorenciaFerste successfully logged in
+2025-10-16 19:00:19 [ERROR] [ACC] unexpected error for @FredOrtiz10
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-16 19:00:19 [ERROR] [ACC] unexpected error for @HVLxANTONIO
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-16 19:00:19 [INFO] [ACC] @Filou3939 successfully logged in
+2025-10-16 19:00:19 [ERROR] [ACC] unexpected error for @Igor31
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-16 19:00:19 [ERROR] [ACC] unexpected error for @ILoveHarryL
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-16 19:00:20 [ERROR] [ACC] unexpected error for @ErickSerek
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-16 19:00:21 [ERROR] [ACC] unexpected error for @GMenochelli
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-16 19:00:21 [ERROR] [ACC] unexpected error for @Filou3939
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-16 19:00:21 [ERROR] [ACC] unexpected error for @FlorenciaFerste
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-16 19:00:25 [INFO] [ACC] @FallenAngel6993 successfully logged in
+2025-10-16 19:00:31 [ERROR] [ACC] connection error for @FallenAngel6993
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 773, in urlopen
+    self._prepare_proxy(conn)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 1042, in _prepare_proxy
+    conn.connect()
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/connection.py", line 770, in connect
+    self._tunnel()
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/connection.py", line 269, in _tunnel
+    raise OSError(
+OSError: Tunnel connection failed: 503 Service Unavailable
+
+The above exception was the direct cause of the following exception:
+
+urllib3.exceptions.ProxyError: ('Unable to connect to proxy', OSError('Tunnel connection failed: 503 Service Unavailable'))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/adapters.py", line 589, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.x.com', port=443): Max retries exceeded with url: /graphql/qRednkZG-rn1P6b48NINmQ/UserByScreenName?variables=%7B%22screen_name%22%3A+%22elonmusk%22%2C+%22withSafetyModeUserFields%22%3A+true%7D&features=%7B%22responsive_web_graphql_exclude_directive_enabled%22%3A+true%2C+%22verified_phone_label_enabled%22%3A+true%2C+%22responsive_web_graphql_skip_user_profile_image_extensions_enabled%22%3A+false%2C+%22responsive_web_graphql_timeline_navigation_enabled%22%3A+true%2C+%22hidden_profile_likes_enabled%22%3A+false%2C+%22hidden_profile_subscriptions_enabled%22%3A+true%2C+%22highlights_tweets_tab_ui_enabled%22%3A+true%2C+%22responsive_web_twitter_article_notes_tab_enabled%22%3A+false%2C+%22creator_subscriptions_tweet_preview_api_enabled%22%3A+true%2C+%22subscriptions_verification_info_is_identity_verified_enabled%22%3A+true%2C+%22subscriptions_verification_info_verified_since_enabled%22%3A+true%7D (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 503 Service Unavailable')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 31, in request
+    response = self.session.request(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/adapters.py", line 616, in send
+    raise ProxyError(e, request=request)
+requests.exceptions.ProxyError: HTTPSConnectionPool(host='api.x.com', port=443): Max retries exceeded with url: /graphql/qRednkZG-rn1P6b48NINmQ/UserByScreenName?variables=%7B%22screen_name%22%3A+%22elonmusk%22%2C+%22withSafetyModeUserFields%22%3A+true%7D&features=%7B%22responsive_web_graphql_exclude_directive_enabled%22%3A+true%2C+%22verified_phone_label_enabled%22%3A+true%2C+%22responsive_web_graphql_skip_user_profile_image_extensions_enabled%22%3A+false%2C+%22responsive_web_graphql_timeline_navigation_enabled%22%3A+true%2C+%22hidden_profile_likes_enabled%22%3A+false%2C+%22hidden_profile_subscriptions_enabled%22%3A+true%2C+%22highlights_tweets_tab_ui_enabled%22%3A+true%2C+%22responsive_web_twitter_article_notes_tab_enabled%22%3A+false%2C+%22creator_subscriptions_tweet_preview_api_enabled%22%3A+true%2C+%22subscriptions_verification_info_is_identity_verified_enabled%22%3A+true%2C+%22subscriptions_verification_info_verified_since_enabled%22%3A+true%7D (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 503 Service Unavailable')))
+2025-10-16 19:00:39 [INFO] [ACC] @EileenJohnsons successfully logged in
+2025-10-16 19:00:45 [ERROR] [ACC] unexpected error for @EileenJohnsons
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-16 19:00:45 [INFO] [LOAD][batch 1] ok=0 | refreshed=0 | login_failed=0 | banned=0 | conn_error=1 | init_failed=9
+2025-10-16 19:00:45 [INFO] [LOAD][TOTAL] accounts=10 | ok=0 | refreshed=0 | login_failed=0 | banned=0 | conn_error=1 | init_failed=9 | ready_to_work=0
+2025-10-16 19:00:46 [INFO] INIT: mode=set_up, загружаю аккаунты и запускаю set_up_new_accounts()
+2025-10-16 19:19:25 [INFO] INIT: TEST MODE ACTIVATED
+2025-10-16 19:19:25 [INFO] [LOAD] batch 1/1: accounts 1-1 of 1
+2025-10-16 19:19:32 [INFO] [ACC] @ErickSerek successfully logged in
+2025-10-16 19:19:35 [ERROR] [ACC] unexpected error for @ErickSerek
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 124, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-16 19:19:35 [INFO] [LOAD][batch 1] ok=0 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=1
+2025-10-16 19:19:35 [INFO] [LOAD][TOTAL] accounts=1 | ok=0 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=1 | ready_to_work=0
+2025-10-16 19:22:51 [INFO] INIT: TEST MODE ACTIVATED
+2025-10-16 19:22:51 [INFO] [LOAD] batch 1/1: accounts 1-1 of 1
+2025-10-16 19:22:58 [ERROR] [ACC] unexpected error for @ErickSerek
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 111, in process_account
+    tw_cl = load_session(tw_cl, acc["screen_name"])
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 34, in load_session
+    with open(f"x_accs_pkl_sessions/{session_name}.pkl", "rb") as file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'x_accs_pkl_sessions/ErickSerek.pkl'
+2025-10-16 19:22:58 [INFO] [LOAD][batch 1] ok=0 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=1
+2025-10-16 19:22:58 [INFO] [LOAD][TOTAL] accounts=1 | ok=0 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=1 | ready_to_work=0
+2025-10-16 19:24:58 [INFO] Account ErickSerek successfully logged in!
+2025-10-16 19:25:23 [INFO] Account EileenJohnsons successfully logged in!
+2025-10-16 19:25:39 [INFO] Account Filou3939 successfully logged in!
+2025-10-17 12:32:33 [ERROR] [SESS] @ErickSerek child error on attempt 1: Can't pickle local object 'run_in_subprocess.<locals>._child'
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 155, in save_cookies_and_sess_with_timeout
+    res = run_in_subprocess(worker_generate_and_save, args=(acc,), timeout=timeout_sec)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 98, in run_in_subprocess
+    p.start()
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/process.py", line 121, in start
+    self._popen = self._Popen(self)
+                  ^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/context.py", line 288, in _Popen
+    return Popen(process_obj)
+           ^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/popen_spawn_posix.py", line 32, in __init__
+    super().__init__(process_obj)
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/popen_fork.py", line 19, in __init__
+    self._launch(process_obj)
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/popen_spawn_posix.py", line 47, in _launch
+    reduction.dump(process_obj, fp)
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/reduction.py", line 60, in dump
+    ForkingPickler(file, protocol).dump(obj)
+AttributeError: Can't pickle local object 'run_in_subprocess.<locals>._child'
+2025-10-17 12:32:36 [ERROR] [SESS] @ErickSerek child error on attempt 2: Can't pickle local object 'run_in_subprocess.<locals>._child'
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 155, in save_cookies_and_sess_with_timeout
+    res = run_in_subprocess(worker_generate_and_save, args=(acc,), timeout=timeout_sec)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 98, in run_in_subprocess
+    p.start()
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/process.py", line 121, in start
+    self._popen = self._Popen(self)
+                  ^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/context.py", line 288, in _Popen
+    return Popen(process_obj)
+           ^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/popen_spawn_posix.py", line 32, in __init__
+    super().__init__(process_obj)
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/popen_fork.py", line 19, in __init__
+    self._launch(process_obj)
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/popen_spawn_posix.py", line 47, in _launch
+    reduction.dump(process_obj, fp)
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/multiprocessing/reduction.py", line 60, in dump
+    ForkingPickler(file, protocol).dump(obj)
+AttributeError: Can't pickle local object 'run_in_subprocess.<locals>._child'
+2025-10-17 12:48:35 [INFO] [SESS] @ErickSerek cookies+session saved (attempt 1)
+2025-10-17 12:48:50 [INFO] [SESS] @EileenJohnsons cookies+session saved (attempt 1)
+2025-10-17 12:50:20 [WARNING] [SESS] @Filou3939 timed out (attempt 1/3)
+2025-10-17 12:50:39 [INFO] [SESS] @Filou3939 cookies+session saved (attempt 2)
+2025-10-17 12:50:52 [INFO] [SESS] @FallenAngel6993 cookies+session saved (attempt 1)
+2025-10-17 12:51:09 [INFO] [SESS] @FlorenciaFerste cookies+session saved (attempt 1)
+2025-10-17 12:51:22 [INFO] [SESS] @GMenochelli cookies+session saved (attempt 1)
+2025-10-17 12:51:37 [INFO] [SESS] @FredOrtiz10 cookies+session saved (attempt 1)
+2025-10-17 12:51:49 [INFO] [SESS] @ILoveHarryL cookies+session saved (attempt 1)
+2025-10-17 12:52:03 [INFO] [SESS] @Igor31 cookies+session saved (attempt 1)
+2025-10-17 12:52:17 [INFO] [SESS] @HVLxANTONIO cookies+session saved (attempt 1)
+2025-10-17 12:52:17 [INFO] [LOAD] batch 1/1: accounts 1-10 of 10
+2025-10-17 12:52:21 [ERROR] [ACC] init client failed for @Igor31
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/response.py", line 779, in _error_catcher
+    yield
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/response.py", line 904, in _raw_read
+    data = self._fp_read(amt, read1=read1) if not fp_closed else b""
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/response.py", line 887, in _fp_read
+    return self._fp.read(amt) if amt is not None else self._fp.read()
+           ^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/http/client.py", line 465, in read
+    s = self.fp.read(amt)
+        ^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py", line 705, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/ssl.py", line 1278, in recv_into
+    return self.read(nbytes, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/ssl.py", line 1134, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ssl.SSLError: [SSL: DECRYPTION_FAILED_OR_BAD_RECORD_MAC] decryption failed or bad record mac (_ssl.c:2546)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/models.py", line 820, in generate
+    yield from self.raw.stream(chunk_size, decode_content=True)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/response.py", line 1091, in stream
+    data = self.read(amt=amt, decode_content=decode_content)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/response.py", line 980, in read
+    data = self._raw_read(amt)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/response.py", line 903, in _raw_read
+    with self._error_catcher():
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/contextlib.py", line 155, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/response.py", line 790, in _error_catcher
+    raise SSLError(e) from e
+urllib3.exceptions.SSLError: [SSL: DECRYPTION_FAILED_OR_BAD_RECORD_MAC] decryption failed or bad record mac (_ssl.c:2546)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 20, in initialize_client
+    return TweeterPy(proxies=proxy)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 41, in __init__
+    self.generate_session()
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 193, in generate_session
+    ondemand_file_response = util.get_ondemand_file_response(
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 100, in get_ondemand_file_response
+    ondemand_file = session.request(url=ondemand_file_url, method="GET")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/sessions.py", line 746, in send
+    r.content
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/models.py", line 902, in content
+    self._content = b"".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b""
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/models.py", line 828, in generate
+    raise RequestsSSLError(e)
+requests.exceptions.SSLError: [SSL: DECRYPTION_FAILED_OR_BAD_RECORD_MAC] decryption failed or bad record mac (_ssl.c:2546)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 181, in process_account
+    tw_cl = initialize_client(proxy=proxy)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 22, in initialize_client
+    logger.warning(f"[INIT] @{screen_name} init fail (attempt {i+1}/{max_attempts}) proxy={proxy} err={e}")
+                                                                                                       ^
+NameError: name 'e' is not defined
+2025-10-17 12:52:22 [ERROR] [ACC] init client failed for @FallenAngel6993
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 20, in initialize_client
+    return TweeterPy(proxies=proxy)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 41, in __init__
+    self.generate_session()
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 193, in generate_session
+    ondemand_file_response = util.get_ondemand_file_response(
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 100, in get_ondemand_file_response
+    ondemand_file = session.request(url=ondemand_file_url, method="GET")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL 'None': No scheme supplied. Perhaps you meant https://None?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 181, in process_account
+    tw_cl = initialize_client(proxy=proxy)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 22, in initialize_client
+    logger.warning(f"[INIT] @{screen_name} init fail (attempt {i+1}/{max_attempts}) proxy={proxy} err={e}")
+                                                                                                       ^
+NameError: name 'e' is not defined
+2025-10-17 12:52:22 [ERROR] [ACC] init client failed for @FlorenciaFerste
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 20, in initialize_client
+    return TweeterPy(proxies=proxy)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 41, in __init__
+    self.generate_session()
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 193, in generate_session
+    ondemand_file_response = util.get_ondemand_file_response(
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 100, in get_ondemand_file_response
+    ondemand_file = session.request(url=ondemand_file_url, method="GET")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/sessions.py", line 575, in request
+    prep = self.prepare_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/sessions.py", line 484, in prepare_request
+    p.prepare(
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/models.py", line 367, in prepare
+    self.prepare_url(url, params)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/models.py", line 438, in prepare_url
+    raise MissingSchema(
+requests.exceptions.MissingSchema: Invalid URL 'None': No scheme supplied. Perhaps you meant https://None?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 181, in process_account
+    tw_cl = initialize_client(proxy=proxy)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 22, in initialize_client
+    logger.warning(f"[INIT] @{screen_name} init fail (attempt {i+1}/{max_attempts}) proxy={proxy} err={e}")
+                                                                                                       ^
+NameError: name 'e' is not defined
+2025-10-17 12:52:23 [INFO] [ACC] @HVLxANTONIO successfully logged in
+2025-10-17 12:52:23 [INFO] [ACC] @EileenJohnsons successfully logged in
+2025-10-17 12:52:23 [INFO] [ACC] @GMenochelli successfully logged in
+2025-10-17 12:52:23 [INFO] [ACC] @ILoveHarryL successfully logged in
+2025-10-17 12:52:23 [INFO] [ACC] @FredOrtiz10 successfully logged in
+2025-10-17 12:52:24 [INFO] [ACC] @ErickSerek successfully logged in
+2025-10-17 12:52:25 [ERROR] [ACC] unexpected error for @EileenJohnsons
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 202, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-17 12:52:25 [ERROR] [ACC] unexpected error for @ILoveHarryL
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 202, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-17 12:52:25 [ERROR] [ACC] unexpected error for @HVLxANTONIO
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 202, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-17 12:52:25 [ERROR] [ACC] unexpected error for @GMenochelli
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 202, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-17 12:52:25 [ERROR] [ACC] unexpected error for @FredOrtiz10
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 202, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-17 12:52:26 [ERROR] [ACC] unexpected error for @ErickSerek
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 202, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-17 12:52:29 [INFO] [ACC] @Filou3939 successfully logged in
+2025-10-17 12:52:32 [ERROR] [ACC] unexpected error for @Filou3939
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 202, in process_account
+    tw_cl.get_user_data('elonmusk')
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 40, in request
+    return util.check_for_errors(response)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/util.py", line 148, in check_for_errors
+    raise Exception(error_message)
+Exception: Error code 32 - Could not authenticate you
+2025-10-17 12:52:32 [INFO] [LOAD][batch 1] ok=0 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=10
+2025-10-17 12:52:32 [INFO] [LOAD][TOTAL] accounts=10 | ok=0 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=10 | ready_to_work=0
+2025-10-17 12:52:33 [INFO] INIT: mode=set_up, загружаю аккаунты и запускаю set_up_new_accounts()
+2025-10-17 16:30:32 [INFO] [SESS] @ErickSerek cookies+session saved (attempt 1)
+2025-10-17 16:30:46 [INFO] [SESS] @EileenJohnsons cookies+session saved (attempt 1)
+2025-10-17 16:31:01 [INFO] [SESS] @Filou3939 cookies+session saved (attempt 1)
+2025-10-17 16:31:17 [INFO] [SESS] @FallenAngel6993 cookies+session saved (attempt 1)
+2025-10-17 16:31:33 [INFO] [SESS] @FlorenciaFerste cookies+session saved (attempt 1)
+2025-10-17 16:31:49 [INFO] [SESS] @GMenochelli cookies+session saved (attempt 1)
+2025-10-17 16:32:03 [INFO] [SESS] @FredOrtiz10 cookies+session saved (attempt 1)
+2025-10-17 16:32:17 [INFO] [SESS] @ILoveHarryL cookies+session saved (attempt 1)
+2025-10-17 16:32:30 [INFO] [SESS] @Igor31 cookies+session saved (attempt 1)
+2025-10-17 16:32:36 [WARNING] [INIT] @None init fail (attempt 1/3) proxy={'http': 'http://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-1b0577c5816e4-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080', 'https': 'http://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-1b0577c5816e4-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'} err=Invalid URL 'None': No scheme supplied. Perhaps you meant https://None?
+2025-10-17 16:32:59 [INFO] [SESS] @HVLxANTONIO cookies+session saved (attempt 1)
+2025-10-17 16:32:59 [INFO] [LOAD] batch 1/1: accounts 1-10 of 10
+2025-10-17 16:33:09 [INFO] [ACC] @ILoveHarryL successfully logged in
+2025-10-17 16:33:09 [INFO] [ACC] @FredOrtiz10 successfully logged in
+2025-10-17 16:33:09 [INFO] [ACC] @GMenochelli successfully logged in
+2025-10-17 16:33:10 [INFO] [ACC] @Igor31 successfully logged in
+2025-10-17 16:33:10 [INFO] [ACC] @HVLxANTONIO successfully logged in
+2025-10-17 16:33:10 [INFO] [ACC] @EileenJohnsons successfully logged in
+2025-10-17 16:33:10 [INFO] [ACC] @FallenAngel6993 successfully logged in
+2025-10-17 16:33:10 [INFO] [ACC] @ErickSerek successfully logged in
+2025-10-17 16:33:11 [INFO] [ACC] @Filou3939 successfully logged in
+2025-10-17 16:33:11 [INFO] [ACC] @FlorenciaFerste successfully logged in
+2025-10-17 16:33:11 [INFO] [ACC] @ILoveHarryL session is OK
+2025-10-17 16:33:11 [INFO] [ACC] @FredOrtiz10 session is OK
+2025-10-17 16:33:12 [INFO] [ACC] @GMenochelli session is OK
+2025-10-17 16:33:12 [INFO] [ACC] @Igor31 session is OK
+2025-10-17 16:33:12 [INFO] [ACC] @HVLxANTONIO session is OK
+2025-10-17 16:33:12 [INFO] [ACC] @FallenAngel6993 session is OK
+2025-10-17 16:33:12 [INFO] [ACC] @ErickSerek session is OK
+2025-10-17 16:33:12 [INFO] [ACC] @EileenJohnsons session is OK
+2025-10-17 16:33:15 [INFO] [ACC] @Filou3939 session is OK
+2025-10-17 16:33:15 [INFO] [ACC] @FlorenciaFerste session is OK
+2025-10-17 16:33:15 [INFO] [LOAD][batch 1] ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-17 16:33:15 [INFO] [LOAD][TOTAL] accounts=10 | ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0 | ready_to_work=10
+2025-10-17 16:33:28 [INFO] INIT: mode=set_up, загружаю аккаунты и запускаю set_up_new_accounts()
+2025-10-17 17:12:50 [INFO] [LOAD] batch 1/1: accounts 1-10 of 10
+2025-10-17 17:12:57 [INFO] [ACC] @ILoveHarryL successfully logged in
+2025-10-17 17:12:57 [INFO] [ACC] @FredOrtiz10 successfully logged in
+2025-10-17 17:12:57 [INFO] [ACC] @EileenJohnsons successfully logged in
+2025-10-17 17:12:57 [INFO] [ACC] @Igor31 successfully logged in
+2025-10-17 17:12:58 [INFO] [ACC] @GMenochelli successfully logged in
+2025-10-17 17:12:58 [INFO] [ACC] @FallenAngel6993 successfully logged in
+2025-10-17 17:12:58 [INFO] [ACC] @ErickSerek successfully logged in
+2025-10-17 17:12:58 [INFO] [ACC] @FredOrtiz10 session is OK
+2025-10-17 17:12:59 [INFO] [ACC] @FlorenciaFerste successfully logged in
+2025-10-17 17:12:59 [INFO] [ACC] @ILoveHarryL session is OK
+2025-10-17 17:12:59 [INFO] [ACC] @EileenJohnsons session is OK
+2025-10-17 17:12:59 [INFO] [ACC] @Igor31 session is OK
+2025-10-17 17:12:59 [INFO] [ACC] @Filou3939 successfully logged in
+2025-10-17 17:12:59 [INFO] [ACC] @GMenochelli session is OK
+2025-10-17 17:13:00 [INFO] [ACC] @FallenAngel6993 session is OK
+2025-10-17 17:13:00 [INFO] [ACC] @ErickSerek session is OK
+2025-10-17 17:13:01 [INFO] [ACC] @FlorenciaFerste session is OK
+2025-10-17 17:13:02 [INFO] [ACC] @Filou3939 session is OK
+2025-10-17 17:13:04 [INFO] [ACC] @HVLxANTONIO successfully logged in
+2025-10-17 17:13:06 [INFO] [ACC] @HVLxANTONIO session is OK
+2025-10-17 17:13:06 [INFO] [LOAD][batch 1] ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0
+2025-10-17 17:13:06 [INFO] [LOAD][TOTAL] accounts=10 | ok=10 | refreshed=0 | login_failed=0 | banned=0 | conn_error=0 | init_failed=0 | ready_to_work=10
+2025-10-17 17:13:08 [INFO] INIT: mode=set_up, загружаю аккаунты и запускаю set_up_new_accounts()
+2025-10-17 17:13:08 [ERROR] Ошибка при очистке файлов сессии забаненого аккаунта!
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/x_ferma.py", line 74, in set_up_new_accounts
+    self.clear_acc_info_if_banned(x_banned_acc_data, delete=True)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/x_ferma.py", line 708, in clear_acc_info_if_banned
+    mark_unmark_used_image(acc_data["avatar"], instruction=False)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/x_ferma.py", line 822, in mark_unmark_used_image
+    os.rename(chosen_path, new_path)
+FileNotFoundError: [Errno 2] No such file or directory: 'nft_ava_pack/nft_ava_Bons #1014_1014[used].png' -> 'nft_ava_pack/nft_ava_Bons #1014_1014.png'
+2025-10-17 17:13:09 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:09 [INFO] [DESC] UNMARK used для whalemakesmagic
+2025-10-17 17:13:10 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:11 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:11 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_#100783 Warlord's Touch_100783.png
+2025-10-17 17:13:11 [INFO] [DESC] UNMARK used для StinkDEX_
+2025-10-17 17:13:12 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:14 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:15 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:16 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:16 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_re:gen #1118_1118.png
+2025-10-17 17:13:16 [INFO] [DESC] UNMARK used для SeeEnEffTee
+2025-10-17 17:13:18 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:19 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:19 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Rank4241.png
+2025-10-17 17:13:19 [INFO] [DESC] UNMARK used для ltzcoco
+2025-10-17 17:13:20 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:21 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:22 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Favorite BurnableCandles.png
+2025-10-17 17:13:22 [INFO] [DESC] UNMARK used для mystic_capper
+2025-10-17 17:13:23 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:24 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:24 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_test_keytest_value.png
+2025-10-17 17:13:24 [INFO] [DESC] UNMARK used для ninja_writer21
+2025-10-17 17:13:25 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:27 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:27 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Kitoshi #1051_1050.png
+2025-10-17 17:13:27 [INFO] [DESC] UNMARK used для mr_nobodySOL
+2025-10-17 17:13:28 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:29 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:29 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Yapybara #1056_1056.png
+2025-10-17 17:13:29 [INFO] [DESC] UNMARK used для 8MTyGlrv5B86247
+2025-10-17 17:13:30 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:31 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:33 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:34 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:34 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_OutfitCaptain Airship.png
+2025-10-17 17:13:34 [INFO] [DESC] UNMARK used для westside_habibi
+2025-10-17 17:13:35 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:36 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:36 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_BitLife#1000038_1000038.png
+2025-10-17 17:13:36 [INFO] [DESC] UNMARK used для deeggaa132044
+2025-10-17 17:13:37 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:39 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:39 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Bush Babies #2167_2167.png
+2025-10-17 17:13:39 [INFO] [DESC] UNMARK used для GorbhouseSOL
+2025-10-17 17:13:40 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:41 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:41 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_0xdbde75_2950.png
+2025-10-17 17:13:41 [INFO] [DESC] UNMARK used для junkcasino
+2025-10-17 17:13:42 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:44 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:44 [INFO] [DESC] UNMARK used для mezonquark47
+2025-10-17 17:13:45 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:46 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:46 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Jupi #1016_1015.png
+2025-10-17 17:13:46 [INFO] [DESC] UNMARK used для anis_sharipov
+2025-10-17 17:13:47 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:48 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:48 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_R•E•M•A•I•N•C•A•L•M #630_1079.png
+2025-10-17 17:13:48 [INFO] [DESC] UNMARK used для babyKE4875
+2025-10-17 17:13:50 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:51 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:51 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Polygon Ape #7746_7745.png
+2025-10-17 17:13:51 [INFO] [DESC] UNMARK used для AltkingX
+2025-10-17 17:13:52 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:53 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:53 [INFO] [DESC] UNMARK used для ANHSANGNGUYEN
+2025-10-17 17:13:54 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:55 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:56 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_MCH Extension: #11840027 Lv.1_11840027.png
+2025-10-17 17:13:56 [INFO] [DESC] UNMARK used для TrickyDreddx
+2025-10-17 17:13:57 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:13:58 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:13:58 [INFO] [DESC] UNMARK used для sadd_asd77675
+2025-10-17 17:13:59 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:00 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:00 [INFO] [DESC] UNMARK used для TheChipGamble
+2025-10-17 17:14:02 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:03 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:03 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Alternates: Multiverse #1040_1040.png
+2025-10-17 17:14:03 [INFO] [DESC] UNMARK used для smith_GCR
+2025-10-17 17:14:04 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:06 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:06 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_drfhyrtshjrsy_100128146166595460667713307184515356421504012680507437376244993015933745306853.png
+2025-10-17 17:14:06 [INFO] [DESC] UNMARK used для harsh_sharmaa9
+2025-10-17 17:14:07 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:08 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:09 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Imbued Soul #1293_1293.png
+2025-10-17 17:14:09 [INFO] [DESC] UNMARK used для Tokio_963
+2025-10-17 17:14:10 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:11 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:11 [INFO] [DESC] UNMARK used для olop_
+2025-10-17 17:14:12 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:14 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:14 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Purple Haze #1015_1015.png
+2025-10-17 17:14:14 [INFO] [DESC] UNMARK used для NoCryptoForYou
+2025-10-17 17:14:15 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:16 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:16 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_NODE #1531_1531.png
+2025-10-17 17:14:16 [INFO] [DESC] UNMARK used для heyheygreenfenc
+2025-10-17 17:14:18 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:19 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:19 [INFO] [DESC] UNMARK used для cryptoblue01
+2025-10-17 17:14:20 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:21 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:22 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Hungrybera #1004_1004.png
+2025-10-17 17:14:22 [INFO] [DESC] UNMARK used для _epik
+2025-10-17 17:14:23 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:24 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:24 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Azuki #576_576.png
+2025-10-17 17:14:24 [INFO] [DESC] UNMARK used для wizagry
+2025-10-17 17:14:25 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:27 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:28 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:29 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:31 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:32 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:32 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Fugger #1018_1018.png
+2025-10-17 17:14:32 [INFO] [DESC] UNMARK used для stake_mm
+2025-10-17 17:14:33 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:34 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:34 [INFO] [DESC] UNMARK used для trashdotfun_
+2025-10-17 17:14:36 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:37 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:37 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Sappy Seal #6965_6965.png
+2025-10-17 17:14:37 [INFO] [DESC] UNMARK used для Jaquarius2000
+2025-10-17 17:14:38 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:39 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:39 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Rarity Rank2573.png
+2025-10-17 17:14:39 [INFO] [DESC] UNMARK used для qj_banana
+2025-10-17 17:14:40 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:42 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:43 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:44 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:44 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_TinFun #1053_1053.png
+2025-10-17 17:14:44 [INFO] [DESC] UNMARK used для Grich7373
+2025-10-17 17:14:46 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:47 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:47 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Insight Chalice_221.png
+2025-10-17 17:14:47 [INFO] [DESC] UNMARK used для pharoxe
+2025-10-17 17:14:49 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:50 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:50 [INFO] [DESC] UNMARK used для officialxbro
+2025-10-17 17:14:51 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:53 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:53 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Peng #4898_1021.png
+2025-10-17 17:14:53 [INFO] [DESC] UNMARK used для frenchysguy
+2025-10-17 17:14:54 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:14:56 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:14:56 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Metaverse Stardrop #166_166.png
+2025-10-17 17:14:56 [INFO] [DESC] UNMARK used для tigernuda
+2025-10-17 17:14:57 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:15:00 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:15:00 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Sandstorm rivalry_439098.png
+2025-10-17 17:15:00 [INFO] [DESC] UNMARK used для e116n23
+2025-10-17 17:15:01 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:15:03 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:15:03 [INFO] [DESC] UNMARK used для OrcawifOnSol
+2025-10-17 17:15:04 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:15:05 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:15:05 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Chronos Hoard_1080.png
+2025-10-17 17:15:05 [INFO] [DESC] UNMARK used для Gazz931
+2025-10-17 17:15:07 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:15:08 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:15:08 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_0xdbde38_2944.png
+2025-10-17 17:15:08 [INFO] [DESC] UNMARK used для Ganesh59935097
+2025-10-17 17:15:09 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:15:10 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:15:11 [INFO] [DESC] UNMARK used для Bruce88818
+2025-10-17 17:15:12 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:15:13 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:15:13 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Zombseis #104_104.png
+2025-10-17 17:15:13 [INFO] [DESC] UNMARK used для xaxiosai_new
+2025-10-17 17:15:14 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:15:15 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:15:15 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_Captainz #9286_9286.png
+2025-10-17 17:15:15 [INFO] [DESC] UNMARK used для Artee_22
+2025-10-17 17:15:16 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:15:18 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:15:18 [INFO] [IMG] UNMARK used: nft_ava_pack/nft_ava_NFT #1102_1102.png
+2025-10-17 17:15:18 [INFO] [DESC] UNMARK used для JTrenchx
+2025-10-17 17:15:20 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:15:22 [WARNING] ⚠️ Ничего не удалено (uid не найден)
+2025-10-17 17:15:22 [ERROR] Ошибка при очистке файлов сессии забаненого аккаунта!
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/x_ferma.py", line 74, in set_up_new_accounts
+    self.clear_acc_info_if_banned(x_banned_acc_data, delete=True)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/x_ferma.py", line 708, in clear_acc_info_if_banned
+    mark_unmark_used_image(acc_data["avatar"], instruction=False)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/x_ferma.py", line 822, in mark_unmark_used_image
+    os.rename(chosen_path, new_path)
+FileNotFoundError: [Errno 2] No such file or directory: 'nft_ava_pack/nft_ava_Crocky On Ape #110_110[used].png' -> 'nft_ava_pack/nft_ava_Crocky On Ape #110_110.png'
+2025-10-17 17:15:23 [INFO] ✅ Удалено 1 записей
+2025-10-17 17:15:23 [INFO] [SETUP] Работаю с @ErickSerek
+2025-10-17 17:15:25 [INFO] [SETUP] insert_new_acc ok=True uid=1606419728
+2025-10-17 17:15:25 [INFO] [DESC] Уже есть описание: If you can't beat them, join them, пропускаю
+2025-10-17 17:15:25 [INFO] [AVA] У аккаунта уже есть аватарка, пропускаю
+2025-10-17 17:15:25 [INFO] [DONE] Обработка @ErickSerek завершена
+2025-10-17 17:15:25 [INFO] [SETUP] Работаю с @EileenJohnsons
+2025-10-17 17:15:27 [INFO] [SETUP] insert_new_acc ok=True uid=457800211
+2025-10-17 17:15:27 [INFO] [DESC] Уже есть описание: You can search the Seven Seas and never find, no, пропускаю
+2025-10-17 17:15:27 [INFO] [AVA] У аккаунта уже есть аватарка, пропускаю
+2025-10-17 17:15:27 [INFO] [DONE] Обработка @EileenJohnsons завершена
+2025-10-17 17:15:27 [INFO] [SETUP] Работаю с @Filou3939
+2025-10-17 17:15:27 [ERROR] Account Filou3939, error 0 with proxy!
+urllib3.exceptions.SSLError: [SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:2546)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/adapters.py", line 589, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.x.com', port=443): Max retries exceeded with url: /graphql/qRednkZG-rn1P6b48NINmQ/UserByScreenName?variables=%7B%22screen_name%22%3A+%22Filou3939%22%2C+%22withSafetyModeUserFields%22%3A+true%7D&features=%7B%22responsive_web_graphql_exclude_directive_enabled%22%3A+true%2C+%22verified_phone_label_enabled%22%3A+true%2C+%22responsive_web_graphql_skip_user_profile_image_extensions_enabled%22%3A+false%2C+%22responsive_web_graphql_timeline_navigation_enabled%22%3A+true%2C+%22hidden_profile_likes_enabled%22%3A+false%2C+%22hidden_profile_subscriptions_enabled%22%3A+true%2C+%22highlights_tweets_tab_ui_enabled%22%3A+true%2C+%22responsive_web_twitter_article_notes_tab_enabled%22%3A+false%2C+%22creator_subscriptions_tweet_preview_api_enabled%22%3A+true%2C+%22subscriptions_verification_info_is_identity_verified_enabled%22%3A+true%2C+%22subscriptions_verification_info_verified_since_enabled%22%3A+true%7D (Caused by SSLError(SSLError(1, '[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:2546)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 362, in get_user_data
+    user_data = tw_cl.get_user_data(username)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 31, in request
+    response = self.session.request(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/adapters.py", line 620, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='api.x.com', port=443): Max retries exceeded with url: /graphql/qRednkZG-rn1P6b48NINmQ/UserByScreenName?variables=%7B%22screen_name%22%3A+%22Filou3939%22%2C+%22withSafetyModeUserFields%22%3A+true%7D&features=%7B%22responsive_web_graphql_exclude_directive_enabled%22%3A+true%2C+%22verified_phone_label_enabled%22%3A+true%2C+%22responsive_web_graphql_skip_user_profile_image_extensions_enabled%22%3A+false%2C+%22responsive_web_graphql_timeline_navigation_enabled%22%3A+true%2C+%22hidden_profile_likes_enabled%22%3A+false%2C+%22hidden_profile_subscriptions_enabled%22%3A+true%2C+%22highlights_tweets_tab_ui_enabled%22%3A+true%2C+%22responsive_web_twitter_article_notes_tab_enabled%22%3A+false%2C+%22creator_subscriptions_tweet_preview_api_enabled%22%3A+true%2C+%22subscriptions_verification_info_is_identity_verified_enabled%22%3A+true%2C+%22subscriptions_verification_info_verified_since_enabled%22%3A+true%7D (Caused by SSLError(SSLError(1, '[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:2546)')))
+2025-10-17 17:15:34 [INFO] [SETUP] insert_new_acc ok=True uid=317667037
+2025-10-17 17:15:34 [INFO] [DESC] Уже есть описание: I was already runnin' for the kitchen doors, пропускаю
+2025-10-17 17:15:34 [INFO] [AVA] У аккаунта уже есть аватарка, пропускаю
+2025-10-17 17:15:34 [INFO] [DONE] Обработка @Filou3939 завершена
+2025-10-17 17:15:34 [INFO] [SETUP] Работаю с @FallenAngel6993
+2025-10-17 17:15:36 [INFO] [SETUP] insert_new_acc ok=True uid=946296194
+2025-10-17 17:15:36 [INFO] [DESC] Уже есть описание: We're real lit in Miami, пропускаю
+2025-10-17 17:15:36 [INFO] [AVA] У аккаунта уже есть аватарка, пропускаю
+2025-10-17 17:15:36 [INFO] [DONE] Обработка @FallenAngel6993 завершена
+2025-10-17 17:15:36 [INFO] [SETUP] Работаю с @FlorenciaFerste
+2025-10-17 17:15:38 [INFO] [SETUP] insert_new_acc ok=True uid=1174025539
+2025-10-17 17:15:38 [INFO] [DESC] Уже есть описание: Off the rails and blazin' through town, пропускаю
+2025-10-17 17:15:38 [INFO] [AVA] У аккаунта уже есть аватарка, пропускаю
+2025-10-17 17:15:38 [INFO] [DONE] Обработка @FlorenciaFerste завершена
+2025-10-17 17:15:38 [INFO] [SETUP] Работаю с @GMenochelli
+2025-10-17 17:22:58 [ERROR] Account GMenochelli, error 0 with proxy!
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+               ^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/connection.py", line 565, in getresponse
+    httplib_response = super().getresponse()
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/http/client.py", line 1374, in getresponse
+    response.begin()
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/http/client.py", line 318, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/http/client.py", line 287, in _read_status
+    raise RemoteDisconnected("Remote end closed connection without"
+http.client.RemoteDisconnected: Remote end closed connection without response
+
+The above exception was the direct cause of the following exception:
+
+urllib3.exceptions.ProxyError: ('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response'))
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/adapters.py", line 589, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.x.com', port=443): Max retries exceeded with url: /graphql/qRednkZG-rn1P6b48NINmQ/UserByScreenName?variables=%7B%22screen_name%22%3A+%22GMenochelli%22%2C+%22withSafetyModeUserFields%22%3A+true%7D&features=%7B%22responsive_web_graphql_exclude_directive_enabled%22%3A+true%2C+%22verified_phone_label_enabled%22%3A+true%2C+%22responsive_web_graphql_skip_user_profile_image_extensions_enabled%22%3A+false%2C+%22responsive_web_graphql_timeline_navigation_enabled%22%3A+true%2C+%22hidden_profile_likes_enabled%22%3A+false%2C+%22hidden_profile_subscriptions_enabled%22%3A+true%2C+%22highlights_tweets_tab_ui_enabled%22%3A+true%2C+%22responsive_web_twitter_article_notes_tab_enabled%22%3A+false%2C+%22creator_subscriptions_tweet_preview_api_enabled%22%3A+true%2C+%22subscriptions_verification_info_is_identity_verified_enabled%22%3A+true%2C+%22subscriptions_verification_info_verified_since_enabled%22%3A+true%7D (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/tweeterpyapi.py", line 362, in get_user_data
+    user_data = tw_cl.get_user_data(username)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/tweeterpy.py", line 346, in get_user_data
+    response = self.request_client.request(**request_payload)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 54, in request
+    raise error
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/tweeterpy/utils/request.py", line 31, in request
+    response = self.session.request(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/requests/adapters.py", line 616, in send
+    raise ProxyError(e, request=request)
+requests.exceptions.ProxyError: HTTPSConnectionPool(host='api.x.com', port=443): Max retries exceeded with url: /graphql/qRednkZG-rn1P6b48NINmQ/UserByScreenName?variables=%7B%22screen_name%22%3A+%22GMenochelli%22%2C+%22withSafetyModeUserFields%22%3A+true%7D&features=%7B%22responsive_web_graphql_exclude_directive_enabled%22%3A+true%2C+%22verified_phone_label_enabled%22%3A+true%2C+%22responsive_web_graphql_skip_user_profile_image_extensions_enabled%22%3A+false%2C+%22responsive_web_graphql_timeline_navigation_enabled%22%3A+true%2C+%22hidden_profile_likes_enabled%22%3A+false%2C+%22hidden_profile_subscriptions_enabled%22%3A+true%2C+%22highlights_tweets_tab_ui_enabled%22%3A+true%2C+%22responsive_web_twitter_article_notes_tab_enabled%22%3A+false%2C+%22creator_subscriptions_tweet_preview_api_enabled%22%3A+true%2C+%22subscriptions_verification_info_is_identity_verified_enabled%22%3A+true%2C+%22subscriptions_verification_info_verified_since_enabled%22%3A+true%7D (Caused by ProxyError('Unable to connect to proxy', RemoteDisconnected('Remote end closed connection without response')))
+2025-10-17 17:23:04 [INFO] [SETUP] insert_new_acc ok=True uid=719864475
+2025-10-17 17:23:04 [INFO] [DESC] Уже есть описание: Los peines repletos pa' tumbarles bien los mocos, пропускаю
+2025-10-17 17:23:04 [INFO] [AVA] У аккаунта уже есть аватарка, пропускаю
+2025-10-17 17:23:04 [INFO] [DONE] Обработка @GMenochelli завершена
+2025-10-17 17:23:04 [INFO] [SETUP] Работаю с @FredOrtiz10
+2025-10-17 17:23:08 [INFO] [SETUP] insert_new_acc ok=True uid=2196054350
+2025-10-17 17:23:08 [INFO] [DESC] Уже есть описание: Dimitri Vegas & Like Mike, Armin van Buuren & Vini Vici –, пропускаю
+2025-10-17 17:23:08 [INFO] [AVA] У аккаунта уже есть аватарка, пропускаю
+2025-10-17 17:23:08 [INFO] [DONE] Обработка @FredOrtiz10 завершена
+2025-10-17 17:23:08 [INFO] [SETUP] Работаю с @ILoveHarryL
+2025-10-17 17:23:11 [INFO] [SETUP] insert_new_acc ok=True uid=1146001297
+2025-10-17 17:23:11 [INFO] [DESC] Уже есть описание: I ain't gotta еxplain (No), пропускаю
+2025-10-17 17:23:11 [INFO] [AVA] У аккаунта уже есть аватарка, пропускаю
+2025-10-17 17:23:11 [INFO] [DONE] Обработка @ILoveHarryL завершена
+2025-10-17 17:23:11 [INFO] [SETUP] Работаю с @Igor31
+2025-10-17 17:23:15 [INFO] [SETUP] insert_new_acc ok=True uid=1090291830
+2025-10-17 17:23:15 [INFO] [DESC] Уже есть описание: Uh, bring me them guns, get 'em beat up, пропускаю
+2025-10-17 17:23:15 [INFO] [AVA] У аккаунта уже есть аватарка, пропускаю
+2025-10-17 17:23:15 [INFO] [DONE] Обработка @Igor31 завершена
+2025-10-17 17:23:15 [INFO] [SETUP] Работаю с @HVLxANTONIO
+2025-10-17 17:23:19 [INFO] [SETUP] insert_new_acc ok=True uid=2477023100
+2025-10-17 17:23:19 [INFO] [DESC] Уже есть описание: I'm a couple drinks in thinkin' it's my bad (Thinkin' it's my bad), пропускаю
+2025-10-17 17:23:19 [INFO] [AVA] У аккаунта уже есть аватарка, пропускаю
+2025-10-17 17:23:19 [INFO] [DONE] Обработка @HVLxANTONIO завершена

@@ -1,16 +1,17 @@
-import time, json, random, os, emoji, math, logging
+import time, json, random, os, emoji, math, logging, tempfile
 import traceback
 import zoneinfo
 import twitter_search
 # from twitter_search import load_accounts_cookies_login
-from typing import Tuple, List
+# from typing import Tuple, List
 from x_media_uploader import upload_and_update_pfp
-from tweeterpyapi import load_accounts_tweeterpy, get_user_data, initialize_client
-from config import nodemaven_proxy_rotating, get_random_mob_proxy, parse_accounts_to_list
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from tweeterpyapi import load_accounts_tweeterpy, get_user_data, initialize_client, save_cookies_and_sess_with_timeout, get_user_id_by_sn
+from config import nodemaven_proxy_rotating, get_random_mob_proxy, parse_accounts_to_list, parse_cid
+# from concurrent.futures import ThreadPoolExecutor, as_completed
 from database import Database
 from datetime import datetime
 from alarm_bot import admin_error
+from typing import Callable, Optional
 
 NY_TZ = zoneinfo.ZoneInfo("America/New_York")
 MOS_TZ = zoneinfo.ZoneInfo("Europe/Moscow")
@@ -46,6 +47,7 @@ class xFerma:
         self.mode = mode
 
         if self.mode == 'set_up':
+            # save_cookies_and_sess_with_timeout()
             self.x_accounts_data = load_accounts_tweeterpy(mode=self.mode, load_cookies=True)
             self.x_banned_accounts_data = db.get_banned_accounts()
             logger.info("INIT: mode=set_up, загружаю аккаунты и запускаю set_up_new_accounts()")
@@ -55,14 +57,6 @@ class xFerma:
             self.x_accounts_data = load_accounts_tweeterpy(mode=self.mode)
             logger.info("INIT: mode=work, загружаю аккаунты и запускаю ferma_lifecycle()")
             self.ferma_lifecycle()
-
-        elif self.mode == 'mutual_follow':
-            logger.info("INIT: mode=mutual_follow, запускаю mutual_follow()")
-            self.mutual_follow()
-
-        elif self.mode == 'influ_follow':
-            logger.info("INIT: mode=influ_follow, запускаю follow_influencers_for_new_accounts()")
-            self.follow_influencers_for_new_accounts()
 
         elif self.mode == 'test':
             logger.info("INIT: TEST MODE ACTIVATED")
@@ -76,8 +70,11 @@ class xFerma:
     def set_up_new_accounts(self):
         # clear banned accounts data (desc, ava) and delete
         for x_banned_acc_data in self.x_banned_accounts_data:
-            self.clear_acc_info_if_banned(x_banned_acc_data, delete=True)
-            delete_session(x_banned_acc_data['screen_name'])
+            try:
+                self.clear_acc_info_if_banned(x_banned_acc_data, delete=True)
+                delete_session(x_banned_acc_data['screen_name'])
+            except Exception as e:
+                logger.exception('Ошибка при очистке файлов сессии забаненого аккаунта!')
 
         # start set-up for new accounts
         for x_account_data in self.x_accounts_data:
@@ -112,7 +109,7 @@ class xFerma:
                     x_account_data.get("password"),
                     x_account_data.get("auth_token"),
                     x_account_data.get("ua"),
-                    x_account_data.get("proxy"),
+                    parse_cid(x_account_data.get("proxy")),
                 )
                 logger.info(f"[SETUP] insert_new_acc ok={ok} uid={user_data['uid']}")
             except Exception as e:
@@ -202,195 +199,267 @@ class xFerma:
     # ----------------------------
     # FOLLOWING (очередь)
     # ----------------------------
-    def follow_influencers_for_new_accounts(
-        self,
-        influencers_file: str = "influencers.txt",
-        max_workers: int = 10
+
+    # def follow_influencers_for_new_accounts(
+    #     self,
+    #     influencers_file: str = "influencers.txt",
+    #     max_workers: int = 10
+    # ):
+    #     """
+    #     Берёт все новые аккаунты (is_new=TRUE) и подписывает каждый на инфлюенсеров из файла.
+    #     Обрабатывает до max_workers аккаунтов одновременно. Порядок инфлюенсеров
+    #     для каждого аккаунта перемешивается отдельно.
+    #     """
+    #     # 1) загрузим usernames инфлюенсеров
+    #     influencers = read_influencers(influencers_file)
+    #     if not influencers:
+    #         logger.warning("[INFLU] Список инфлюенсеров пуст")
+    #         return
+    #
+    #     # 2) берём новые аккаунты
+    #     try:
+    #         new_accounts = db.fetch_new_accounts()  # [{'uid':..., 'screen_name':...}, ...]
+    #     except Exception as e:
+    #         logger.exception(f"[INFLU] Ошибка db.fetch_new_accounts: {e}")
+    #         return
+    #
+    #     if not new_accounts:
+    #         logger.info("[INFLU] Новых аккаунтов нет")
+    #         return
+    #
+    #     logger.info(f"[INFLU] Новых аккаунтов: {len(new_accounts)}")
+    #
+    #     skip_users = {'iyannorth', 'khallid1993', 'siscazora'}
+    #     total_actions = 0
+    #
+    #     def worker(acc: dict) -> int:
+    #         """Обрабатывает одного аккаунта: подписывает на всех инфлюенсеров в рандомном порядке."""
+    #         uid = acc["uid"]
+    #         sn  = acc["screen_name"]
+    #
+    #         if sn in skip_users:
+    #             logger.info(f"[INFLU][SKIP] @{sn} пропущен")
+    #             return 0
+    #
+    #         local_actions = 0
+    #         infl_order = _shuffle_copy(influencers)  # у каждого аккаунта свой порядок
+    #         logger.info(f"[INFLU] Обрабатываю @{sn} (uid={uid}), инфлюенсеров: {len(infl_order)}")
+    #
+    #         for infl_sn in infl_order:
+    #             try:
+    #                 self.follow(acc, dst_screen_name=infl_sn)
+    #                 logger.info(f"[INFLU] @{sn} → follow @{infl_sn}")
+    #                 local_actions += 1
+    #             except Exception as e:
+    #                 logger.exception(f"[INFLU] Ошибка follow @{sn} → @{infl_sn}: {e}")
+    #
+    #             time.sleep(random.randint(1, 8))  # лёгкий троттлинг внутри потока
+    #
+    #         return local_actions
+    #
+    #     # 3) параллельный запуск
+    #     with ThreadPoolExecutor(max_workers=max_workers) as ex:
+    #         futures = [ex.submit(worker, acc) for acc in new_accounts]
+    #         for fut in as_completed(futures):
+    #             try:
+    #                 total_actions += fut.result()
+    #             except Exception as e:
+    #                 logger.exception(f"[INFLU] Ошибка в потоке: {e}")
+    #
+    #     logger.info(f"[INFLU] Готово. Всего попыток подписки: {total_actions}")
+
+
+        # def enqueue_edges_for_new_accounts(new_ids: List[str]):
+        #     logger.info(f"[ENQUEUE] Генерация задач для {len(new_ids)} новых аккаунтов")
+        #
+        #     all_accounts = db.fetch_all_accounts()
+        #     all_ids = {a["uid"] for a in all_accounts}
+        #     new_ids_set = set(new_ids)
+        #     old_ids = all_ids - new_ids_set
+        #     logger.info(f"[ENQUEUE] Всего={len(all_ids)} | новых={len(new_ids_set)} | старых={len(old_ids)}")
+        #
+        #     pairs: List[Tuple[str, str]] = []
+        #
+        #     # 1) new -> new
+        #     for i in range(len(new_ids)):
+        #         for j in range(len(new_ids)):
+        #             if i == j:
+        #                 continue
+        #             pairs.append((new_ids[i], new_ids[j]))
+        #
+        #     # 2) new -> old
+        #     for n in new_ids_set:
+        #         for o in old_ids:
+        #             pairs.append((n, o))
+        #
+        #     # 3) old -> new
+        #     for o in old_ids:
+        #         for n in new_ids_set:
+        #             pairs.append((o, n))
+        #
+        #     try:
+        #         db.bulk_upsert_follow_edges(pairs)
+        #         logger.info(f"[ENQUEUE] Добавлено задач: {len(pairs)}")
+        #     except Exception as e:
+        #         logger.exception(f"[ENQUEUE] Ошибка bulk_upsert_follow_edges: {e}")
+
+    def process_follow_edges(self, batch_size: int = 200, sleep_sec: float = 1.0) -> int:
+        try:
+            edges = db.fetch_pending_edges(limit=batch_size)
+        except Exception as e:
+            logger.exception(f"[PROCESS] Ошибка fetch_pending_edges: {e}")
+            return 0
+
+        if not edges:
+            logger.info("[PROCESS] Нет задач")
+            return -1
+
+        logger.info(f"[PROCESS] Взято задач: {len(edges)}")
+        ids_needed = {sid for sid, _ in edges} | {did for _, did in edges}
+        try:
+            accs = db.fetch_accounts_by_ids(ids_needed)
+        except Exception as e:
+            logger.exception(f"[PROCESS] Ошибка fetch_accounts_by_ids: {e}")
+            return 0
+
+        acc_map = {a["uid"]: a for a in accs}
+        processed = 0
+
+        for src_id, dst_id in edges:
+            src = acc_map.get(src_id)
+            dst = acc_map.get(dst_id)
+            if not src or not dst:
+                try:
+                    db.mark_edge_failed(src_id, dst_id, "src/dst not found")
+                except Exception as e:
+                    logger.exception(f"[PROCESS] Ошибка mark_edge_failed: {e}")
+                logger.exception(f"[PROCESS] src={src_id} или dst={dst_id} не найдены")
+                continue
+
+            try:
+                self.follow(src, dst_uid=dst)
+                db.mark_edge_done(src_id, dst_id)
+                processed += 1
+                logger.info(f"[PROCESS] ✅ {src['screen_name']} → {dst['screen_name']}")
+            except Exception as e:
+                try:
+                    db.mark_edge_failed(src_id, dst_id, str(e))
+                except Exception as e2:
+                    logger.exception(f"[PROCESS] Ошибка mark_edge_failed: {e2}")
+                logger.exception(f"[PROCESS] Ошибка подписки {src_id}→{dst_id}: {e}")
+
+            time.sleep(sleep_sec)
+
+        logger.info(f"[PROCESS] Успешно выполнено: {processed}")
+        return processed
+
+    def finalize_new_flags(self):
+        try:
+            ready_ids = db.fetch_ready_to_unset_new()
+        except Exception as e:
+            logger.exception(f"[FINALIZE] Ошибка fetch_ready_to_unset_new: {e}")
+            return
+
+        if ready_ids:
+            try:
+                db.set_is_new_false(ready_ids)
+                logger.info(f"[FINALIZE] Снял is_new для {len(ready_ids)}: {ready_ids}")
+            except Exception as e:
+                logger.exception(f"[FINALIZE] Ошибка set_is_new_false: {e}")
+        else:
+            logger.info("[FINALIZE] Нет аккаунтов для обновления")
+
+        # def mutual_follow_maintainer():
+        #     while True:
+        #         n = process_follow_edges(batch_size=200, sleep_sec=1.0)
+        #         if n == -1:
+        #             logger.info(f"[MAINTAINER] Все задачи выполнены!")
+        #             return
+        #         finalize_new_flags()
+        #         pause = 5 if n else 30
+        #         logger.info(f"[MAINTAINER] Пауза: {pause}s")
+        #         time.sleep(pause)
+        #
+        # # ---- Главная логика ----
+        # try:
+        #     new_accounts = db.fetch_new_accounts()
+        #     logger.info(f"[MAIN] Получено новых аккаунтов: {len(new_accounts)}")
+        #     enqueue_edges_for_new_accounts([a["uid"] for a in new_accounts])
+        #     mutual_follow_maintainer()
+        # except Exception as e:
+        #     logger.exception(f"[MAIN] Ошибка mutual_follow: {e}")
+
+    def schedule_follows_tick(
+            self,
+            influencers_file="influencers.jsonl",
+            per_tick=2,  # максимум подписок на аккаунт за один тик
+            quota_min=3, quota_max=10  # дневная квота на аккаунт
     ):
         """
-        Берёт все новые аккаунты (is_new=TRUE) и подписывает каждый на инфлюенсеров из файла.
-        Обрабатывает до max_workers аккаунтов одновременно. Порядок инфлюенсеров
-        для каждого аккаунта перемешивается отдельно.
+        Планирует небольшую порцию подписок для каждого аккаунта в текущий момент.
+        Вызывать регулярно в дневные часы (NY), например, каждые 5–10 минут.
         """
-        # 1) загрузим usernames инфлюенсеров
-        influencers = read_influencers(influencers_file)
-        if not influencers:
-            logger.warning("[INFLU] Список инфлюенсеров пуст")
-            return
+        exclude_list = ['iyannorth', 'khallid1993']
+        influencers = db.fetch_influencers_with_uid(influencers_file)
 
-        # 2) берём новые аккаунты
-        try:
-            new_accounts = db.fetch_new_accounts()  # [{'uid':..., 'screen_name':...}, ...]
-        except Exception as e:
-            logger.exception(f"[INFLU] Ошибка db.fetch_new_accounts: {e}")
-            return
+        accounts = db.fetch_all_accounts()
+        if not accounts:
+            logger.info("[SCHED] нет аккаунтов")
+            return 0
 
-        if not new_accounts:
-            logger.info("[INFLU] Новых аккаунтов нет")
-            return
+        today_ny = datetime.now(NY_TZ).date()
+        total_added = 0
 
-        logger.info(f"[INFLU] Новых аккаунтов: {len(new_accounts)}")
+        for acc in accounts:
+            src_id = acc["id"]
+            sn = acc["screen_name"]
 
-        skip_users = {'iyannorth', 'khallid1993', 'siscazora'}
-        total_actions = 0
+            # получаем/создаём дневную квоту
+            quota = db.get_daily_quota(src_id, today_ny, quota_min, quota_max)
 
-        def worker(acc: dict) -> int:
-            """Обрабатывает одного аккаунта: подписывает на всех инфлюенсеров в рандомном порядке."""
-            uid = acc["uid"]
-            sn  = acc["screen_name"]
+            done_today = db.count_done_today(src_id)
+            pending = db.count_pending_today(src_id)
+            remaining = max(quota - (done_today + pending), 0)
 
-            if sn in skip_users:
-                logger.info(f"[INFLU][SKIP] @{sn} пропущен")
-                return 0
+            if remaining <= 0:
+                logger.info(
+                    f"[SCHED] @{sn}: лимит на сегодня исчерпан (quota={quota}, done={done_today}, pending={pending})")
+                continue
 
-            local_actions = 0
-            infl_order = _shuffle_copy(influencers)  # у каждого аккаунта свой порядок
-            logger.info(f"[INFLU] Обрабатываю @{sn} (uid={uid}), инфлюенсеров: {len(infl_order)}")
+            # ограничим текущий тик
+            to_schedule = min(per_tick, remaining)
 
-            for infl_sn in infl_order:
-                try:
-                    self.follow(acc, dst_screen_name=infl_sn)
-                    logger.info(f"[INFLU] @{sn} → follow @{infl_sn}")
-                    local_actions += 1
-                except Exception as e:
-                    logger.exception(f"[INFLU] Ошибка follow @{sn} → @{infl_sn}: {e}")
+            already = db.fetch_followed_or_pending_dst_ids(src_id)
 
-                time.sleep(random.randint(1, 8))  # лёгкий троттлинг внутри потока
+            pairs = []
 
-            return local_actions
-
-        # 3) параллельный запуск
-        with ThreadPoolExecutor(max_workers=max_workers) as ex:
-            futures = [ex.submit(worker, acc) for acc in new_accounts]
-            for fut in as_completed(futures):
-                try:
-                    total_actions += fut.result()
-                except Exception as e:
-                    logger.exception(f"[INFLU] Ошибка в потоке: {e}")
-
-        logger.info(f"[INFLU] Готово. Всего попыток подписки: {total_actions}")
-
-    def mutual_follow(self):
-
-        def enqueue_edges_for_new_accounts(new_ids: List[str]):
-            logger.info(f"[ENQUEUE] Генерация задач для {len(new_ids)} новых аккаунтов")
-
-            all_accounts = db.fetch_all_accounts()
-            all_ids = {a["uid"] for a in all_accounts}
-            new_ids_set = set(new_ids)
-            old_ids = all_ids - new_ids_set
-            logger.info(f"[ENQUEUE] Всего={len(all_ids)} | новых={len(new_ids_set)} | старых={len(old_ids)}")
-
-            pairs: List[Tuple[str, str]] = []
-
-            # 1) new -> new
-            for i in range(len(new_ids)):
-                for j in range(len(new_ids)):
-                    if i == j:
+            # 1) инфлюенсеры
+            if influencers and sn not in exclude_list:
+                for influencer in influencers:
+                    dst = influencer["uid"]
+                    if not dst or dst == src_id or dst in already:
                         continue
-                    pairs.append((new_ids[i], new_ids[j]))
+                    pairs.append((src_id, dst))
+                    if len(pairs) >= to_schedule:
+                        break
 
-            # 2) new -> old
-            for n in new_ids_set:
-                for o in old_ids:
-                    pairs.append((n, o))
+            # 2) база аккаунтов
+            if len(pairs) < to_schedule:
+                for a in accounts:
+                    dst = a["id"]
+                    if dst == src_id or dst in already:
+                        continue
+                    pairs.append((src_id, dst))
+                    if len(pairs) >= to_schedule:
+                        break
 
-            # 3) old -> new
-            for o in old_ids:
-                for n in new_ids_set:
-                    pairs.append((o, n))
+            added = db.bulk_upsert_follow_edges(pairs)
+            total_added += added
+            logger.info(
+                f"[SCHED] @{sn}: добавлено {added}/{to_schedule} (remaining={remaining}, quota={quota}, done={done_today}, pending={pending})")
 
-            try:
-                db.bulk_upsert_follow_edges(pairs)
-                logger.info(f"[ENQUEUE] Добавлено задач: {len(pairs)}")
-            except Exception as e:
-                logger.exception(f"[ENQUEUE] Ошибка bulk_upsert_follow_edges: {e}")
-
-        def process_follow_edges(batch_size: int = 200, sleep_sec: float = 1.0) -> int:
-            try:
-                edges = db.fetch_pending_edges(limit=batch_size)
-            except Exception as e:
-                logger.exception(f"[PROCESS] Ошибка fetch_pending_edges: {e}")
-                return 0
-
-            if not edges:
-                logger.info("[PROCESS] Нет задач")
-                return -1
-
-            logger.info(f"[PROCESS] Взято задач: {len(edges)}")
-            ids_needed = {sid for sid, _ in edges} | {did for _, did in edges}
-            try:
-                accs = db.fetch_accounts_by_ids(ids_needed)
-            except Exception as e:
-                logger.exception(f"[PROCESS] Ошибка fetch_accounts_by_ids: {e}")
-                return 0
-
-            acc_map = {a["uid"]: a for a in accs}
-            processed = 0
-
-            for src_id, dst_id in edges:
-                src = acc_map.get(src_id)
-                dst = acc_map.get(dst_id)
-                if not src or not dst:
-                    try:
-                        db.mark_edge_failed(src_id, dst_id, "src/dst not found")
-                    except Exception as e:
-                        logger.exception(f"[PROCESS] Ошибка mark_edge_failed: {e}")
-                    logger.exception(f"[PROCESS] src={src_id} или dst={dst_id} не найдены")
-                    continue
-
-                try:
-                    self.follow(src, dst_uid=dst)
-                    db.mark_edge_done(src_id, dst_id)
-                    processed += 1
-                    logger.info(f"[PROCESS] ✅ {src['screen_name']} → {dst['screen_name']}")
-                except Exception as e:
-                    try:
-                        db.mark_edge_failed(src_id, dst_id, str(e))
-                    except Exception as e2:
-                        logger.exception(f"[PROCESS] Ошибка mark_edge_failed: {e2}")
-                    logger.exception(f"[PROCESS] Ошибка подписки {src_id}→{dst_id}: {e}")
-
-                time.sleep(sleep_sec)
-
-            logger.info(f"[PROCESS] Успешно выполнено: {processed}")
-            return processed
-
-        def finalize_new_flags():
-            try:
-                ready_ids = db.fetch_ready_to_unset_new()
-            except Exception as e:
-                logger.exception(f"[FINALIZE] Ошибка fetch_ready_to_unset_new: {e}")
-                return
-
-            if ready_ids:
-                try:
-                    db.set_is_new_false(ready_ids)
-                    logger.info(f"[FINALIZE] Снял is_new для {len(ready_ids)}: {ready_ids}")
-                except Exception as e:
-                    logger.exception(f"[FINALIZE] Ошибка set_is_new_false: {e}")
-            else:
-                logger.info("[FINALIZE] Нет аккаунтов для обновления")
-
-        def mutual_follow_maintainer():
-            while True:
-                n = process_follow_edges(batch_size=200, sleep_sec=1.0)
-                if n == -1:
-                    logger.info(f"[MAINTAINER] Все задачи выполнены!")
-                    return
-                finalize_new_flags()
-                pause = 5 if n else 30
-                logger.info(f"[MAINTAINER] Пауза: {pause}s")
-                time.sleep(pause)
-
-        # ---- Главная логика ----
-        try:
-            new_accounts = db.fetch_new_accounts()
-            logger.info(f"[MAIN] Получено новых аккаунтов: {len(new_accounts)}")
-            enqueue_edges_for_new_accounts([a["uid"] for a in new_accounts])
-            mutual_follow_maintainer()
-        except Exception as e:
-            logger.exception(f"[MAIN] Ошибка mutual_follow: {e}")
+        logger.info(f"[SCHED] тик планировщика завершён, всего добавлено задач: {total_added}")
+        return total_added
 
     # ----------------------------
     # DAILY LIFECYCLE
@@ -404,6 +473,27 @@ class xFerma:
                 if 9 <= hour < 23:
                 # if 0 <= hour < 23:
                     logger.info(f"[LIFE] Активный режим MOSCOW {now:%Y-%m-%d %H:%M:%S}")
+
+                    # планируем немного задач
+                    try:
+                        self.schedule_follows_tick(
+                            influencers_file="influencers.jsonl",
+                            per_tick=2,  # 1–2 задачи за тик на аккаунт
+                            quota_min=3,
+                            quota_max=10
+                        )
+                    except Exception:
+                        logger.exception("[LIFE] ошибка schedule_follows_tick")
+
+                    # обрабатываем очередь фоллов (можно в отдельном воркере)
+                    try:
+                        processed = self.process_follow_edges(batch_size=200, sleep_sec=1.0)
+                        if processed:
+                            self.finalize_new_flags()
+                    except Exception:
+                        logger.exception("[LIFE] ошибка process_follow_edges")
+
+                    # жизнь аккаунтов
                     for x_working_acc in self.x_accounts_data.copy():
                         timeline = self.get_timeline(x_working_acc)
                         if timeline:
@@ -790,34 +880,114 @@ def delete_session(screen_name: str):
 
     return deleted
 
+
+def update_influencers_jsonl_resilient(
+    txt_path: str = "influencers.txt",
+    jsonl_path: str = "influencers.jsonl",
+    get_id_fn: Optional[Callable[[str], str]] = None,
+) -> dict:
+    """
+    Синхронизирует influencers.txt -> influencers.jsonl с повторными попытками.
+    - Для каждого screen_name из txt пытается получить uid (get_id_fn).
+    - Если раньше uid не удалось (или был пустым), при следующем запуске пробует снова.
+    - jsonl перезаписывается атомарно (без дублей): одна строка на каждый screen_name.
+    Возвращает статистику: {'total':..., 'resolved_now':..., 'still_unresolved':..., 'written':...}
+    """
+    if get_id_fn is None:
+        raise ValueError("Нужна функция get_id_fn(screen_name) -> uid")
+
+    if not os.path.exists(txt_path):
+        raise FileNotFoundError(f"Не найден файл {txt_path}")
+
+    # 1) читаем TXT: убираем пустые, '@', дубли, сохраняем порядок
+    uniq_txt = []
+    seen = set()
+    with open(txt_path, "r", encoding="utf-8") as f:
+        for line in f:
+            sn = line.strip().lstrip("@")
+            if not sn:
+                continue
+            if sn not in seen:
+                uniq_txt.append(sn)
+                seen.add(sn)
+
+    # 2) читаем существующий JSONL -> словарь sn -> uid (может быть "", None)
+    existing = {}
+    if os.path.exists(jsonl_path):
+        with open(jsonl_path, "r", encoding="utf-8") as f:
+            for ln in f:
+                ln = ln.strip()
+                if not ln:
+                    continue
+                try:
+                    obj = json.loads(ln)
+                    sn = (obj.get("screen_name") or "").strip()
+                    uid = obj.get("uid")
+                    if sn:
+                        existing[sn] = uid
+                except json.JSONDecodeError:
+                    # битую строку пропускаем
+                    continue
+
+    total = len(uniq_txt)
+    resolved_now = 0
+    still_unresolved = 0
+
+    # 3) формируем итоговый порядок и значения uid
+    result_rows = []
+    for sn in uniq_txt:
+        current_uid = existing.get(sn)
+
+        # решаем, нужно ли пробовать получать uid заново:
+        need_resolve = (current_uid is None) or (str(current_uid).strip() == "")
+
+        if need_resolve:
+            try:
+                new_uid = get_id_fn(sn)
+                # нормализуем к строке
+                new_uid = "" if new_uid is None else str(new_uid)
+                if new_uid:
+                    current_uid = new_uid
+                    resolved_now += 1
+                else:
+                    # всё ещё не получилось
+                    current_uid = ""
+                    still_unresolved += 1
+            except Exception:
+                # не удалось на этом запуске
+                current_uid = ""
+                still_unresolved += 1
+
+        # если uid уже был в файле — оставим его как есть
+        result_rows.append({"screen_name": sn, "uid": str(current_uid or "")})
+
+    # 4) атомарно перезаписываем JSONL (без дублей)
+    os.makedirs(os.path.dirname(jsonl_path) or ".", exist_ok=True)
+    fd, tmp_path = tempfile.mkstemp(prefix="influ_", suffix=".jsonl", dir=os.path.dirname(jsonl_path) or ".")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as out:
+            for row in result_rows:
+                out.write(json.dumps(row, ensure_ascii=False) + "\n")
+        os.replace(tmp_path, jsonl_path)  # атомарная замена
+    except Exception:
+        # при сбое удалим временный файл
+        try:
+            os.remove(tmp_path)
+        except Exception:
+            pass
+        raise
+
+    return {
+        "total": total,
+        "resolved_now": resolved_now,
+        "still_unresolved": still_unresolved,
+        "written": len(result_rows),
+    }
+
 if __name__ == '__main__':
-    # set_up_new_accounts()
-    from tweeterpyapi import process_account
     ferma = xFerma(mode='work')
-    # ferma = xFerma(mode='test')
-    # banned_acc = {
-    #     'uid': 527403566,
-    #     'avatar': 'nft_ava_Zards #18_18[used].png',
-    #     'description_id': 'prsnfx',
-    # }
-    # ferma.clear_acc_info_if_banned(banned_acc)
-    # for acc in db.get_working_accounts():
-    #     ferma.like(acc, 1817467635707043968)
-    #     time.sleep(3)
-    # accs = load_accounts_tweeterpy(mode='work', how_many_accounts=1)
+    # accs = load_accounts_tweeterpy(mode='set_up')
     # for acc in accs:
-    #     print(ferma.like(acc, 1972376013297586551))
+    #     print(ferma.like(acc, 1978183328223441057))
     #     time.sleep(1)
-    # print(ferma.like(one_time_acc[1], 1972376013297586551))
-    # one_time_acc = db.fetch_accounts_by_ids({'472720290'})
-    # one_time_acc = {
-    #     'screen_name': 'siscazora',
-    #     'ua': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36',
-    #     'proxy': 'xZ1GLj:unTrU4@138.59.206.38:9491'
-    # }
-    # one_time_acc['cookies_dict'] = twitter_search.load_cookies_for_twitter_account_from_file(f'x_accs_cookies/{one_time_acc["screen_name"]}.json')
-    # acc = process_account(one_time_acc)
-    # print(ferma.get_timeline(acc))
-    # print(ferma.view(acc, 1972376013297586551, 1972376013297586551))
-    # print(ferma.follow(one_time_acc[0], {'uid': '3278906401'}))
-    # TODO: CHECK IP (1st check 16.09)!!!! 138.59.206.77 (usa ip mobile proxy) gate.nodemaven.com:8080:vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-412b573343e14-filter-medium:e3ibl6cpq4
+    # update_influencers_jsonl_resilient(get_id_fn=get_user_id_by_sn)

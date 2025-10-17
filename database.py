@@ -1,9 +1,13 @@
 from typing import Iterable, Sequence, Tuple, Dict, List, Optional, Set
-from datetime import datetime
-import psycopg, platform
+from datetime import datetime, timedelta, timezone
+import psycopg, platform, logging, random, json
 from psycopg.rows import dict_row
-from config import DB_PORT, DB_HOST_SERVER, DB_HOST_LOCAL, DB_PASSWORD, DB_BASE_NAME, DB_USERNAME
+from config import DB_PORT, DB_HOST_SERVER, DB_HOST_LOCAL, DB_PASSWORD, DB_BASE_NAME, DB_USERNAME, get_proxy_by_sid
+from zoneinfo import ZoneInfo
 
+MOS_TZ = ZoneInfo("Europe/Moscow")
+
+logger = logging.getLogger("xFerma")
 
 def get_host():
     system = platform.system().lower()
@@ -37,7 +41,7 @@ class Database:
         pw: Optional[str],
         auth_token: Optional[str],
         ua: Optional[str],
-        proxy: Optional[str],
+        proxy_sid: Optional[str],
     ) -> bool:
         """
         Вставка записи в X_FERMA.
@@ -49,7 +53,7 @@ class Database:
         """
         try:
             with self._conn() as conn, conn.cursor() as cur:
-                cur.execute(sql, (uid, username, category, lang, datetime.now(), pw, auth_token, ua, proxy))
+                cur.execute(sql, (uid, username, category, lang, datetime.now(), pw, auth_token, ua, proxy_sid))
             return True
         except Exception as e:
             # Логируй, если нужно
@@ -86,9 +90,9 @@ class Database:
             cur.execute(sql, (uid,))
             deleted = cur.rowcount
             if deleted > 0:
-                print(f"✅ Удалено {deleted} записей")
+                logger.info(f"✅ Удалено {deleted} записей")
             else:
-                print("⚠️ Ничего не удалено (uid не найден)")
+                logger.warning("⚠️ Ничего не удалено (uid не найден)")
 
     def get_banned_accounts(self) -> List[dict]:
         """
@@ -111,7 +115,7 @@ class Database:
                 "avatar": r["avatar"],
                 "description_id": r["description_id"],
                 "ua": r.get("ua"),
-                "proxy": r.get("proxy"),
+                "proxy": get_proxy_by_sid(r.get("proxy")),
             }
             for r in rows
         ]
@@ -144,7 +148,7 @@ class Database:
                 "uid": r["uid"],
                 "screen_name": r["screen_name"],
                 "ua": r.get("ua"),
-                "proxy": r.get("proxy"),
+                "proxy": get_proxy_by_sid(r.get("proxy")),
             }
             for r in rows
         ]
@@ -155,10 +159,100 @@ class Database:
 
     # ---- Accounts ----
 
-    def fetch_all_accounts(self) -> List[dict]:
+    def fetch_all_accounts(self):
         with self._conn() as conn, conn.cursor() as cur:
-            cur.execute("SELECT uid, username AS screen_name, is_new FROM X_FERMA WHERE is_banned IS NOT TRUE;")
-            return list(cur.fetchall())
+            cur.execute("SELECT id, screen_name FROM accounts WHERE is_banned IS NOT TRUE;")
+            return [{"id": r[0], "screen_name": r[1]} for r in cur.fetchall()]
+
+    def fetch_influencers_with_uid(self, path="influencers.jsonl"):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = [json.loads(line) for line in f if line.strip()]
+        except FileNotFoundError:
+            logger.warning("[SCHED] influencers.jsonl не найден")
+            return []
+        except json.JSONDecodeError as e:
+            logger.exception(f"[SCHED] Ошибка чтения {path}: {e}")
+            return []
+
+        seen, uniq = set(), []
+        for d in data:
+            sn = d.get("screen_name", "").strip().lstrip("@")
+            uid = d.get("uid")
+            if sn and sn not in seen:
+                uniq.append({"screen_name": sn, "uid": uid})
+                seen.add(sn)
+        return uniq
+
+    def count_done_today(self, src_id):
+        # границы «сегодня» в EU:
+        now_eu = datetime.now(MOS_TZ)
+        start_local = now_eu.replace(hour=0, minute=0, second=0, microsecond=0)
+        end_local = start_local + timedelta(days=1)
+        start_utc = start_local.astimezone(timezone.utc)
+        end_utc = end_local.astimezone(timezone.utc)
+
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute("""
+                SELECT COUNT(*) FROM follow_edges
+                WHERE src_id=%s AND status='done' AND done_at >= %s AND done_at < %s;
+            """, (src_id, start_utc, end_utc))
+            return cur.fetchone()[0]
+
+    def count_pending_today(self, src_id):
+        # можно ограничить по created_at в пределах суток NY, но обычно pending = сегодняшние
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute("""
+                SELECT COUNT(*) FROM follow_edges
+                WHERE src_id=%s AND status='pending';
+            """, (src_id,))
+            return cur.fetchone()[0]
+
+    def set_daily_quota_if_absent(self, src_id, plan_date, quota_min=3, quota_max=10):
+        quota = random.randint(quota_min, quota_max)
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO follow_daily_plan(src_id, plan_date, quota)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (src_id, plan_date) DO NOTHING;
+            """, (src_id, plan_date, quota))
+
+    def get_daily_quota(self, src_id, plan_date, quota_min=3, quota_max=10):
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute("""
+                SELECT quota FROM follow_daily_plan
+                WHERE src_id=%s AND plan_date=%s;
+            """, (src_id, plan_date))
+            row = cur.fetchone()
+            if row:
+                return row[0]
+        # нет строки — создадим
+        self.set_daily_quota_if_absent(src_id, plan_date, quota_min, quota_max)
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute("""
+                SELECT quota FROM follow_daily_plan
+                WHERE src_id=%s AND plan_date=%s;
+            """, (src_id, plan_date))
+            return cur.fetchone()[0]
+
+    def fetch_followed_or_pending_dst_ids(self, src_id):
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute("""
+                SELECT dst_id FROM follow_edges
+                WHERE src_id=%s AND status IN ('pending','done');
+            """, (src_id,))
+            return {r[0] for r in cur.fetchall()}
+
+    def bulk_upsert_follow_edges(self, pairs):
+        if not pairs:
+            return 0
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.executemany("""
+                INSERT INTO follow_edges(src_id, dst_id, status, created_at)
+                VALUES (%s, %s, 'pending', NOW())
+                ON CONFLICT (src_id, dst_id) DO NOTHING;
+            """, pairs)
+            return cur.rowcount
 
     def fetch_new_accounts(self) -> List[dict]:
         with self._conn() as conn, conn.cursor() as cur:
@@ -196,23 +290,6 @@ class Database:
                 VALUES (%s, %s, 'pending')
                 ON CONFLICT (src_id, dst_id) DO NOTHING;
             """, (src_id, dst_id))
-
-    def bulk_upsert_follow_edges(self, pairs: Sequence[Tuple[str, str]]):
-        if not pairs:
-            return
-        pairs = list({(a, b) for a, b in pairs if a != b})
-        if not pairs:
-            return
-        with self._conn() as conn, conn.cursor() as cur:
-            cur.execute("""
-                CREATE TEMP TABLE tmp_edges(src_id BIGINT, dst_id BIGINT) ON COMMIT DROP;
-            """)
-            cur.executemany("INSERT INTO tmp_edges VALUES (%s, %s);", pairs)
-            cur.execute("""
-                INSERT INTO follow_edges(src_id, dst_id, status)
-                SELECT src_id, dst_id, 'pending' FROM tmp_edges
-                ON CONFLICT (src_id, dst_id) DO NOTHING;
-            """)
 
     def fetch_pending_edges(self, limit: int = 100) -> List[Tuple[str, str]]:
         with self._conn() as conn, conn.cursor() as cur:

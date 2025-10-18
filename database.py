@@ -365,23 +365,88 @@ class Database:
                 WHERE src_id=%s AND dst_id=%s;
             """, (error_msg[:1000], src_id, dst_id))
 
-    def fetch_ready_to_unset_new(self) -> List[str]:
+    def is_account_complete_strict(self, uid: str) -> bool:
         """
-        ID аккаунтов, у которых нет рёбер со статусом != 'done'
+        Аккаунт готов, если:
+          - исходящие DONE >= (все другие не-инфлюенсеры) + (все инфлюенсеры)
+          - входящие DONE >= (все другие не-инфлюенсеры)
+          - нет ребер со статусом <> 'done' для (src=uid или dst=uid)
+        """
+        with self._conn() as conn, conn.cursor() as cur:
+            # Сколько рабочих аккаунтов (не инфлюенсеров), кроме self
+            cur.execute("""
+                SELECT COUNT(*) AS cnt
+                FROM X_FERMA
+                WHERE is_banned IS NOT TRUE
+                  AND is_influencer IS NOT TRUE
+                  AND uid <> %s;
+            """, (uid,))
+            other_workers = cur.fetchone()["cnt"]
+
+            # Сколько инфлюенсеров
+            cur.execute("""
+                SELECT COUNT(*) AS cnt
+                FROM X_FERMA
+                WHERE is_influencer IS TRUE;
+            """)
+            influencers = cur.fetchone()["cnt"]
+
+            expected_out = other_workers + influencers  # должен подписаться на всех
+            expected_in = other_workers  # все рабочие должны подписаться на него
+
+            # done исходящие
+            cur.execute("""
+                SELECT COUNT(*) AS cnt
+                FROM follow_edges
+                WHERE src_id = %s AND status = 'done';
+            """, (uid,))
+            done_out = cur.fetchone()["cnt"]
+
+            # done входящие: только от рабочих (не инфлюенсеров)
+            cur.execute("""
+                SELECT COUNT(*) AS cnt
+                FROM follow_edges fe
+                JOIN X_FERMA a ON a.uid = fe.src_id
+                WHERE fe.dst_id = %s
+                  AND fe.status = 'done'
+                  AND a.is_influencer IS NOT TRUE
+                  AND a.is_banned IS NOT TRUE;
+            """, (uid,))
+            done_in = cur.fetchone()["cnt"]
+
+            # существуют ли недоделанные ребра для этого аккаунта
+            cur.execute("""
+                SELECT EXISTS (
+                  SELECT 1
+                  FROM follow_edges
+                  WHERE (src_id = %s OR dst_id = %s)
+                    AND status <> 'done'
+                ) AS has_not_done;
+            """, (uid, uid))
+            has_not_done = cur.fetchone()["has_not_done"]
+
+            return (not has_not_done) and (done_out >= expected_out) and (done_in >= expected_in)
+
+    def fetch_ready_to_unset_new_strict(self) -> list[str]:
+        """
+        Возвращает uid тех аккаунтов (не инфлюенсеров, is_new=TRUE),
+        которые прошли строгую проверку готовности.
         """
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute("""
-                SELECT a.uid
-                FROM X_FERMA a
-                WHERE a.is_new = TRUE
-                  AND a.is_influencer IS NOT TRUE
-                  AND NOT EXISTS (
-                        SELECT 1 FROM follow_edges fe
-                        WHERE (fe.src_id = a.uid OR fe.dst_id = a.uid)
-                          AND fe.status <> 'done'
-                  );
+                SELECT uid
+                FROM X_FERMA
+                WHERE is_new = TRUE
+                  AND is_influencer IS NOT TRUE
+                  AND is_banned IS NOT TRUE;
             """)
-            return [r["uid"] for r in cur.fetchall()]
+            candidates = [r["uid"] for r in cur.fetchall()]
+
+        ready = []
+        for uid in candidates:
+            if self.is_account_complete_strict(uid):
+                ready.append(uid)
+        return ready
 
     def ensure_influencers_present(self, infls: list[dict]) -> int:
         """

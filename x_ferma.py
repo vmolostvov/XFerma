@@ -355,9 +355,9 @@ class xFerma:
 
     def finalize_new_flags(self):
         try:
-            ready_ids = db.fetch_ready_to_unset_new()
+            ready_ids = db.fetch_ready_to_unset_new_strict()
         except Exception as e:
-            logger.exception(f"[FINALIZE] Ошибка fetch_ready_to_unset_new: {e}")
+            logger.exception(f"[FINALIZE] Ошибка fetch_ready_to_unset_new_strict: {e}")
             return
 
         if ready_ids:
@@ -510,7 +510,8 @@ class xFerma:
                     logger.info(f"[SLEEP] Ночь в MOSCOW ({now}), ферма отдыхает")
 
                 pause = random.randint(1000, 10000)
-                logger.info(f"[LIFE] Пауза {pause}s")
+                pause_readable = format_duration(pause)
+                logger.info(f"[LIFE] Пауза {pause_readable}")
                 time.sleep(pause)
             except Exception as e:
                 logger.exception(f"[LIFE] Критическая ошибка цикла: {e}")
@@ -985,6 +986,16 @@ def update_influencers_jsonl_resilient(
         "still_unresolved": still_unresolved,
         "written": len(result_rows),
     }
+
+# Функция форматирования паузы в читаемый вид
+def format_duration(seconds: int) -> str:
+    if seconds < 60:
+        return f"{seconds}s"
+    minutes, sec = divmod(seconds, 60)
+    if minutes < 60:
+        return f"{minutes}m {sec}s"
+    hours, minutes = divmod(minutes, 60)
+    return f"{hours}h {minutes}m {sec}s"
 
 if __name__ == '__main__':
     ferma = xFerma(mode='work')

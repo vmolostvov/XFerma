@@ -1344,7 +1344,7 @@ def get_latest_timeline(working_acc, cursor=""):
 
     js = twitter_api_call('HomeTimeline', variables, features, twitter_working_account=working_acc)
 
-    print(js)
+    # print(js)
 
     instructions = js["data"]["home"]["home_timeline_urt"]["instructions"]
     timeline = parse_tweets_instructions(instructions)

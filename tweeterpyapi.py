@@ -230,9 +230,9 @@ def process_account(acc):
                     time.sleep(2)
                 else:
                     logger.exception(f"[ACC] connection error for @{acc['screen_name']}")
-                    if _ == 2:
+                    if _ == 4:
                         return {"status": "conn_error", "account": None}
-                    time.sleep(3)
+                    time.sleep(5)
             except KeyError:
                 logger.warning(f"[ACC] @{acc['screen_name']} вероятно забанен")
                 try:

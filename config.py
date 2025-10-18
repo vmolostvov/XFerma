@@ -104,11 +104,11 @@ def parse_accounts_to_list(file_path='x_accs.txt'):
 
                 # --- Парсим аккаунт ---
                 account_split = account_part.split(':')
-                if len(account_split) < 4:
+                if len(account_split) < 6:
                     raise ValueError("Недостаточно данных в account_part")
 
-                # Берём только первые 4 элемента, остальное игнорируем
-                screen_name, password, email, email_pw, auth_token = account_split[:5]
+                # Берём только первые 5 элемента, остальное игнорируем
+                screen_name, password, email, email_pw, mobile, auth_token = account_split[:6]
 
                 # --- Парсим прокси ---
                 proxy_split = proxy_part.split(':')
@@ -291,4 +291,9 @@ def make_main_file_with_accs():
 
 
 if __name__ == '__main__':
-    make_main_file_with_accs()
+    # make_main_file_with_accs()
+    with open(file_path, 'r', encoding='utf-8') as file:
+        for line in file:
+            line = line.strip()
+            if not line:
+                continue

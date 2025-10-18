@@ -259,22 +259,60 @@ class Database:
             return cur.rowcount
 
     def fetch_new_accounts(self) -> List[dict]:
+        """
+        Возвращает новые аккаунты (is_new = TRUE), не забаненные и не инфлюенсеров.
+        Поле proxy автоматически обрабатывается через get_proxy_by_sid().
+        """
         with self._conn() as conn, conn.cursor() as cur:
-            cur.execute("SELECT uid, username AS screen_name, is_new, ua, proxy FROM X_FERMA "
-                        "WHERE is_banned IS NOT TRUE "
-                        "AND is_new IS TRUE"
-                        "AND is_influencer IS NOT TRUE;")
-            return list(cur.fetchall())
+            cur.execute("""
+                SELECT uid, username AS screen_name, is_new, ua, proxy
+                FROM X_FERMA
+                WHERE is_banned IS NOT TRUE
+                  AND is_new IS TRUE
+                  AND is_influencer IS NOT TRUE;
+            """)
+            rows = cur.fetchall()
+
+        return [
+            {
+                "uid": r["uid"],
+                "screen_name": r["screen_name"],
+                "is_new": r["is_new"],
+                "ua": r.get("ua"),
+                "proxy": get_proxy_by_sid(r.get("proxy"))
+            }
+            for r in rows
+        ]
 
     def fetch_accounts_by_ids(self, ids: Set[str]) -> List[dict]:
+        """
+        Возвращает список аккаунтов по их uid.
+        Значение proxy автоматически преобразуется через get_proxy_by_sid().
+        """
         if not ids:
             return []
+
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute(
-                "SELECT uid, username AS screen_name, is_new, ua, proxy FROM X_FERMA WHERE uid = ANY(%s);",
+                """
+                SELECT uid, username AS screen_name, is_new, ua, proxy
+                FROM X_FERMA
+                WHERE uid = ANY(%s);
+                """,
                 (list(ids),)
             )
-            return list(cur.fetchall())
+            rows = cur.fetchall()
+
+        return [
+            {
+                "uid": r["uid"],
+                "screen_name": r["screen_name"],
+                "is_new": r["is_new"],
+                "ua": r.get("ua"),
+                "proxy": get_proxy_by_sid(r.get("proxy"))
+            }
+            for r in rows
+        ]
 
     def set_is_new_false(self, ids: Sequence[str]):
         if not ids:

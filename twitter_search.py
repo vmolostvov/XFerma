@@ -1426,8 +1426,6 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
     headers = get_headers_for_twitter_account(twitter_cookies_dict)
     proxies = get_proxies_for_twitter_account(twitter_working_account)
 
-    print('XXXX ', proxies)
-
     if update_ua:
         headers['user-agent'] = twitter_working_account['ua']
 

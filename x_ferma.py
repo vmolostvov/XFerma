@@ -987,10 +987,10 @@ def update_influencers_jsonl_resilient(
     }
 
 if __name__ == '__main__':
-    ferma = xFerma(mode='test')
-    accs = load_accounts_tweeterpy(mode='work')
-    for acc in accs:
-        if acc['screen_name'] == 'HVLxANTONIO':
-            tl = ferma.get_timeline(acc)
-            time.sleep(1)
-    update_influencers_jsonl_resilient(get_id_fn=get_user_id_by_sn)
+    ferma = xFerma(mode='work')
+    # accs = load_accounts_tweeterpy(mode='work')
+    # for acc in accs:
+    #     if acc['screen_name'] == 'HVLxANTONIO':
+    #         tl = ferma.get_timeline(acc)
+    #         time.sleep(1)
+    # update_influencers_jsonl_resilient(get_id_fn=get_user_id_by_sn)

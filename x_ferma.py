@@ -999,10 +999,10 @@ def format_duration(seconds: int) -> str:
     return f"{hours}h {minutes}m {sec}s"
 
 if __name__ == '__main__':
-    # ferma = xFerma(mode='work')
-    accs = load_accounts_tweeterpy(mode='work', how_many_accounts=1)
-    res = twitter_search.user_friendship(accs[0], "follow", screen_name='elonmusk')
-    print(res)
+    ferma = xFerma(mode='work')
+    # accs = load_accounts_tweeterpy(mode='work', how_many_accounts=1)
+    # res = twitter_search.user_friendship(accs[0], "follow", screen_name='elonmusk')
+    # print(res)
     # for acc in accs:
     #     if acc['screen_name'] == 'HVLxANTONIO':
     #         tl = ferma.get_timeline(acc)

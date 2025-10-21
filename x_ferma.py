@@ -999,20 +999,20 @@ def format_duration(seconds: int) -> str:
     return f"{hours}h {minutes}m {sec}s"
 
 if __name__ == '__main__':
-    # ferma = xFerma(mode='work')
+    ferma = xFerma(mode='work')
     # accs = load_accounts_tweeterpy(mode='work', how_many_accounts=1)
     from twitter_search import get_proxies_for_twitter_account
-    from config import get_proxy_by_sid
-    acc = {
-        'screen_name': 'CarterTuel1',
-        'uid': 781519304596590592,
-        'ua': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Mobile/15E148 Safari/604.1',
-        'proxy': get_proxy_by_sid('3e85cb8c21534')
-    }
+    # from config import get_proxy_by_sid
+    # acc = {
+    #     'screen_name': 'CarterTuel1',
+    #     'uid': 781519304596590592,
+    #     'ua': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Mobile/15E148 Safari/604.1',
+    #     'proxy': get_proxy_by_sid('3e85cb8c21534')
+    # }
 
     # for acc in accs:
     #     if acc['screen_name'] == 'CarterTuel1':
-    print(twitter_search.user_friendship(acc, "follow", screen_name='vladik_sol'))
+    # print(twitter_search.user_friendship(acc, "follow", screen_name='vladik_sol'))
     # update_influencers_jsonl_resilient(get_id_fn=get_user_id_by_sn)
 
     """OSError: Tunnel connection failed: 503 Service Unavailable"""

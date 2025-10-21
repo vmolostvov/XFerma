@@ -590,6 +590,7 @@ class xFerma:
     # ----------------------------
     def follow(self, src, dst_uid=None, dst_screen_name=None):
         try:
+            logger.info(f"[FOLLOW] Аккаунт {src['screen_name']} выполняет подписку на {dst_uid or dst_screen_name} !")
             if dst_uid:
                 res = twitter_search.user_friendship(src, "follow", user_id=dst_uid["uid"])
                 print(res)
@@ -598,8 +599,8 @@ class xFerma:
                 print(res)
 
             if res == 'ban':
-                logger.info(f"[VIEW] Аккаунт {dst_uid or dst_screen_name} вероятно забанен!")
-                admin_error(f"[VIEW] Аккаунт {dst_uid or dst_screen_name} вероятно забанен!")
+                logger.info(f"[FOLLOW] Аккаунт {dst_uid or dst_screen_name} вероятно забанен!")
+                admin_error(f"[FOLLOW] Аккаунт {dst_uid or dst_screen_name} вероятно забанен!")
                 try:
                     if dst_uid:
                         db.update_is_banned(dst_uid["uid"])
@@ -998,10 +999,14 @@ def format_duration(seconds: int) -> str:
     return f"{hours}h {minutes}m {sec}s"
 
 if __name__ == '__main__':
-    ferma = xFerma(mode='work')
-    # accs = load_accounts_tweeterpy(mode='work')
+    # ferma = xFerma(mode='work')
+    accs = load_accounts_tweeterpy(mode='work', how_many_accounts=1)
+    res = twitter_search.user_friendship(accs[0], "follow", screen_name='elonmusk')
+    print(res)
     # for acc in accs:
     #     if acc['screen_name'] == 'HVLxANTONIO':
     #         tl = ferma.get_timeline(acc)
     #         time.sleep(1)
     # update_influencers_jsonl_resilient(get_id_fn=get_user_id_by_sn)
+
+    """OSError: Tunnel connection failed: 503 Service Unavailable"""

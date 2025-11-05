@@ -599,13 +599,10 @@ class xFerma:
                 print(res)
 
             if res == 'ban':
-                logger.info(f"[FOLLOW] Аккаунт {dst_uid or dst_screen_name} вероятно забанен!")
-                admin_error(f"[FOLLOW] Аккаунт {dst_uid or dst_screen_name} вероятно забанен!")
+                logger.info(f"[FOLLOW] Аккаунт {src['screen_name']} вероятно забанен!")
+                admin_error(f"[FOLLOW] Аккаунт {src['screen_name']} вероятно забанен!")
                 try:
-                    if dst_uid:
-                        db.update_is_banned(dst_uid["uid"])
-                    elif dst_screen_name:
-                        db.update_is_banned_by_sn(dst_screen_name)
+                    db.update_is_banned_by_sn(src['screen_name'])
                 except Exception as e:
                     logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
                 return 'ban'
@@ -1001,7 +998,7 @@ def format_duration(seconds: int) -> str:
 if __name__ == '__main__':
     ferma = xFerma(mode='work')
     # accs = load_accounts_tweeterpy(mode='work', how_many_accounts=1)
-    from twitter_search import get_proxies_for_twitter_account
+    # from twitter_search import get_proxies_for_twitter_account
     # from config import get_proxy_by_sid
     # acc = {
     #     'screen_name': 'CarterTuel1',

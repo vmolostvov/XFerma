@@ -120,28 +120,37 @@ class Database:
             for r in rows
         ]
 
-    def get_working_accounts(self, count: int | None = None) -> List[dict]:
+    def get_working_accounts(
+            self,
+            count: int | None = None,
+            screen_name: str | None = None
+    ) -> List[dict]:
         """
         Возвращает активные аккаунты из X_FERMA.
         Если count=None → вернёт все.
+        Если передан screen_name → вернёт только этот аккаунт.
         """
         base_sql = """
-            SELECT uid, username AS screen_name, ua, proxy
+            SELECT uid, username AS screen_name, ua, proxy, auth_token
             FROM X_FERMA
             WHERE is_banned IS NOT TRUE
             AND is_influencer IS NOT TRUE
-            ORDER BY addition_date DESC
         """
 
+        params = []
+
+        if screen_name:
+            base_sql += " AND username = %s"
+            params.append(screen_name)
+
+        base_sql += " ORDER BY addition_date DESC"
+
         if count is not None:
-            sql = base_sql + " LIMIT %s"
-            params = (count,)
-        else:
-            sql = base_sql
-            params = ()
+            base_sql += " LIMIT %s"
+            params.append(count)
 
         with self._conn() as conn, conn.cursor() as cur:
-            cur.execute(sql, params)
+            cur.execute(base_sql, tuple(params))
             rows = cur.fetchall()
 
         return [
@@ -150,6 +159,7 @@ class Database:
                 "screen_name": r["screen_name"],
                 "ua": r.get("ua"),
                 "proxy": get_proxy_by_sid(r.get("proxy")),
+                "auth_token": r.get("auth_token"),
             }
             for r in rows
         ]

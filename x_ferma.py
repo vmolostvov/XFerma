@@ -996,8 +996,8 @@ def format_duration(seconds: int) -> str:
     return f"{hours}h {minutes}m {sec}s"
 
 if __name__ == '__main__':
-    ferma = xFerma(mode='work')
-    # accs = load_accounts_tweeterpy(mode='work', how_many_accounts=1)
+    ferma = xFerma(mode='test')
+    accs = load_accounts_tweeterpy(mode='test', acc_un='IyanNorth')
     # from twitter_search import get_proxies_for_twitter_account
     # from config import get_proxy_by_sid
     # acc = {

@@ -205,6 +205,7 @@ def process_account(acc):
 
         for _ in range(5):
             try:
+                # TODO: "Exception: Error code 32 - Could not authenticate you"
                 tw_cl.get_user_data('elonmusk')
                 logger.info(f"[ACC] @{acc['screen_name']} session is OK")
                 break
@@ -249,16 +250,19 @@ def process_account(acc):
         return {"status": "init_failed", "account": None}
 
 
-def load_accounts_tweeterpy(mode, how_many_accounts=None, load_cookies=False):
+def load_accounts_tweeterpy(mode, how_many_accounts=None, load_cookies=False, acc_un=None):
     """
     mode = "set_up" - set up new accounts, parsing file with new data
     mode = "work"   - getting working accounts from db
+    mode = "test"   - getting working accounts from db for test
     Возвращает список аккаунтов (готовых к работе) и словарь со статистикой.
     """
     if mode == 'work':
         twitter_working_accounts = db.get_working_accounts(how_many_accounts)
     elif mode == 'set_up':
         twitter_working_accounts = parse_accounts_to_list()
+    elif mode == 'test' and acc_un:
+        twitter_working_accounts = db.get_working_accounts(screen_name=acc_un.lower())
     else:
         twitter_working_accounts = []
 

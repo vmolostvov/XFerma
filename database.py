@@ -135,7 +135,7 @@ class Database:
             base_sql = """
                 SELECT uid, username AS screen_name, ua, proxy, auth_token
                 FROM X_FERMA
-                WHERE username = %s
+                WHERE LOWER(username) = LOWER(%s)
                 ORDER BY addition_date DESC
             """
             params = [screen_name]

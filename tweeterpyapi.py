@@ -263,7 +263,7 @@ def load_accounts_tweeterpy(mode, how_many_accounts=None, load_cookies=False, ac
     elif mode == 'set_up':
         twitter_working_accounts = parse_accounts_to_list()
     elif mode == 'test' and acc_un:
-        twitter_working_accounts = db.get_working_accounts(screen_name=acc_un.lower())
+        twitter_working_accounts = db.get_working_accounts(screen_name=acc_un)
     else:
         twitter_working_accounts = []
 

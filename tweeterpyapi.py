@@ -209,9 +209,10 @@ def process_account(acc):
                 tw_cl.get_user_data('elonmusk')
                 logger.info(f"[ACC] @{acc['screen_name']} session is OK")
                 break
-            except ConnectionError:
+            except (ConnectionError, AttributeError):
                 trace = traceback.format_exc()
-                if 'Connection aborted' in trace and 'Remote end closed connection without response' in trace:
+                if (('Connection aborted' in trace and 'Remote end closed connection without response' in trace) or
+                        "'Retry' object has no attribute 'backoff_max'" in trace):
                     logger.warning(f"[ACC] @{acc['screen_name']} session outdated → refreshing…")
 
                     # ВАЖНО: генерацию делаем в отдельном процессе с таймаутом+ретраями

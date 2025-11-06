@@ -712,6 +712,10 @@ class xFerma:
             db.delete_banned_by_uid(acc_data["uid"])
 
 
+    def accounts_health_test(self, accs):
+        for acc in accs:
+            self.view(acc,1976324634992636355, 44196397)
+
 # ----------------------------
 # ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (logging вместо print)
 # ----------------------------
@@ -996,20 +1000,40 @@ def format_duration(seconds: int) -> str:
     return f"{hours}h {minutes}m {sec}s"
 
 if __name__ == '__main__':
-    ferma = xFerma(mode='test')
-    accs = load_accounts_tweeterpy(mode='test', acc_un='IyanNorth')
-    # from twitter_search import get_proxies_for_twitter_account
-    # from config import get_proxy_by_sid
-    # acc = {
-    #     'screen_name': 'CarterTuel1',
-    #     'uid': 781519304596590592,
-    #     'ua': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Mobile/15E148 Safari/604.1',
-    #     'proxy': get_proxy_by_sid('3e85cb8c21534')
-    # }
+    if __name__ == '__main__':
+        print("\n🚀  Добро пожаловать в xFerma!")
+        print("Выберите режим работы:")
+        print("  1 — Работа фермы (work)")
+        print("  2 — Настройка новых аккаунтов (set_up)")
+        print("  3 — Тестовый режим (testing)")
+        print("  0 — Выход\n")
 
-    # for acc in accs:
-    #     if acc['screen_name'] == 'CarterTuel1':
-    # print(twitter_search.user_friendship(acc, "follow", screen_name='vladik_sol'))
-    # update_influencers_jsonl_resilient(get_id_fn=get_user_id_by_sn)
+        choice = input("👉 Введите номер режима: ").strip()
+
+        if choice == '1':
+            print("\n▶ Запуск фермы в рабочем режиме...\n")
+            xFerma(mode='work')
+
+        elif choice == '2':
+            print("\n⚙ Настройка новых аккаунтов...\n")
+            xFerma(mode='set_up')
+
+
+        elif choice == '3':
+            print("\n🧪 Тестовый режим...\n")
+            acc_un = input("🔹 Введите username тестового аккаунта (без @): ").strip()
+            if not acc_un:
+                print("❌ Вы не ввели username. Завершение работы.")
+            else:
+                ferma = xFerma(mode='testing')
+                accs = load_accounts_tweeterpy(mode='testing', acc_un=acc_un)
+                ferma.accounts_health_test(accs)
+
+        elif choice == '0':
+            print("\n👋 Выход из программы. До встречи!")
+            exit(0)
+
+        else:
+            print("\n❌ Неверный выбор. Перезапустите программу и выберите правильный режим.")
 
     """OSError: Tunnel connection failed: 503 Service Unavailable"""

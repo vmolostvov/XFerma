@@ -33,7 +33,7 @@ nodemaven_proxy_server = 'gate.nodemaven.com'
 nodemaven_proxy_port = '8080'
 nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-{}-filter-medium'
 # nodemaven_proxy_login = 'https://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-3e85cb8c21534-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
-# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-3e85cb8c21534-filter-medium'
+# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-1f13ea6406d34-filter-medium'
 # nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-3e85cb8c21534-filter-medium'
 nodemaven_proxy_pw = 'e3ibl6cpq4'
 
@@ -294,9 +294,13 @@ def make_main_file_with_accs():
 
 
 if __name__ == '__main__':
-    # make_main_file_with_accs()
-    with open(file_path, 'r', encoding='utf-8') as file:
-        for line in file:
-            line = line.strip()
-            if not line:
-                continue
+
+
+    base_sql = """
+        SELECT uid, username AS screen_name, ua, proxy, auth_token
+        FROM X_FERMA
+        WHERE is_banned IS NOT TRUE
+        AND is_influencer IS NOT TRUE
+    """
+
+    print(base_sql.replace('WHERE is_banned IS NOT TRUE\n', ''))

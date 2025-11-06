@@ -128,22 +128,27 @@ class Database:
         """
         Возвращает активные аккаунты из X_FERMA.
         Если count=None → вернёт все.
-        Если передан screen_name → вернёт только этот аккаунт.
+        Если передан screen_name → вернёт даже заблокированные/инфлюенсеров.
         """
-        base_sql = """
-            SELECT uid, username AS screen_name, ua, proxy, auth_token
-            FROM X_FERMA
-            WHERE is_banned IS NOT TRUE
-            AND is_influencer IS NOT TRUE
-        """
-
-        params = []
-
         if screen_name:
-            base_sql += " AND username = %s"
-            params.append(screen_name)
-
-        base_sql += " ORDER BY addition_date DESC"
+            # без фильтров is_banned / is_influencer
+            base_sql = """
+                SELECT uid, username AS screen_name, ua, proxy, auth_token
+                FROM X_FERMA
+                WHERE username = %s
+                ORDER BY addition_date DESC
+            """
+            params = [screen_name]
+        else:
+            # обычный запрос для рабочих аккаунтов
+            base_sql = """
+                SELECT uid, username AS screen_name, ua, proxy, auth_token
+                FROM X_FERMA
+                WHERE is_banned IS NOT TRUE
+                  AND is_influencer IS NOT TRUE
+                ORDER BY addition_date DESC
+            """
+            params = []
 
         if count is not None:
             base_sql += " LIMIT %s"
@@ -159,7 +164,7 @@ class Database:
                 "screen_name": r["screen_name"],
                 "ua": r.get("ua"),
                 "proxy": get_proxy_by_sid(r.get("proxy")),
-                "auth_token": r.get("auth_token"),
+                "auth_token": r.get("auth_token")
             }
             for r in rows
         ]

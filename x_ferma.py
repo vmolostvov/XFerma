@@ -1025,8 +1025,8 @@ if __name__ == '__main__':
             if not acc_un:
                 print("❌ Вы не ввели username. Завершение работы.")
             else:
-                ferma = xFerma(mode='testing')
-                accs = load_accounts_tweeterpy(mode='testing', acc_un=acc_un)
+                ferma = xFerma(mode='test')
+                accs = load_accounts_tweeterpy(mode='test', acc_un=acc_un)
                 ferma.accounts_health_test(accs)
 
         elif choice == '0':

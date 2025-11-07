@@ -1,4 +1,4 @@
-import requests, json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading
+import requests, json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading, logging
 from multiprocessing.managers import SyncManager
 from alarm_bot import admin_signal, admin_error
 from tweeterpyapi import load_accounts_tweeterpy
@@ -1347,6 +1347,8 @@ def get_latest_timeline(working_acc, cursor=""):
 
     js = twitter_api_call('HomeTimeline', variables, features, twitter_working_account=working_acc)
 
+    logger = logging.getLogger("xFerma")
+    logger.info(js)
     # print(js)
 
     instructions = js["data"]["home"]["home_timeline_urt"]["instructions"]

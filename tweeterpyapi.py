@@ -19,14 +19,16 @@ def initialize_client(proxy=None, screen_name=None, max_attempts=3):
         try:
             return TweeterPy(proxies=proxy)
         except (OSError, ProxyError, ConnectionError, MissingSchema, ReadTimeout) as e:
-            logger.warning(f"[INIT] @{screen_name} init fail (attempt {i+1}/{max_attempts}) proxy={proxy} err={e}")
+            logger.warning(f"[INIT] @{screen_name} init fail by specific exc (attempt {i+1}/{max_attempts}) proxy={proxy} err={e}")
             time.sleep(3)
             proxy = get_random_mob_proxy()
         except Exception as e:
-            if 'raise Exception("invalid response")' in traceback.format_exc():
-                logger.warning(f"[INIT] @{screen_name} init fail (attempt {i + 1}/{max_attempts}) proxy={proxy} err={e}")
+            trace = traceback.format_exc()
+            if 'raise Exception("invalid response")' in trace:
+                logger.warning(f"[INIT] @{screen_name} init fail by general exc (attempt {i + 1}/{max_attempts}) proxy={proxy} err={e}")
                 time.sleep(3)
-                proxy = get_random_mob_proxy()
+                if 'SSLError' not in trace:
+                    proxy = get_random_mob_proxy()
 
     return None
 
@@ -205,7 +207,6 @@ def process_account(acc):
 
         for _ in range(5):
             try:
-                # TODO: "Exception: Error code 32 - Could not authenticate you"
                 tw_cl.get_user_data('elonmusk')
                 logger.info(f"[ACC] @{acc['screen_name']} session is OK")
                 break
@@ -231,8 +232,8 @@ def process_account(acc):
                     session_refreshed = True
                     time.sleep(2)
                 else:
-                    logger.exception(f"[ACC] connection error for @{acc['screen_name']}")
                     if _ == 4:
+                        logger.exception(f"[ACC] connection error 5 times for @{acc['screen_name']}")
                         return {"status": "conn_error", "account": None}
                     time.sleep(5)
             except KeyError:

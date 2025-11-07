@@ -613,6 +613,9 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
     elif 'Error code 64 - Your account is suspended' in trace:
         return 'ban'
 
+    elif 'Error code 32 - Could not authenticate you' in trace:
+        return 'ban'
+
     elif 'Error code 141 - Authorization' in trace:
         return 'ban'
 

@@ -699,9 +699,17 @@ class xFerma:
 
     def get_timeline(self, x_working_acc):
         try:
-            return twitter_search.get_latest_timeline(x_working_acc)
+            for i in range(3):
+                timeline = twitter_search.get_latest_timeline(x_working_acc)
+                if timeline:
+                    return timeline
+                else:
+                    time.sleep(10)
+
         except Exception as e:
-            logger.exception(f"[VIEW] Критическая ошибка в get_timeline: {e}")
+            logger.exception(f"[TIMELINE] Критическая ошибка в get_timeline: {e}")
+
+        logger.warning(f'[TIMELINE] Невозможно получить timeline для аккаунта {x_working_acc["screen_name"]}!')
 
     def clear_acc_info_if_banned(self, acc_data, delete=False):
         if acc_data["avatar"]:

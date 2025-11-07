@@ -1347,14 +1347,11 @@ def get_latest_timeline(working_acc, cursor=""):
 
     js = twitter_api_call('HomeTimeline', variables, features, twitter_working_account=working_acc)
 
-    logger = logging.getLogger("xFerma")
-    logger.info(js)
-    # print(js)
+    if js:
+        instructions = js["data"]["home"]["home_timeline_urt"]["instructions"]
+        timeline = parse_tweets_instructions(instructions)
 
-    instructions = js["data"]["home"]["home_timeline_urt"]["instructions"]
-    timeline = parse_tweets_instructions(instructions)
-
-    return [x for x in timeline["tweets"]]
+        return [x for x in timeline["tweets"]]
 
 
 #

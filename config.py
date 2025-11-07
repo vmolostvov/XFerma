@@ -23,7 +23,7 @@ nodemaven_mob_proxy_data = [
     'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-3f9fa76581f04-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
     'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-6c8d9de51d764-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
     'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-1672614f767b4-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
-    'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-3020fe676bd54-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
+    'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-540010aa5aac4-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
 ]
 
 nodemaven_proxy_rotating = {'http': 'https://vmolostvov96_gmail_com-country-any-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080', 'https': 'http://vmolostvov96_gmail_com-country-any-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080/'}

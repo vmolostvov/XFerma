@@ -242,20 +242,19 @@ def process_account(acc):
                 except Exception:
                     logger.exception("[ACC] update_is_banned failed")
                 return {"status": "banned", "account": None}
-            except Exception as e:
-                trace = traceback.format_exc()
-                if 'Error code 32 - Could not authenticate you' in trace:
-                    logger.warning(f"[ACC] @{acc['screen_name']} вероятно забанен")
-                    try:
-                        db.update_is_banned(acc["uid"])
-                    except Exception:
-                        logger.exception("[ACC] update_is_banned failed")
-                    return {"status": "banned", "account": None}
 
         acc['session'] = tw_cl
         return {"status": "session_refreshed" if session_refreshed else "ok", "account": acc}
 
     except Exception:
+        trace = traceback.format_exc()
+        if 'Error code 32 - Could not authenticate you' in trace:
+            logger.warning(f"[ACC] @{acc['screen_name']} вероятно забанен")
+            try:
+                db.update_is_banned(acc["uid"])
+            except Exception:
+                logger.exception("[ACC] update_is_banned failed")
+            return {"status": "banned", "account": None}
         logger.exception(f"[ACC] unexpected error for @{acc.get('screen_name')}")
         return {"status": "init_failed", "account": None}
 

@@ -270,7 +270,10 @@ def filter_entities_urls(entities_urls):
 def parse_tweet(tweet_raw):
     tweet_user_raw = tweet_raw["core"]["user_results"]["result"]
     # print(f"tweet_user_raw: {tweet_user_raw}")
-    tweet_legacy = tweet_raw["legacy"]
+    try:
+        tweet_legacy = tweet_raw["legacy"]
+    except KeyError:
+        return
 
     if ("retweeted_status_result" in tweet_legacy) and ("result" in tweet_legacy["retweeted_status_result"]) and (
             "legacy" in tweet_legacy["retweeted_status_result"]["result"]):
@@ -363,10 +366,12 @@ def parse_tweet_entry(tweet_entry):
 
         if tweet:
             tweet_user = tweet["core"]["user_results"]["result"]
-            tweet_entry_parsed = {
-                'tweet': parse_tweet(tweet),
-                'user': parse_user(tweet_user)
-            }
+            parsed_tweet = parse_tweet(tweet)
+            if parsed_tweet:
+                tweet_entry_parsed = {
+                    'tweet': parsed_tweet,
+                    'user': parse_user(tweet_user)
+                }
 
     return tweet_entry_parsed
 

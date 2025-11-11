@@ -1030,7 +1030,7 @@ if __name__ == '__main__':
         elif choice == '3':
             print("\n🧪 Тестовый режим...\n")
             print("  1 — Health-test аккаунта (load & view tweet)")
-            print("  2 — Регенерация сессии аккаунта (save_cookies_and_sess)")
+            print("  2 — Регенерация сессии аккаунта (save_cookies_and_sess)\n")
 
             choice = input("👉 Введите номер режима: ").strip()
             ferma = xFerma(mode='test')
@@ -1050,8 +1050,8 @@ if __name__ == '__main__':
                 if not acc_un:
                     print("❌ Вы не ввели username. Завершение работы.")
                 else:
-                    acc = load_accounts_tweeterpy(mode='test', acc_un=acc_un)
-                    save_cookies_and_sess_with_timeout(acc)
+                    accs = db.get_working_accounts(screen_name=acc_un)
+                    save_cookies_and_sess_with_timeout(outdated_session=accs[0])
 
 
         elif choice == '0':

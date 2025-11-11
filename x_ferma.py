@@ -723,6 +723,14 @@ class xFerma:
     def accounts_health_test(self, accs):
         for acc in accs:
             self.view(acc,1976324634992636355, 44196397)
+            time.sleep(1)
+            self.like(acc, 1988172622837018690)
+            time.sleep(2)
+            self.like(acc, 1988101882615865798)
+            time.sleep(2)
+            self.like(acc, 1987956674087485848)
+            time.sleep(2)
+            self.like(acc, 1987836473329283101)
 
 # ----------------------------
 # ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (logging вместо print)

@@ -1029,13 +1029,30 @@ if __name__ == '__main__':
 
         elif choice == '3':
             print("\n🧪 Тестовый режим...\n")
-            acc_un = input("🔹 Введите username тестового аккаунта (без @): ").strip()
-            if not acc_un:
-                print("❌ Вы не ввели username. Завершение работы.")
-            else:
-                ferma = xFerma(mode='test')
-                accs = load_accounts_tweeterpy(mode='test', acc_un=acc_un)
-                ferma.accounts_health_test(accs)
+            print("  1 — Health-test аккаунта (load & view tweet)")
+            print("  2 — Регенерация сессии аккаунта (save_cookies_and_sess)")
+
+            choice = input("👉 Введите номер режима: ").strip()
+            ferma = xFerma(mode='test')
+
+            if choice == '1':
+                print("\n▶ Запуск режима проверки аккаунтов...\n")
+                acc_un = input("🔹 Введите username тестового аккаунта (без @): ").strip()
+                if not acc_un:
+                    print("❌ Вы не ввели username. Завершение работы.")
+                else:
+                    acc = load_accounts_tweeterpy(mode='test', acc_un=acc_un)
+                    ferma.accounts_health_test(acc)
+
+            elif choice == '2':
+                print("\n⚙ Запуск режима регенерации сессии аккаунта...\n")
+                acc_un = input("🔹 Введите username тестового аккаунта (без @): ").strip()
+                if not acc_un:
+                    print("❌ Вы не ввели username. Завершение работы.")
+                else:
+                    acc = load_accounts_tweeterpy(mode='test', acc_un=acc_un)
+                    save_cookies_and_sess_with_timeout(acc)
+
 
         elif choice == '0':
             print("\n👋 Выход из программы. До встречи!")

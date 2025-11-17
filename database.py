@@ -72,6 +72,12 @@ class Database:
             cur.execute(sql, (desc_id, uid))
             return cur.fetchone() is not None
 
+    def update_proxy(self, uid: str, proxy: str) -> bool:
+        sql = "UPDATE X_FERMA SET proxy = %s WHERE uid = %s RETURNING uid;"
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute(sql, (proxy, uid))
+            return cur.fetchone() is not None
+
     def update_is_banned(self, uid: str) -> bool:
         sql = "UPDATE X_FERMA SET is_banned = TRUE WHERE uid = %s RETURNING uid;"
         with self._conn() as conn, conn.cursor() as cur:

@@ -5,8 +5,9 @@ import twitter_search
 # from twitter_search import load_accounts_cookies_login
 # from typing import Tuple, List
 from x_media_uploader import upload_and_update_pfp
-from tweeterpyapi import load_accounts_tweeterpy, get_user_data, initialize_client, save_cookies_and_sess_with_timeout, get_user_id_by_sn
-from config import nodemaven_proxy_rotating, get_random_mob_proxy, parse_accounts_to_list, parse_cid
+from tweeterpyapi import load_accounts_tweeterpy, get_user_data, initialize_client, save_cookies_and_sess_with_timeout, process_account
+from config import get_random_mob_proxy, parse_cid
+from pixelscan_checker import get_proxy_by_sid, generate_valid_sid_nodemaven_proxy
 # from concurrent.futures import ThreadPoolExecutor, as_completed
 from database import Database
 from datetime import datetime
@@ -590,22 +591,31 @@ class xFerma:
     # ----------------------------
     def follow(self, src, dst_uid=None, dst_screen_name=None):
         try:
-            logger.info(f"[FOLLOW] Аккаунт {src['screen_name']} выполняет подписку на {dst_uid['screen_name'] or dst_screen_name} !")
-            if dst_uid:
-                res = twitter_search.user_friendship(src, "follow", user_id=dst_uid["uid"])
-                print(res)
-            elif dst_screen_name:
-                res = twitter_search.user_friendship(src, "follow", screen_name=dst_screen_name)
-                print(res)
+            for i in range(2):
+                logger.info(f"[FOLLOW] Аккаунт {src['screen_name']} выполняет подписку на {dst_uid['screen_name'] or dst_screen_name} !")
+                if dst_uid:
+                    res = twitter_search.user_friendship(src, "follow", user_id=dst_uid["uid"])
+                    print(res)
+                elif dst_screen_name:
+                    res = twitter_search.user_friendship(src, "follow", screen_name=dst_screen_name)
+                    print(res)
 
-            if res == 'ban':
-                logger.info(f"[FOLLOW] Аккаунт {src['screen_name']} вероятно забанен!")
-                admin_error(f"[FOLLOW] Аккаунт {src['screen_name']} вероятно забанен!")
-                try:
-                    db.update_is_banned_by_sn(src['screen_name'])
-                except Exception as e:
-                    logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
-                return 'ban'
+                if res == 'ban':
+                    logger.info(f"[FOLLOW] Аккаунт {src['screen_name']} вероятно забанен!")
+                    admin_error(f"[FOLLOW] Аккаунт {src['screen_name']} вероятно забанен!")
+                    try:
+                        db.update_is_banned_by_sn(src['screen_name'])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
+                    return 'ban'
+
+                elif res == 'proxy_dead':
+                    logger.info(f"[VIEW] У аккаунта {src['screen_name']} умер прокси!")
+                    src = self.regenerate_acc_object(src, new_proxy=True)
+                    if src:
+                        continue
+                break
+
         except Exception as e:
             print(traceback.format_exc())
             logger.exception(f"[FOLLOW] Ошибка follow: {e}")
@@ -613,77 +623,113 @@ class xFerma:
 
     def like(self, twitter_working_account, tweet_id):
         try:
-            res = twitter_search.like_tweet_by_tweet_id(twitter_working_account, tweet_id)
-            if res == '139':
-                logger.info(f"[LIKE] Уже лайкнуто (tweetId={tweet_id})")
-            elif res == 'ban':
-                logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
-                admin_error(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
-                try:
-                    db.update_is_banned(twitter_working_account["uid"])
-                except Exception as e:
-                    logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
-                return 'ban'
+            for i in range(2):
+                res = twitter_search.like_tweet_by_tweet_id(twitter_working_account, tweet_id)
+                if res == '139':
+                    logger.info(f"[LIKE] Уже лайкнуто (tweetId={tweet_id})")
+                elif res == 'ban':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                    admin_error(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                    try:
+                        db.update_is_banned(twitter_working_account["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
+                    return 'ban'
+                elif res == 'proxy_dead':
+                    logger.info(f"[VIEW] У аккаунта {twitter_working_account['screen_name']} умер прокси!")
+                    twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
+                    if twitter_working_account:
+                        continue
+                break
+
         except Exception as e:
             logger.exception(f"[LIKE] Ошибка like: {e}")
 
     def retweet(self, twitter_working_account, tweet_id):
         try:
-            res = twitter_search.rt_tweet_by_tweet_id(twitter_working_account, tweet_id)
-            if res == '139':
-                logger.info(f"[RT] Уже ретвитнуто (tweetId={tweet_id})")
-            elif res == 'ban':
-                logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
-                admin_error(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
-                try:
-                    db.update_is_banned(twitter_working_account["uid"])
-                except Exception as e:
-                    logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
-                return 'ban'
+            for i in range(2):
+                res = twitter_search.rt_tweet_by_tweet_id(twitter_working_account, tweet_id)
+                if res == '139':
+                    logger.info(f"[RT] Уже ретвитнуто (tweetId={tweet_id})")
+                elif res == 'ban':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                    admin_error(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                    try:
+                        db.update_is_banned(twitter_working_account["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
+                    return 'ban'
+                elif res == 'proxy_dead':
+                    logger.info(f"[VIEW] У аккаунта {twitter_working_account['screen_name']} умер прокси!")
+                    twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
+                    if twitter_working_account:
+                        continue
+                break
         except Exception as e:
             logger.exception(f"[RT] Ошибка retweet: {e}")
 
     def bookmark(self, twitter_working_account, tweet_id):
         try:
-            res = twitter_search.bm_tweet_by_tweet_id(twitter_working_account, tweet_id)
-            if res == '139':
-                logger.info(f"[BM] Уже в закладках (tweetId={tweet_id})")
-            elif res == 'ban':
-                logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
-                admin_error(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
-                try:
-                    db.update_is_banned(twitter_working_account["uid"])
-                except Exception as e:
-                    logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
-                return 'ban'
+            for i in range(2):
+                res = twitter_search.bm_tweet_by_tweet_id(twitter_working_account, tweet_id)
+                if res == '139':
+                    logger.info(f"[BM] Уже в закладках (tweetId={tweet_id})")
+                elif res == 'ban':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                    admin_error(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                    try:
+                        db.update_is_banned(twitter_working_account["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
+                    return 'ban'
+                elif res == 'proxy_dead':
+                    logger.info(f"[VIEW] У аккаунта {twitter_working_account['screen_name']} умер прокси!")
+                    twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
+                    if twitter_working_account:
+                        continue
+                break
         except Exception as e:
             logger.exception(f"[BM] Ошибка bookmark: {e}")
 
     def reply(self, twitter_working_account, tweet_text, tweet_id):
         try:
-            res = twitter_search.reply_tweet_by_tweet_id(twitter_working_account, tweet_text, tweet_id)
-            if res == 'ban':
-                logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
-                admin_error(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
-                try:
-                    db.update_is_banned(twitter_working_account["uid"])
-                except Exception as e:
-                    logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
-                return 'ban'
+            for i in range(2):
+                res = twitter_search.reply_tweet_by_tweet_id(twitter_working_account, tweet_text, tweet_id)
+                if res == 'ban':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                    admin_error(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                    try:
+                        db.update_is_banned(twitter_working_account["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
+                    return 'ban'
+                elif res == 'proxy_dead':
+                    logger.info(f"[VIEW] У аккаунта {twitter_working_account['screen_name']} умер прокси!")
+                    twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
+                    if twitter_working_account:
+                        continue
+                break
         except Exception as e:
             logger.exception(f"[REPLY] Ошибка reply: {e}")
 
     def view(self, twitter_working_account, tweet_id, author_id):
         try:
-            res = twitter_search.view_tweet_by_tweet_id(twitter_working_account, tweet_id, author_id=author_id)
-            if res == 'ban':
-                logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
-                admin_error(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
-                try:
-                    db.update_is_banned(twitter_working_account["uid"])
-                except Exception as e:
-                    logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
-                return 'ban'
+            for i in range(2):
+                res = twitter_search.view_tweet_by_tweet_id(twitter_working_account, tweet_id, author_id=author_id)
+                if res == 'ban':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                    admin_error(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                    try:
+                        db.update_is_banned(twitter_working_account["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
+                    return 'ban'
+                elif res == 'proxy_dead':
+                    logger.info(f"[VIEW] У аккаунта {twitter_working_account['screen_name']} умер прокси!")
+                    twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
+                    if twitter_working_account:
+                        continue
+                break
         except Exception as e:
             logger.exception(f"[VIEW] Ошибка view: {e}")
 
@@ -701,7 +747,12 @@ class xFerma:
         try:
             for i in range(3):
                 timeline = twitter_search.get_latest_timeline(x_working_acc)
-                if timeline:
+                if timeline == 'proxy_dead':
+                    logger.info(f"[VIEW] У аккаунта {x_working_acc['screen_name']} умер прокси!")
+                    x_working_acc = self.regenerate_acc_object(x_working_acc, new_proxy=True)
+                    if x_working_acc:
+                        continue
+                elif timeline:
                     return timeline
                 else:
                     time.sleep(10)
@@ -718,6 +769,81 @@ class xFerma:
             mark_unmark_used_desc(acc_data["description_id"], instruction=False)
         if delete:
             db.delete_banned_by_uid(acc_data["uid"])
+
+    def regenerate_acc_object(self, twitter_working_account, new_proxy=False):
+        logger.info(
+            f"[REGEN] Начинаю регенерацию аккаунта @{twitter_working_account.get('screen_name')} "
+            f"(new_proxy={new_proxy})"
+        )
+
+        sid = None
+
+        # --- Генерация нового прокси ---
+        if new_proxy:
+            try:
+                sid = generate_valid_sid_nodemaven_proxy()
+                old_proxy = twitter_working_account.get("proxy")
+                twitter_working_account['proxy'] = get_proxy_by_sid(sid)
+
+                logger.info(
+                    f"[REGEN] Новый SID: {sid} | Старый proxy: {old_proxy} | Новый proxy: {twitter_working_account['proxy']}"
+                )
+            except Exception:
+                logger.exception(
+                    f"[REGEN] Ошибка при генерации нового прокси для @{twitter_working_account.get('screen_name')}"
+                )
+                return None
+
+        # --- Попытка восстановить объект аккаунта ---
+        try:
+            new_acc_object = process_account(twitter_working_account)
+        except Exception:
+            logger.exception(
+                f"[REGEN] process_account упал для @{twitter_working_account.get('screen_name')}"
+            )
+            return None
+
+        status = new_acc_object.get("status")
+        logger.info(
+            f"[REGEN] Результат process_account для @{twitter_working_account.get('screen_name')}: status={status}"
+        )
+
+        # --- Успешная регенерация ---
+        if new_acc_object.get('account'):
+            try:
+                old_obj = twitter_working_account
+                self.x_accounts_data[self.x_accounts_data.index(twitter_working_account)] = new_acc_object.get('account')
+
+                logger.info(
+                    f"[REGEN] Аккаунт @{twitter_working_account.get('screen_name')} успешно обновлен "
+                    f"в self.x_accounts_data (status={status})"
+                )
+
+                if new_proxy:
+                    try:
+                        db.update_proxy(new_acc_object['account']['uid'], sid)
+                        logger.info(
+                            f"[REGEN] Прокси обновлен в базе для UID={new_acc_object['account']['uid']} SID={sid}"
+                        )
+                    except Exception:
+                        logger.exception(
+                            f"[REGEN] Ошибка update_proxy в базе для UID={new_acc_object['account']['uid']}"
+                        )
+
+                return new_acc_object
+
+            except Exception:
+                logger.exception(
+                    f"[REGEN] Ошибка при обновлении self.x_accounts_data для @{twitter_working_account.get('screen_name')}"
+                )
+                return None
+
+        else:
+            logger.warning(
+                f"[REGEN] Регенерация не удалась — process_account вернул пустой account для "
+                f"@{twitter_working_account.get('screen_name')}, status={status}"
+            )
+            return None
 
 
     def accounts_health_test(self, accs):

@@ -26,6 +26,8 @@ nodemaven_mob_proxy_data = [
     'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-540010aa5aac4-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
 ]
 
+nodemaven_api_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzYyNTI0ODU3LCJpYXQiOjE3NjI1MjMwNTcsImp0aSI6IjNkNmE4NWEwMmYyOTQ0MTZhYmNiODE4ZjRmMGU1NTc3IiwidXNlcl9pZCI6IjAyN2Y5MGU0LTc3NTYtNDU2OS04NmEzLTU4MDczZmM3YTAxMSJ9.i9TDxfHW9smd_fBYqz-XpbWVMVpqHlnux-na2Zdld4o'
+
 nodemaven_proxy_rotating = {'http': 'https://vmolostvov96_gmail_com-country-any-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080', 'https': 'http://vmolostvov96_gmail_com-country-any-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080/'}
 
 # proxy config mobile ipv4 us
@@ -33,8 +35,8 @@ nodemaven_proxy_server = 'gate.nodemaven.com'
 nodemaven_proxy_port = '8080'
 nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-{}-filter-medium'
 # nodemaven_proxy_login = 'https://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-3e85cb8c21534-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
-# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-3020fe676bd54-filter-medium'
-# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-3e85cb8c21534-filter-medium'
+# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-72bb3f092ba04-filter-medium'
+# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-72b6aba8ac8a5-filter-medium'
 nodemaven_proxy_pw = 'e3ibl6cpq4'
 
 def get_random_mob_proxy():
@@ -44,10 +46,6 @@ def get_random_mob_proxy():
         "https": f"http://{proxy}"
     }
     return proxies
-
-
-def get_proxy_by_sid(sid):
-    return f"{nodemaven_proxy_login.format(sid)}:{nodemaven_proxy_pw}@{nodemaven_proxy_server}:{nodemaven_proxy_port}"
 
 
 def get_random_mob_proxy_aiohttp():
@@ -291,16 +289,3 @@ def append_user_agents(file_path: str, mobile_ratio: float = 0.8, desktop_chrome
 def make_main_file_with_accs():
     merge_files_with_delimiter('x_accs.txt', 'proxy.txt')
     append_user_agents('x_accs.txt')
-
-
-if __name__ == '__main__':
-
-
-    base_sql = """
-        SELECT uid, username AS screen_name, ua, proxy, auth_token
-        FROM X_FERMA
-        WHERE is_banned IS NOT TRUE
-        AND is_influencer IS NOT TRUE
-    """
-
-    print(base_sql.replace('WHERE is_banned IS NOT TRUE\n', ''))

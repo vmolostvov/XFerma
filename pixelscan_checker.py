@@ -1,5 +1,6 @@
-import requests, base64
+import requests, base64, time, string, random
 from urllib.parse import urlparse, urlunparse
+from config import nodemaven_proxy_pw, nodemaven_proxy_port, nodemaven_proxy_login, nodemaven_proxy_server
 
 headers = {
     "Accept": "*/*",
@@ -16,6 +17,7 @@ headers = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:144.0) Gecko/20100101 Firefox/144.0"
 }
 
+pixelscan_url = 'https://936665286.extension.pixelscan.net/'
 
 def parse_proxy_string(ps: str):
     """
@@ -73,57 +75,102 @@ def make_proxy_auth_header(username, password):
     b64 = base64.b64encode(pair).decode()
     return f"Basic {b64}"
 
-def proxy_check(proxy_string: str, url: str, timeout: float = 15.0):
-    info = parse_proxy_string(proxy_string)
-    proxies = build_proxy_dict(info)
-    auth_header = make_proxy_auth_header(info["username"], info["password"])
-    headers["Proxy-Authorization"] = auth_header
+def proxy_check(proxy_string: str, timeout: float = 15.0, triple_check: bool = False):
+    """
+    Проверяет прокси через PixelScan.
+    Если triple_check=True — выполняет до 3 попыток,
+    но только в случае неуспеха предыдущей проверки.
+    """
 
-    print("== Proxy info ==")
-    print(f" proxy_url: {info['proxy_url']}")
-    print(f" username: {info['username']!r}")
-    print(f" password: {'***' if info['password'] else None}")
-    print()
+    def _single_check():
+        info = parse_proxy_string(proxy_string)
+        proxies = build_proxy_dict(info)
+        auth_header = make_proxy_auth_header(info["username"], info["password"])
+        headers["Proxy-Authorization"] = auth_header
 
-    try:
-        print(f"-> GET {url} via proxy (timeout {timeout}s)")
-        resp = requests.get(url, headers=headers, proxies=proxies, timeout=timeout)
-    except requests.exceptions.ProxyError as e:
-        print("ProxyError:", e)
-        return {"ok": False, "error": "proxy_error", "exception": str(e)}
-    except requests.exceptions.ConnectTimeout as e:
-        print("ConnectTimeout:", e)
-        return {"ok": False, "error": "timeout", "exception": str(e)}
-    except requests.exceptions.SSLError as e:
-        print("SSLError:", e)
-        return {"ok": False, "error": "ssl_error", "exception": str(e)}
-    except Exception as e:
-        print("Other error:", e)
-        return {"ok": False, "error": "other", "exception": str(e)}
+        print("== Proxy info ==")
+        print(f" proxy_url: {info['proxy_url']}")
+        print(f" username: {info['username']!r}")
+        print(f" password: {'***' if info['password'] else None}\n")
 
-    # Выводим результат
-    print("== Result ==")
-    print("status_code:", resp.status_code)
-    print("elapsed:", resp.elapsed)
+        try:
+            print(f"-> GET {pixelscan_url} via proxy (timeout {timeout}s)")
+            resp = requests.get(pixelscan_url, headers=headers, proxies=proxies, timeout=timeout)
+        except requests.exceptions.ProxyError as e:
+            print("ProxyError:", e)
+            return {"ok": False, "error": "proxy_error", "exception": str(e)}
+        except requests.exceptions.ConnectTimeout as e:
+            print("ConnectTimeout:", e)
+            return {"ok": False, "error": "timeout", "exception": str(e)}
+        except requests.exceptions.SSLError as e:
+            print("SSLError:", e)
+            return {"ok": False, "error": "ssl_error", "exception": str(e)}
+        except Exception as e:
+            print("Other error:", e)
+            return {"ok": False, "error": "other", "exception": str(e)}
 
-    analyze = resp.json()
+        print("== Result ==")
+        print("status_code:", resp.status_code)
+        print("elapsed:", resp.elapsed)
 
-    print("proxy_ip:", analyze['ip'])
-    print("proxy_score:", analyze['score'])
-    print("proxy_quality:", analyze['quality'])
+        try:
+            analyze = resp.json()
+        except Exception:
+            return {"ok": False, "error": "invalid_json"}
 
-    return {
-        "ok": True,
-        "status_code": resp.status_code,
-        "elapsed": resp.elapsed.total_seconds(),
-        "proxy_ip": analyze['ip'],
-        "proxy_score": analyze['score'],
-        "proxy_quality": analyze['quality']
-    }
+        print("proxy_ip:", analyze.get('ip'))
+        print("proxy_score:", analyze.get('score'))
+        print("proxy_quality:", analyze.get('quality'))
+
+        return {
+            "ok": True,
+            "status_code": resp.status_code,
+            "elapsed": resp.elapsed.total_seconds(),
+            "proxy_ip": analyze.get('ip'),
+            "proxy_score": analyze.get('score'),
+            "proxy_quality": analyze.get('quality')
+        }
+
+    # --- Первая проверка ---
+    result = _single_check()
+
+    # Если всё ок — сразу возвращаем
+    if result["ok"] or not triple_check:
+        return result
+
+    # --- Повторные попытки (максимум 2 дополнительно) ---
+    print("\n❗ Proxy failed — starting triple-check mode...\n")
+
+    for attempt in range(2):   # 2 доп. попытки = всего 3
+        print(f"🔁 Retry attempt {attempt + 2}/3...\n")
+        time.sleep(1)
+        new_result = _single_check()
+
+        if new_result["ok"]:
+            return new_result
+
+        result = new_result
+
+    return result  # последний результат (неуспешный)
+
+
+def get_proxy_by_sid(sid):
+    return f"{nodemaven_proxy_login.format(sid)}:{nodemaven_proxy_pw}@{nodemaven_proxy_server}:{nodemaven_proxy_port}"
+
+
+def generate_valid_sid_nodemaven_proxy(length=13):
+    hex_chars = string.hexdigits.lower()
+    while True:
+        sid = ''.join(random.choice(hex_chars) for _ in range(length))
+        proxy_analyze = proxy_check(make_proxy_str_for_pixelscan(get_proxy_by_sid(sid)))
+        if proxy_analyze['ok']:
+            return sid
+
+def make_proxy_str_for_pixelscan(proxy):
+    return f"http://{proxy}"
 
 
 if __name__ == '__main__':
-    pixelscan_url = 'https://936665286.extension.pixelscan.net/'
-    proxy_str = 'http://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-865a112cf3f84-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
-    proxy_check(proxy_str, pixelscan_url)
+    proxy_str = 'http://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-72b6aba8ac8a5-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
+    proxy_check(proxy_str)
 

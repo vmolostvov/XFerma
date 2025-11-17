@@ -595,10 +595,12 @@ class xFerma:
                 logger.info(f"[FOLLOW] Аккаунт {src['screen_name']} выполняет подписку на {dst_uid['screen_name'] or dst_screen_name} !")
                 if dst_uid:
                     res = twitter_search.user_friendship(src, "follow", user_id=dst_uid["uid"])
-                    print(res)
+                    if not res:
+                        raise
                 elif dst_screen_name:
                     res = twitter_search.user_friendship(src, "follow", screen_name=dst_screen_name)
-                    print(res)
+                    if not res:
+                        raise
 
                 if res == 'ban':
                     logger.info(f"[FOLLOW] Аккаунт {src['screen_name']} вероятно забанен!")
@@ -617,7 +619,6 @@ class xFerma:
                 break
 
         except Exception as e:
-            print(traceback.format_exc())
             logger.exception(f"[FOLLOW] Ошибка follow: {e}")
             raise
 
@@ -771,83 +772,50 @@ class xFerma:
             db.delete_banned_by_uid(acc_data["uid"])
 
     def regenerate_acc_object(self, twitter_working_account, new_proxy=False):
-        logger.info(
-            f"[REGEN] Начинаю регенерацию аккаунта @{twitter_working_account.get('screen_name')} "
-            f"(new_proxy={new_proxy})"
-        )
+        screen_name = twitter_working_account.get("screen_name")
+        uid = twitter_working_account.get("uid")
 
-        sid = None
+        logger.info(f"[REGEN] Регенерирую аккаунт @{screen_name}")
 
-        # --- Генерация нового прокси ---
+        # ---- 1. Выдать новый прокси ----
+        if new_proxy:
+            sid = generate_valid_sid_nodemaven_proxy()
+            new_proxy_value = get_proxy_by_sid(sid)
+            twitter_working_account["proxy"] = new_proxy_value
+            logger.info(f"[REGEN] @{screen_name} → новый прокси SID={sid}")
+
+        # ---- 2. Обновляем сессию аккаунта ----
+        result = process_account(twitter_working_account)
+
+        if not result["account"]:
+            logger.warning(f"[REGEN] @{screen_name} — не удалось обновить сессию")
+            return result
+
+        updated_acc = result["account"]
+
+        # ---- 3. Обновляем поля в self.x_accounts_data ----
+        updated = False
+        for acc in self.x_accounts_data:
+            if acc["uid"] == uid:  # ← идентификация по UID
+                acc["session"] = updated_acc["session"]
+                acc["proxy"] = updated_acc["proxy"]
+                updated = True
+                logger.info(f"[REGEN] @{screen_name} данные обновлены в x_accounts_data")
+                break
+
+        if not updated:
+            logger.warning(f"[REGEN] @{screen_name} не найден в x_accounts_data — добавляю")
+            self.x_accounts_data.append(updated_acc)
+
+        # ---- 4. Обновление прокси в базе ----
         if new_proxy:
             try:
-                sid = generate_valid_sid_nodemaven_proxy()
-                old_proxy = twitter_working_account.get("proxy")
-                twitter_working_account['proxy'] = get_proxy_by_sid(sid)
-
-                logger.info(
-                    f"[REGEN] Новый SID: {sid} | Старый proxy: {old_proxy} | Новый proxy: {twitter_working_account['proxy']}"
-                )
+                db.update_proxy(uid, sid)
+                logger.info(f"[REGEN] @{screen_name} proxy SID обновлён в базе")
             except Exception:
-                logger.exception(
-                    f"[REGEN] Ошибка при генерации нового прокси для @{twitter_working_account.get('screen_name')}"
-                )
-                return None
+                logger.exception(f"[REGEN] Ошибка update_proxy для @{screen_name}")
 
-        # --- Попытка восстановить объект аккаунта ---
-        try:
-            new_acc_object = process_account(twitter_working_account)
-        except Exception:
-            logger.exception(
-                f"[REGEN] process_account упал для @{twitter_working_account.get('screen_name')}"
-            )
-            return None
-
-        status = new_acc_object.get("status")
-        logger.info(
-            f"[REGEN] Результат process_account для @{twitter_working_account.get('screen_name')}: status={status}"
-        )
-
-        # --- Успешная регенерация ---
-        if new_acc_object.get('account'):
-            try:
-                if new_proxy:
-                    old_obj = twitter_working_account
-                    old_obj['proxy'] = old_proxy
-                    self.x_accounts_data[self.x_accounts_data.index(old_obj)] = new_acc_object.get('account')
-                else:
-                    self.x_accounts_data[self.x_accounts_data.index(twitter_working_account)] = new_acc_object.get('account')
-
-                logger.info(
-                    f"[REGEN] Аккаунт @{twitter_working_account.get('screen_name')} успешно обновлен "
-                    f"в self.x_accounts_data (status={status})"
-                )
-
-                if new_proxy:
-                    try:
-                        db.update_proxy(new_acc_object['account']['uid'], sid)
-                        logger.info(
-                            f"[REGEN] Прокси обновлен в базе для UID={new_acc_object['account']['uid']} SID={sid}"
-                        )
-                    except Exception:
-                        logger.exception(
-                            f"[REGEN] Ошибка update_proxy в базе для UID={new_acc_object['account']['uid']}"
-                        )
-
-                return new_acc_object
-
-            except Exception:
-                logger.exception(
-                    f"[REGEN] Ошибка при обновлении self.x_accounts_data для @{twitter_working_account.get('screen_name')}"
-                )
-                return None
-
-        else:
-            logger.warning(
-                f"[REGEN] Регенерация не удалась — process_account вернул пустой account для "
-                f"@{twitter_working_account.get('screen_name')}, status={status}"
-            )
-            return None
+        return result
 
 
     def accounts_health_test(self, accs):

@@ -2,9 +2,9 @@ import requests, json, os, datetime, time, random, urllib.parse, concurrent.futu
 from multiprocessing.managers import SyncManager
 from alarm_bot import admin_signal, admin_error
 from tweeterpyapi import load_accounts_tweeterpy
-from config import parse_accounts_to_list, make_proxy_str_for_pixelscan, get_proxy_by_sid, generate_sid_nodemaven_proxy
+from config import parse_accounts_to_list
 from requests.exceptions import ReadTimeout, ProxyError, ConnectTimeout, SSLError
-from pixelscan_checker import proxy_check
+from pixelscan_checker import proxy_check, make_proxy_str_for_pixelscan
 
 twitter_url = 'twitter.com/'
 

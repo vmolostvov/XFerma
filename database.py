@@ -2,7 +2,8 @@ from typing import Iterable, Sequence, Tuple, Dict, List, Optional, Set
 from datetime import datetime, timedelta, timezone
 import psycopg, platform, logging, random, json
 from psycopg.rows import dict_row
-from config import DB_PORT, DB_HOST_SERVER, DB_HOST_LOCAL, DB_PASSWORD, DB_BASE_NAME, DB_USERNAME, get_proxy_by_sid
+from config import DB_PORT, DB_HOST_SERVER, DB_HOST_LOCAL, DB_PASSWORD, DB_BASE_NAME, DB_USERNAME
+from pixelscan_checker import get_proxy_by_sid
 from zoneinfo import ZoneInfo
 
 MOS_TZ = ZoneInfo("Europe/Moscow")

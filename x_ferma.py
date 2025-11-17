@@ -811,8 +811,12 @@ class xFerma:
         # --- Успешная регенерация ---
         if new_acc_object.get('account'):
             try:
-                old_obj = twitter_working_account
-                self.x_accounts_data[self.x_accounts_data.index(twitter_working_account)] = new_acc_object.get('account')
+                if new_proxy:
+                    old_obj = twitter_working_account
+                    old_obj['proxy'] = old_proxy
+                    self.x_accounts_data[self.x_accounts_data.index(old_obj)] = new_acc_object.get('account')
+                else:
+                    self.x_accounts_data[self.x_accounts_data.index(twitter_working_account)] = new_acc_object.get('account')
 
                 logger.info(
                     f"[REGEN] Аккаунт @{twitter_working_account.get('screen_name')} успешно обновлен "

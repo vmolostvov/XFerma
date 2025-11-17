@@ -143,7 +143,7 @@ def proxy_check(proxy_string: str, timeout: float = 15.0, triple_check: bool = F
 
     for attempt in range(2):   # 2 доп. попытки = всего 3
         print(f"🔁 Retry attempt {attempt + 2}/3...\n")
-        time.sleep(1)
+        time.sleep(10)
         new_result = _single_check()
 
         if new_result["ok"]:
@@ -171,6 +171,6 @@ def make_proxy_str_for_pixelscan(proxy):
 
 
 if __name__ == '__main__':
-    proxy_str = 'http://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-72b6aba8ac8a5-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
+    proxy_str = 'http://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-d13c67a320694-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
     proxy_check(proxy_str)
 

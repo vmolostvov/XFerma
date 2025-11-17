@@ -3,7 +3,7 @@ from multiprocessing.managers import SyncManager
 from alarm_bot import admin_signal, admin_error
 from tweeterpyapi import load_accounts_tweeterpy
 from config import parse_accounts_to_list, make_proxy_str_for_pixelscan, get_proxy_by_sid, generate_sid_nodemaven_proxy
-from requests.exceptions import ReadTimeout, ProxyError, ConnectTimeout
+from requests.exceptions import ReadTimeout, ProxyError, ConnectTimeout, SSLError
 from pixelscan_checker import proxy_check
 
 twitter_url = 'twitter.com/'
@@ -510,7 +510,7 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
             params['fieldToggles'] = json_to_str(toggles)
 
     # request
-    for i in range(3):
+    for i in range(4):
 
         if api_endpoint != 'Following' and not use_current_acc and not twitter_working_account:
             twitter_working_account = get_next_acc2()
@@ -567,14 +567,15 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
                     if 'Authorization: Denied by access control' in str(response):
                         print(response)
 
-                except (ReadTimeout, ProxyError, ConnectTimeout, OSError):
+                except (ReadTimeout, ProxyError, ConnectTimeout, OSError, SSLError, ConnectionError):
                     response = {}
-                    print(f'Error while sending request to X api! Acc name: {twitter_working_account["screen_name"]}')
-                    proxy_analyze = proxy_check(make_proxy_str_for_pixelscan(twitter_working_account['proxy']), triple_check=True)
-                    if proxy_analyze['ok']:
-                        continue
-                    else:
-                        return 'proxy_dead'
+                    if i == 1:
+                        print(f'Error while sending request to X api! Acc name: {twitter_working_account["screen_name"]}')
+                        proxy_analyze = proxy_check(make_proxy_str_for_pixelscan(twitter_working_account['proxy']), triple_check=True)
+                        if proxy_analyze['ok']:
+                            continue
+                        else:
+                            return 'proxy_dead'
 
                 response['twitter_working_account'] = twitter_working_account['screen_name']
 
@@ -587,6 +588,7 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
         except Exception as error:
             trace = traceback.format_exc()
             print(trace)
+            time.sleep(1.5)
             # json.decoder.JSONDecodeError, ValueError ==> most likely problem with twitter account, need to use another account
 
             # if 'SearchQueryParsingException' in str(error):
@@ -1478,7 +1480,7 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
 
             js = response.json()
 
-        except ConnectTimeout as e:
+        except (ConnectTimeout, ReadTimeout, ProxyError, SSLError, ConnectionError, OSError) as e:
             print(error)
             attempts += 1
             if attempts >=3:

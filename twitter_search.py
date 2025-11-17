@@ -1481,7 +1481,7 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
             js = response.json()
 
         except (ConnectTimeout, ReadTimeout, ProxyError, SSLError, ConnectionError, OSError) as e:
-            print(error)
+            print(e)
             attempts += 1
             if attempts >=3:
                 print(f'Error while sending request to X api! Acc name: {twitter_working_account["screen_name"]}')

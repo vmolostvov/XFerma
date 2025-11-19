@@ -235,6 +235,7 @@ def process_account(acc):
                     if _ == 99:
                         logger.exception(f"[ACC] connection error 5 times for @{acc['screen_name']}")
                         return {"status": "conn_error", "account": None}
+                    print(f'acc: {acc['screen_name']}; proxy: {acc['proxy']}')
                     time.sleep(1)
             except KeyError:
                 logger.warning(f"[ACC] @{acc['screen_name']} вероятно забанен")

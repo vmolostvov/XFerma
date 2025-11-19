@@ -205,7 +205,7 @@ def process_account(acc):
 
         session_refreshed = False
 
-        for _ in range(5):
+        for _ in range(100):
             try:
                 tw_cl.get_user_data('elonmusk')
                 logger.info(f"[ACC] @{acc['screen_name']} session is OK")
@@ -232,10 +232,10 @@ def process_account(acc):
                     session_refreshed = True
                     time.sleep(2)
                 else:
-                    if _ == 4:
+                    if _ == 99:
                         logger.exception(f"[ACC] connection error 5 times for @{acc['screen_name']}")
                         return {"status": "conn_error", "account": None}
-                    time.sleep(5)
+                    time.sleep(1)
             except KeyError:
                 logger.warning(f"[ACC] @{acc['screen_name']} вероятно забанен")
                 try:

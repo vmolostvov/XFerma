@@ -210,7 +210,7 @@ def process_account(acc):
                 tw_cl.get_user_data('elonmusk')
                 logger.info(f"[ACC] @{acc['screen_name']} session is OK")
                 break
-            except (ConnectionError, AttributeError):
+            except (ConnectionError, AttributeError, ReadTimeout, TimeoutError):
                 trace = traceback.format_exc()
                 if (('Connection aborted' in trace and 'Remote end closed connection without response' in trace) or
                         "'Retry' object has no attribute 'backoff_max'" in trace):
@@ -291,16 +291,24 @@ def load_accounts_tweeterpy(mode, how_many_accounts=None, load_cookies=False, ac
     batch_size = 10
     batches = ceil(total / batch_size)
 
-    # глобальные счётчики
-    stats = {"total": total, "ok": 0, "session_refreshed": 0, "login_failed": 0, "banned": 0, "conn_error": 0, "init_failed": 0}
+    stats = {
+        "total": total,
+        "ok": 0,
+        "session_refreshed": 0,
+        "login_failed": 0,
+        "banned": 0,
+        "conn_error": 0,
+        "init_failed": 0,
+    }
 
-    # будем заменять элементы исходного списка результатами сессий
+    all_ready_accounts = []  # <– сюда собираем только рабочие аккаунты
+
     for i in range(batches):
         start = i * batch_size
         end = min(start + batch_size, total)
         accounts_batch = twitter_working_accounts[start:end]
 
-        logger.info(f"[LOAD] batch {i+1}/{batches}: accounts {start+1}-{end} of {total}")
+        logger.info(f"[LOAD] batch {i + 1}/{batches}: accounts {start + 1}-{end} of {total}")
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             results = list(executor.map(process_account, accounts_batch))
@@ -309,23 +317,21 @@ def load_accounts_tweeterpy(mode, how_many_accounts=None, load_cookies=False, ac
         for r in results:
             stats[r["status"]] = stats.get(r["status"], 0) + 1
 
-        # оставим только успешные (есть account с session)
+        # оставим только успешные и добавим в общий список
         ready_accounts = [r["account"] for r in results if r["account"] is not None]
-
-        # запишем обратно в основной список только готовые
-        twitter_working_accounts[start:end] = ready_accounts
+        all_ready_accounts.extend(ready_accounts)
 
         logger.info(
-            f"[LOAD][batch {i+1}] ok={sum(1 for r in results if r['status']=='ok')} | "
-            f"refreshed={sum(1 for r in results if r['status']=='session_refreshed')} | "
-            f"login_failed={sum(1 for r in results if r['status']=='login_failed')} | "
-            f"banned={sum(1 for r in results if r['status']=='banned')} | "
-            f"conn_error={sum(1 for r in results if r['status']=='conn_error')} | "
-            f"init_failed={sum(1 for r in results if r['status']=='init_failed')}"
+            f"[LOAD][batch {i + 1}] ok={sum(1 for r in results if r['status'] == 'ok')} | "
+            f"refreshed={sum(1 for r in results if r['status'] == 'session_refreshed')} | "
+            f"login_failed={sum(1 for r in results if r['status'] == 'login_failed')} | "
+            f"banned={sum(1 for r in results if r['status'] == 'banned')} | "
+            f"conn_error={sum(1 for r in results if r['status'] == 'conn_error')} | "
+            f"init_failed={sum(1 for r in results if r['status'] == 'init_failed')}"
         )
 
-    # сплющим список (после замены батчами могут быть "дыры")
-    twitter_working_accounts = [acc for acc in twitter_working_accounts if acc]
+    # вместо мутирования исходного списка
+    twitter_working_accounts = all_ready_accounts
 
     if load_cookies:
         for acc in twitter_working_accounts:

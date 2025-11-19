@@ -105,11 +105,11 @@ def parse_accounts_to_list(file_path='x_accs.txt'):
 
                 # --- Парсим аккаунт ---
                 account_split = account_part.split(':')
-                if len(account_split) < 6:
+                if len(account_split) < 5:
                     raise ValueError("Недостаточно данных в account_part")
 
                 # Берём только первые 5 элемента, остальное игнорируем
-                screen_name, password, email, email_pw, mobile, auth_token = account_split[:6]
+                screen_name, password, email, email_pw, auth_token = account_split[:5]
 
                 # --- Парсим прокси ---
                 proxy_split = proxy_part.split(':')

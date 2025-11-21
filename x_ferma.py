@@ -48,7 +48,7 @@ class xFerma:
         self.mode = mode
 
         if self.mode == 'set_up':
-            # save_cookies_and_sess_with_timeout()
+            save_cookies_and_sess_with_timeout()
             self.x_accounts_data = load_accounts_tweeterpy(mode=self.mode, load_cookies=True)
             self.x_banned_accounts_data = db.get_banned_accounts()
             logger.info("INIT: mode=set_up, загружаю аккаунты и запускаю set_up_new_accounts()")

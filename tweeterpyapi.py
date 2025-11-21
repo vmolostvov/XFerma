@@ -212,6 +212,7 @@ def process_account(acc):
                 break
             except (ConnectionError, AttributeError, ReadTimeout, TimeoutError):
                 trace = traceback.format_exc()
+                print(trace)
                 if (('Connection aborted' in trace and 'Remote end closed connection without response' in trace) or
                         "'Retry' object has no attribute 'backoff_max'" in trace):
                     logger.warning(f"[ACC] @{acc['screen_name']} session outdated → refreshing…")

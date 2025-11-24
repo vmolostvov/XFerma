@@ -79,6 +79,18 @@ class Database:
             cur.execute(sql, (proxy, uid))
             return cur.fetchone() is not None
 
+    def update_pw(self, uid: str, pw: str) -> bool:
+        sql = "UPDATE X_FERMA SET pass = %s, pass_changed = True WHERE uid = %s RETURNING uid;"
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute(sql, (pw, uid))
+            return cur.fetchone() is not None
+
+    def update_auth(self, uid: str, auth_token: str) -> bool:
+        sql = "UPDATE X_FERMA SET auth_token = %s WHERE uid = %s RETURNING uid;"
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute(sql, (auth_token, uid))
+            return cur.fetchone() is not None
+
     def update_is_banned(self, uid: str) -> bool:
         sql = "UPDATE X_FERMA SET is_banned = TRUE WHERE uid = %s RETURNING uid;"
         with self._conn() as conn, conn.cursor() as cur:
@@ -130,48 +142,64 @@ class Database:
     def get_working_accounts(
             self,
             count: int | None = None,
-            screen_name: str | None = None
+            screen_name: str | None = None,
+            pw_change_mode: bool = False
     ) -> List[dict]:
         """
-        Возвращает активные аккаунты из X_FERMA.
-        Если count=None → вернёт все.
-        Если передан screen_name → вернёт даже заблокированные/инфлюенсеров.
+        Возвращает аккаунты из X_FERMA.
+
+        Если screen_name указан → возвращает конкретный аккаунт,
+          игнорируя is_banned / is_influencer / pass_changed.
+
+        Если screen_name НЕ указан → применяется обычная логика выборки рабочих аккаунтов.
+          Если pw_change_mode=True → добавляется фильтр pass_changed IS NOT TRUE.
         """
+
+        # --- 1. Режим выборки по одному username ---
         if screen_name:
-            # без фильтров is_banned / is_influencer
             base_sql = """
-                SELECT uid, username AS screen_name, ua, proxy, auth_token
+                SELECT uid, username AS screen_name, ua, proxy, auth_token, pass
                 FROM X_FERMA
                 WHERE LOWER(username) = LOWER(%s)
                 ORDER BY addition_date DESC
             """
             params = [screen_name]
+
+        # --- 2. Режим обычной выборки аккаунтов ---
         else:
-            # обычный запрос для рабочих аккаунтов
             base_sql = """
-                SELECT uid, username AS screen_name, ua, proxy, auth_token
+                SELECT uid, username AS screen_name, ua, proxy, auth_token, pass
                 FROM X_FERMA
                 WHERE is_banned IS NOT TRUE
                   AND is_influencer IS NOT TRUE
-                ORDER BY addition_date DESC
             """
             params = []
 
+            # Добавляем фильтр pass_changed IS NOT TRUE, если включён режим смены пароля
+            if pw_change_mode:
+                base_sql += " AND pass_changed IS NOT TRUE"
+
+            base_sql += " ORDER BY addition_date DESC"
+
+        # --- 3. Лимит ---
         if count is not None:
             base_sql += " LIMIT %s"
             params.append(count)
 
+        # --- 4. Выполняем запрос ---
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute(base_sql, tuple(params))
             rows = cur.fetchall()
 
+        # --- 5. Приводим к нужному формату ---
         return [
             {
                 "uid": r["uid"],
                 "screen_name": r["screen_name"],
                 "ua": r.get("ua"),
                 "proxy": get_proxy_by_sid(r.get("proxy")),
-                "auth_token": r.get("auth_token")
+                "auth_token": r.get("auth_token"),
+                "pass": r["pass"]
             }
             for r in rows
         ]

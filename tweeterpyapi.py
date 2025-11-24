@@ -273,6 +273,8 @@ def load_accounts_tweeterpy(mode, how_many_accounts=None, load_cookies=False, ac
         twitter_working_accounts = db.get_working_accounts(how_many_accounts)
     elif mode == 'set_up':
         twitter_working_accounts = parse_accounts_to_list()
+    elif mode == 'pw_change':
+        twitter_working_accounts = db.get_working_accounts(pw_change_mode=True, screen_name=acc_un, count=how_many_accounts)
     elif mode == 'test' and acc_un:
         twitter_working_accounts = db.get_working_accounts(screen_name=acc_un)
     else:
@@ -368,6 +370,24 @@ def load_accounts_tweeterpy(mode, how_many_accounts=None, load_cookies=False, ac
     logger.info("🚀 Запуск фермы...")
 
     return twitter_working_accounts
+
+
+def load_accounts_cookies(mode, acc_un=None, how_many_accounts=None):
+    if mode == 'all':
+        twitter_working_accounts = db.get_working_accounts(how_many_accounts)
+    elif mode == 'one' and acc_un:
+        twitter_working_accounts = db.get_working_accounts(screen_name=acc_un)
+    else:
+        twitter_working_accounts = []
+
+
+    for acc in twitter_working_accounts:
+        acc['cookies_dict'] = load_cookies_for_twitter_account_from_file(
+            f'x_accs_cookies/{acc["screen_name"]}.json'
+        )
+
+    return twitter_working_accounts
+
 
 
 # def load_accounts_tweeterpy(mode, load_cookies=False):

@@ -5,7 +5,7 @@ import twitter_search
 # from twitter_search import load_accounts_cookies_login
 # from typing import Tuple, List
 from x_media_uploader import upload_and_update_pfp
-from tweeterpyapi import load_accounts_tweeterpy, get_user_data, initialize_client, save_cookies_and_sess_with_timeout, process_account
+from tweeterpyapi import load_accounts_tweeterpy, get_user_data, initialize_client, save_cookies_and_sess_with_timeout, process_account, load_accounts_cookies
 from config import get_random_mob_proxy, parse_cid
 from pixelscan_checker import get_proxy_by_sid, generate_valid_sid_nodemaven_proxy
 # from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -1113,58 +1113,115 @@ def format_duration(seconds: int) -> str:
     hours, minutes = divmod(minutes, 60)
     return f"{hours}h {minutes}m {sec}s"
 
+
 if __name__ == '__main__':
-    if __name__ == '__main__':
-        print("\n🚀  Добро пожаловать в xFerma!")
-        print("Выберите режим работы:")
-        print("  1 — Работа фермы (work)")
-        print("  2 — Настройка новых аккаунтов (set_up)")
-        print("  3 — Тестовый режим (testing)")
-        print("  0 — Выход\n")
 
-        choice = input("👉 Введите номер режима: ").strip()
+    def change_pw_and_save(acc):
+        res, new_pw = twitter_search.change_password(acc)
+        if res.get('status') == 'ok':
+            print(f'✅ Пароль аккаунта {acc["screen_name"]} успешно изменен!')
+            db.update_pw(acc['uid'], new_pw)
 
-        if choice == '1':
-            print("\n▶ Запуск фермы в рабочем режиме...\n")
-            xFerma(mode='work')
+            auth_token_update = False
+            cookies = acc['session'].get_cookies()
+            for cookie in cookies:
+                if 'auth_token' in cookie.name and cookie.value != acc['auth_token']:
+                    print(f'New auth token: {cookie.value}')
+                    db.update_auth(acc['uid'], cookie.value)
+                    acc['auth_token'] = cookie.value
+                    auth_token_update = True
+                    break
 
-        elif choice == '2':
-            print("\n⚙ Настройка новых аккаунтов...\n")
-            xFerma(mode='set_up')
+            if auth_token_update:
+                print(f'✅ Auth-token аккаунта {acc["screen_name"]} успешно изменен!')
+                save_cookies_and_sess_with_timeout(acc)
 
-
-        elif choice == '3':
-            print("\n🧪 Тестовый режим...\n")
-            print("  1 — Health-test аккаунта (load & view tweet)")
-            print("  2 — Регенерация сессии аккаунта (save_cookies_and_sess)\n")
-
-            choice = input("👉 Введите номер режима: ").strip()
-            ferma = xFerma(mode='test')
-
-            if choice == '1':
-                print("\n▶ Запуск режима проверки аккаунтов...\n")
-                acc_un = input("🔹 Введите username тестового аккаунта (без @): ").strip()
-                if not acc_un:
-                    print("❌ Вы не ввели username. Завершение работы.")
-                else:
-                    acc = load_accounts_tweeterpy(mode='test', acc_un=acc_un)
-                    ferma.accounts_health_test(acc)
-
-            elif choice == '2':
-                print("\n⚙ Запуск режима регенерации сессии аккаунта...\n")
-                acc_un = input("🔹 Введите username тестового аккаунта (без @): ").strip()
-                if not acc_un:
-                    print("❌ Вы не ввели username. Завершение работы.")
-                else:
-                    accs = db.get_working_accounts(screen_name=acc_un)
-                    save_cookies_and_sess_with_timeout(outdated_session=accs[0])
-
-
-        elif choice == '0':
-            print("\n👋 Выход из программы. До встречи!")
-            exit(0)
+            else:
+                print(f"❌ Ошибка при попытке обновить auth-token на аккаунте {acc['screen_name']}")
 
         else:
-            print("\n❌ Неверный выбор. Перезапустите программу и выберите правильный режим.")
+            print(f"❌ Ошибка при попытке изменить пароль на аккаунте {acc['screen_name']}")
 
-    """OSError: Tunnel connection failed: 503 Service Unavailable"""
+
+    print("\n🚀  Добро пожаловать в xFerma!")
+    print("Выберите режим работы:")
+    print("  1 — Работа фермы (work)")
+    print("  2 — Настройка новых аккаунтов (set_up)")
+    print("  3 — Тестовый режим (testing)")
+    print("  4 — Смена пароля")
+    print("  0 — Выход\n")
+
+    choice = input("👉 Введите номер режима: ").strip()
+
+    if choice == '1':
+        print("\n▶ Запуск фермы в рабочем режиме...\n")
+        xFerma(mode='work')
+
+    elif choice == '2':
+        print("\n⚙ Настройка новых аккаунтов...\n")
+        xFerma(mode='set_up')
+
+
+    elif choice == '3':
+        print("\n🧪 Тестовый режим...\n")
+        print("  1 — Health-test аккаунта (load & view tweet)")
+        print("  2 — Регенерация сессии аккаунта (save_cookies_and_sess)\n")
+
+        choice = input("👉 Введите номер режима: ").strip()
+        ferma = xFerma(mode='test')
+
+        if choice == '1':
+            print("\n▶ Запуск режима проверки аккаунтов...\n")
+            acc_un = input("🔹 Введите username тестового аккаунта (без @): ").strip()
+            if not acc_un:
+                print("❌ Вы не ввели username. Завершение работы.")
+            else:
+                accs = load_accounts_tweeterpy(mode='test', acc_un=acc_un)
+                ferma.accounts_health_test(accs)
+
+        elif choice == '2':
+            print("\n⚙ Запуск режима регенерации сессии аккаунта...\n")
+            acc_un = input("🔹 Введите username тестового аккаунта (без @): ").strip()
+            if not acc_un:
+                print("❌ Вы не ввели username. Завершение работы.")
+            else:
+                accs = db.get_working_accounts(screen_name=acc_un)
+                save_cookies_and_sess_with_timeout(outdated_session=accs[0])
+
+    elif choice == '4':
+        print("\n🔐 Режим смены пароля\n")
+        print("  1 — Смена пароля только у одного аккаунта")
+        print("  2 — Смена пароля у всех аккаунтов\n")
+
+        pw_choice = input("👉 Введите номер режима смены пароля: ").strip()
+
+        if pw_choice == '1':
+            acc_un = input("🔹 Введите username аккаунта (без @): ").strip()
+            if not acc_un:
+                print("❌ Вы не ввели username. Завершение работы.")
+            else:
+                # accs = load_accounts_cookies(mode='one', acc_un=acc_un)
+                accs = load_accounts_tweeterpy(mode='pw_change', acc_un=acc_un)
+                change_pw_and_save(accs[0])
+
+        elif pw_choice == '2':
+            confirm = input("⚠ Ты уверен, что хочешь сменить пароли у ВСЕХ аккаунтов? (yes/no): ").strip().lower()
+            if confirm == 'yes':
+                accs = load_accounts_tweeterpy(mode='pw_change', how_many_accounts=10)
+                for acc in accs:
+                    change_pw_and_save(acc)
+            else:
+                print("❌ Операция отменена.")
+
+        else:
+            print("\n❌ Неверный выбор режима смены пароля.")
+
+
+    elif choice == '0':
+        print("\n👋 Выход из программы. До встречи!")
+        exit(0)
+
+    else:
+        print("\n❌ Неверный выбор. Перезапустите программу и выберите правильный режим.")
+
+"""OSError: Tunnel connection failed: 503 Service Unavailable"""

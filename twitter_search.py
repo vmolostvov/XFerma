@@ -2,7 +2,7 @@ import requests, json, os, datetime, time, random, urllib.parse, concurrent.futu
 from multiprocessing.managers import SyncManager
 from alarm_bot import admin_signal, admin_error
 from tweeterpyapi import load_accounts_tweeterpy
-from config import parse_accounts_to_list
+from config import parse_accounts_to_list, generate_password
 from requests.exceptions import ReadTimeout, ProxyError, ConnectTimeout, SSLError
 from pixelscan_checker import proxy_check, make_proxy_str_for_pixelscan
 
@@ -491,13 +491,15 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
         base_url = "https://x.com/i/api/graphql/Q0m4wAWzUFfjoQY7CXIXrQ/CreateTweet"
     elif api_endpoint == "change_profile":
         base_url = "https://api.x.com/1.1/account/update_profile.json"
+    elif api_endpoint == "change_pw":
+        base_url = "https://x.com/i/api/i/account/change_password.json"
     elif api_endpoint == "HomeTimeline":
         base_url = "https://x.com/i/api/graphql/c2y7UsmgbMG6b5rbyJDbvA/HomeTimeline"
     elif api_endpoint == "TweetResultByRestId":
         base_url = "https://api.x.com/graphql/yPpn5PIbqek0bMkNb9ufOQ/TweetResultByRestId"
 
     params = None
-    if api_endpoint not in ['FavoriteTweet', 'CreateRetweet', 'CreateBookmark', 'View', 'change_profile']:
+    if api_endpoint not in ['FavoriteTweet', 'CreateRetweet', 'CreateBookmark', 'View', 'change_profile', 'change_pw']:
         # params
         params = {
             "variables": json_to_str(variables),
@@ -550,7 +552,7 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
                     headers['content-type'] = 'application/x-www-form-urlencoded'
 
                 try:
-                    if api_endpoint in ['View', 'change_profile']:
+                    if api_endpoint in ['View', 'change_profile', 'change_pw']:
                         # print('base url', base_url)
                         # print('headers', headers)
                         # print('variables', variables)
@@ -1569,6 +1571,21 @@ def user_friendship(twitter_working_account, action, user_id="", screen_name="")
         return response.json()
     except AttributeError:
         return None
+
+
+def change_password(twitter_working_account):
+    new_pass = generate_password()
+
+    params = {
+        'current_password': twitter_working_account['pass'],
+        'password': new_pass,
+        'password_confirmation': new_pass
+    }
+
+    # response = twitter_api_v1_1_call(twitter_working_account, method, url, params=params)
+    res = twitter_api_call('change_pw', twitter_working_account=twitter_working_account, variables=params, features={})
+
+    return res, new_pass
 
 
 def account_notifications(twitter_working_account, action, settings={}):

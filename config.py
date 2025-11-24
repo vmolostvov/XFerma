@@ -1,4 +1,4 @@
-import random, re, aiohttp
+import random, re, aiohttp, string
 
 # database
 
@@ -36,8 +36,13 @@ nodemaven_proxy_port = '8080'
 nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-{}-filter-medium'
 # nodemaven_proxy_login = 'https://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-3e85cb8c21534-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
 # nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-72bb3f092ba04-filter-medium'
-# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-72bb3f092ba04-filter-medium'
+# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-6f56d96c3a1b4-filter-medium'
 nodemaven_proxy_pw = 'e3ibl6cpq4'
+
+def generate_password(length=20):
+    chars = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(random.choice(chars) for _ in range(length))
+    return password
 
 def get_random_mob_proxy():
     proxy = random.choices(population=nodemaven_mob_proxy_data)[0]

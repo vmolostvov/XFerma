@@ -496,16 +496,31 @@ class xFerma:
                         logger.exception("[LIFE] ошибка process_follow_edges")
 
                     # жизнь аккаунтов
-                    for x_working_acc in self.x_accounts_data.copy():
+                    for x_working_acc in list(self.x_accounts_data):
                         logger.info(f"[ACC-LIFE] Работаю с аккаунтом ({x_working_acc['screen_name']}) !")
+
+                        if x_working_acc.get('regen_sess'):
+                            logger.info(f"[ACC-LIFE] Аккаунту ({x_working_acc['screen_name']}) требуется регенерация!")
+                            x_working_acc = self.regenerate_acc_object(x_working_acc)
+                            if not x_working_acc:
+                                continue
+                            x_working_acc['regen_sess'] = False
+
                         timeline = self.get_timeline(x_working_acc)
                         if timeline:
                             res = self.view_all_tweets(timeline, x_working_acc)
-                            if res != 'ban':
-                                if self.random_like_timeline(timeline, x_working_acc) == 'ban':
-                                    self.x_accounts_data.remove(x_working_acc)
-                            else:
+
+                            if res == 'ban':
                                 self.x_accounts_data.remove(x_working_acc)
+                            elif res == 'no_auth':
+                                x_working_acc["regen_sess"] = True
+                            else:
+                                res = self.random_like_timeline(timeline, x_working_acc)
+                                if res == 'ban':
+                                    self.x_accounts_data.remove(x_working_acc)
+                                elif res == 'no_auth':
+                                    x_working_acc["regen_sess"] = True
+
                         time.sleep(1)
                 else:
                     logger.info(f"[SLEEP] Ночь в MOSCOW ({now}), ферма отдыхает")
@@ -531,17 +546,22 @@ class xFerma:
                 tid = t["tweet"]["id"]
                 uid = t["tweet"]["user_id"]
 
-                if self.view(twitter_working_account, tid, uid) == 'ban':
-                    return 'ban'
-                if self.like(twitter_working_account, tid) == 'ban':
-                    return 'ban'
+                view_res = self.view(twitter_working_account, tid, uid)
+                if view_res in ['ban', 'no_auth']:
+                    return view_res
+
+                like_res = self.like(twitter_working_account, tid)
+                if like_res in ['ban', 'no_auth']:
+                    return like_res
 
                 if random.random() < 0.4:
-                    if self.retweet(twitter_working_account, tid) == 'ban':
-                        return 'ban'
+                    rt_res = self.retweet(twitter_working_account, tid)
+                    if rt_res in ['ban', 'no_auth']:
+                        return rt_res
                 if random.random() < 0.15:
-                    if self.bookmark(twitter_working_account, tid) == 'ban':
-                        return 'ban'
+                    bm_res = self.bookmark(twitter_working_account, tid)
+                    if bm_res in ['ban', 'no_auth']:
+                        return bm_res
 
             logger.info(f"[LIKE] Обработано твитов: {len(chosen_tweets)} для @{twitter_working_account.get('screen_name')}")
         except Exception as e:
@@ -570,7 +590,7 @@ class xFerma:
 
                 try:
                     res = self.view(twitter_working_account, tid, uid)
-                    if res == 'ban':
+                    if res in ['ban', 'no_auth']:
                         return res
                     viewed += 1
                 except Exception:
@@ -616,6 +636,14 @@ class xFerma:
                     src = self.regenerate_acc_object(src, new_proxy=True)
                     if src:
                         continue
+                elif res == 'no_auth':
+                    logger.info(f"[VIEW] Аккаунт {src['screen_name']} вероятно нуждается в обновлении сессии!")
+                    # admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_regen_session(src["uid"], True)
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
+                    return 'no_auth'
                 break
 
         except Exception as e:
@@ -641,6 +669,14 @@ class xFerma:
                     twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
                     if twitter_working_account:
                         continue
+                elif res == 'no_auth':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно нуждается в обновлении сессии!")
+                    # admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_regen_session(twitter_working_account["uid"], True)
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
+                    return 'no_auth'
                 break
 
         except Exception as e:
@@ -665,6 +701,14 @@ class xFerma:
                     twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
                     if twitter_working_account:
                         continue
+                elif res == 'no_auth':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно нуждается в обновлении сессии!")
+                    # admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_regen_session(twitter_working_account["uid"], True)
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
+                    return 'no_auth'
                 break
         except Exception as e:
             logger.exception(f"[RT] Ошибка retweet: {e}")
@@ -688,6 +732,14 @@ class xFerma:
                     twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
                     if twitter_working_account:
                         continue
+                elif res == 'no_auth':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно нуждается в обновлении сессии!")
+                    # admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_regen_session(twitter_working_account["uid"], True)
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
+                    return 'no_auth'
                 break
         except Exception as e:
             logger.exception(f"[BM] Ошибка bookmark: {e}")
@@ -709,6 +761,14 @@ class xFerma:
                     twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
                     if twitter_working_account:
                         continue
+                elif res == 'no_auth':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно нуждается в обновлении сессии!")
+                    # admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_regen_session(twitter_working_account["uid"], True)
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
+                    return 'no_auth'
                 break
         except Exception as e:
             logger.exception(f"[REPLY] Ошибка reply: {e}")
@@ -730,6 +790,14 @@ class xFerma:
                     twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
                     if twitter_working_account:
                         continue
+                elif res == 'no_auth':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно нуждается в обновлении сессии!")
+                    # admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_regen_session(twitter_working_account["uid"], True)
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
+                    return 'no_auth'
                 break
         except Exception as e:
             logger.exception(f"[VIEW] Ошибка view: {e}")
@@ -753,6 +821,22 @@ class xFerma:
                     x_working_acc = self.regenerate_acc_object(x_working_acc, new_proxy=True)
                     if x_working_acc:
                         continue
+                elif timeline == 'ban':
+                    logger.info(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно забанен!")
+                    admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно забанен!")
+                    try:
+                        db.update_is_banned(x_working_acc["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
+                    return 'ban'
+                elif timeline == 'no_auth':
+                    logger.info(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    # admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_regen_session(x_working_acc["uid"], True)
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
+                    return 'no_auth'
                 elif timeline:
                     return timeline
                 else:
@@ -771,11 +855,20 @@ class xFerma:
         if delete:
             db.delete_banned_by_uid(acc_data["uid"])
 
-    def regenerate_acc_object(self, twitter_working_account, new_proxy=False):
+    def regenerate_acc_object(self, twitter_working_account, new_proxy=False, new_auth=False):
         screen_name = twitter_working_account.get("screen_name")
         uid = twitter_working_account.get("uid")
 
         logger.info(f"[REGEN] Регенерирую аккаунт @{screen_name}")
+
+        if new_auth:
+            new_auth = db.get_auth_by_uid(uid)
+            if new_auth != twitter_working_account['auth_token']:
+                twitter_working_account['auth_token'] = new_auth
+            else:
+                logger.info(f"[REGEN] Auth-token в базе не обновлен для аккаунта {screen_name}! Возможно сбой в работе Selen-regen скрипта!")
+                admin_error(f"[REGEN] Auth-token в базе не обновлен для аккаунта {screen_name}! Возможно сбой в работе Selen-regen скрипта!")
+                return
 
         # ---- 1. Выдать новый прокси ----
         if new_proxy:

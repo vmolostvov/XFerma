@@ -103,6 +103,12 @@ class Database:
             cur.execute(sql, (screen_name,))
             return cur.fetchone() is not None
 
+    def update_regen_session(self, uid: str, value: bool) -> bool:
+        sql = "UPDATE X_FERMA SET regen_sess = %s WHERE uid = %s RETURNING uid;"
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute(sql, (value, uid))
+            return cur.fetchone() is not None
+
     def delete_banned_by_uid(self, uid: str):
         sql = "DELETE FROM X_FERMA WHERE uid = %s;"
         with self._conn() as conn, conn.cursor() as cur:
@@ -138,6 +144,28 @@ class Database:
             }
             for r in rows
         ]
+
+    def get_auth_by_uid(self, uid: str) -> str | None:
+        """
+        Возвращает auth_token по uid.
+        Если запись не найдена — возвращает None.
+        """
+        sql = """
+            SELECT auth_token
+            FROM X_FERMA
+            WHERE uid = %s
+            LIMIT 1
+        """
+
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute(sql, (uid,))
+            row = cur.fetchone()
+
+        if row:
+            # row — это dict благодаря row_factory=dict_row
+            return row.get("auth_token")
+
+        return None
 
     def get_working_accounts(
             self,

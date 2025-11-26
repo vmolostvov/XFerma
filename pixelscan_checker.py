@@ -17,7 +17,7 @@ headers = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:144.0) Gecko/20100101 Firefox/144.0"
 }
 
-pixelscan_url = 'https://936665286.extension.pixelscan.net/'
+pixelscan_url = 'https://1936645286.extension.pixelscan.net/'
 
 def parse_proxy_string(ps: str):
     """

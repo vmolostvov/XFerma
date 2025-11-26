@@ -573,11 +573,12 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
                     response = {}
                     if i == 1:
                         print(f'Error while sending request to X api! Acc name: {twitter_working_account["screen_name"]}')
-                        proxy_analyze = proxy_check(make_proxy_str_for_pixelscan(twitter_working_account['proxy']), triple_check=True)
-                        if proxy_analyze['ok']:
-                            continue
-                        else:
-                            return 'proxy_dead'
+                        time.sleep(1.5)
+                        # proxy_analyze = proxy_check(make_proxy_str_for_pixelscan(twitter_working_account['proxy']), triple_check=True)
+                        # if proxy_analyze['ok']:
+                        #     continue
+                        # else:
+                        #     return 'proxy_dead'
 
                 response['twitter_working_account'] = twitter_working_account['screen_name']
 
@@ -1487,12 +1488,13 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
             attempts += 1
             if attempts >=3:
                 print(f'Error while sending request to X api! Acc name: {twitter_working_account["screen_name"]}')
-                proxy_analyze = proxy_check(make_proxy_str_for_pixelscan(twitter_working_account['proxy']),
-                                            triple_check=True)
-                if proxy_analyze['ok']:
-                    continue
-                else:
-                    return 'proxy_dead'
+                time.sleep(1.5)
+                # proxy_analyze = proxy_check(make_proxy_str_for_pixelscan(twitter_working_account['proxy']),
+                #                             triple_check=True)
+                # if proxy_analyze['ok']:
+                #     continue
+                # else:
+                #     return 'proxy_dead'
 
         except Exception as error:
             print(error)

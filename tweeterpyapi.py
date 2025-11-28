@@ -195,15 +195,35 @@ def process_account(acc):
         return {"status": "init_failed", "account": None}
 
     try:
-        tw_cl = load_session(tw_cl, acc["screen_name"])
-        if tw_cl.logged_in():
-            logger.info(f"[ACC] @{acc['screen_name']} successfully logged in")
-        else:
-            logger.warning(f"[ACC] Can't log in @{acc['screen_name']}")
-            time.sleep(3)
-            return {"status": "login_failed", "account": None}
-
         session_refreshed = False
+        try:
+            tw_cl = load_session(tw_cl, acc["screen_name"])
+            if tw_cl.logged_in():
+                logger.info(f"[ACC] @{acc['screen_name']} successfully logged in")
+            else:
+                logger.warning(f"[ACC] Can't log in @{acc['screen_name']}")
+                time.sleep(3)
+                return {"status": "login_failed", "account": None}
+        except AttributeError:
+            trace = traceback.format_exc()
+            if "'HTMLParserTreeBuilder' object has no attribute 'attribute_dict_class'" in trace:
+                logger.warning(f"[ACC] @{acc['screen_name']} session outdated → refreshing…")
+
+                # ВАЖНО: генерацию делаем в отдельном процессе с таймаутом+ретраями
+                status = save_cookies_and_sess_with_timeout(
+                    outdated_session=acc,
+                    max_retries=3,
+                    timeout_sec=90,
+                    retry_sleep=3
+                )
+                if status != "ok":
+                    logger.error(f"[ACC] refresh session failed for @{acc['screen_name']} (status={status})")
+                    return {"status": "conn_error", "account": None}
+
+                # после успешной генерации — перезагружаем сессию из файлов
+                tw_cl = load_session(tw_cl, acc["screen_name"])
+                session_refreshed = True
+                time.sleep(2)
 
         for _ in range(100):
             try:

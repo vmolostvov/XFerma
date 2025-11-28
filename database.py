@@ -121,7 +121,7 @@ class Database:
 
     def get_banned_accounts(self) -> List[dict]:
         """
-        Возвращает неактивные аккаунты из X_FERMA.
+        Возвращает забаненые аккаунты из X_FERMA.
         """
         base_sql = """
             SELECT *
@@ -139,6 +139,31 @@ class Database:
                 "screen_name": r["username"],
                 "avatar": r["avatar"],
                 "description_id": r["description_id"],
+                "ua": r.get("ua"),
+                "proxy": get_proxy_by_sid(r.get("proxy")),
+            }
+            for r in rows
+        ]
+
+    def get_regen_sess_accounts(self) -> List[dict]:
+        """
+        Возвращает неактивные аккаунты из X_FERMA.
+        """
+        base_sql = """
+            SELECT *
+            FROM X_FERMA
+            WHERE regen_sess IS TRUE
+        """
+
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute(base_sql)
+            rows = cur.fetchall()
+
+        return [
+            {
+                "uid": r["uid"],
+                "screen_name": r["username"],
+                "pass": r["pass"],
                 "ua": r.get("ua"),
                 "proxy": get_proxy_by_sid(r.get("proxy")),
             }

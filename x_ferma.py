@@ -501,13 +501,18 @@ class xFerma:
 
                         if x_working_acc.get('regen_sess'):
                             logger.info(f"[ACC-LIFE] Аккаунту ({x_working_acc['screen_name']}) требуется регенерация!")
-                            x_working_acc = self.regenerate_acc_object(x_working_acc)
+                            x_working_acc = self.regenerate_acc_object(x_working_acc, new_auth=True)
                             if not x_working_acc:
                                 continue
                             x_working_acc['regen_sess'] = False
 
                         timeline = self.get_timeline(x_working_acc)
-                        if timeline:
+                        if timeline == 'ban':
+                            self.x_accounts_data.remove(x_working_acc)
+                        elif timeline == 'no_auth':
+                            x_working_acc["regen_sess"] = True
+
+                        elif timeline:
                             res = self.view_all_tweets(timeline, x_working_acc)
 
                             if res == 'ban':
@@ -845,6 +850,7 @@ class xFerma:
         except Exception as e:
             logger.exception(f"[TIMELINE] Критическая ошибка в get_timeline: {e}")
 
+        logger.info(x_working_acc)
         logger.warning(f'[TIMELINE] Невозможно получить timeline для аккаунта {x_working_acc["screen_name"]}!')
 
     def clear_acc_info_if_banned(self, acc_data, delete=False):
@@ -865,6 +871,7 @@ class xFerma:
             new_auth = db.get_auth_by_uid(uid)
             if new_auth != twitter_working_account['auth_token']:
                 twitter_working_account['auth_token'] = new_auth
+                save_cookies_and_sess_with_timeout(outdated_session=twitter_working_account)
             else:
                 logger.info(f"[REGEN] Auth-token в базе не обновлен для аккаунта {screen_name}! Возможно сбой в работе Selen-regen скрипта!")
                 admin_error(f"[REGEN] Auth-token в базе не обновлен для аккаунта {screen_name}! Возможно сбой в работе Selen-regen скрипта!")
@@ -882,7 +889,7 @@ class xFerma:
 
         if not result["account"]:
             logger.warning(f"[REGEN] @{screen_name} — не удалось обновить сессию")
-            return result
+            return None
 
         updated_acc = result["account"]
 

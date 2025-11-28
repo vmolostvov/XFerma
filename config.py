@@ -294,3 +294,7 @@ def append_user_agents(file_path: str, mobile_ratio: float = 0.8, desktop_chrome
 def make_main_file_with_accs():
     merge_files_with_delimiter('x_accs.txt', 'proxy.txt')
     append_user_agents('x_accs.txt')
+
+
+if __name__ == '__main__':
+    print(generate_password())

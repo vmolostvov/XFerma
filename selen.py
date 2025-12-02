@@ -51,9 +51,9 @@ def login(username, password, proxy):
             sb.write("input[name='password']", password, timeout=20)
             print('Entered the pw!')
 
-            next_button = sb.cdp.find_element('Enter', best_match=True)
+            next_button = sb.cdp.find_element('Log in', best_match=True)
             next_button.click()
-            print('Clicked on "Enter" button!')
+            print('Clicked on "Log in" button!')
 
             # sb.wait_for_element_visible("input[name='password']").send_keys(password)
             # sb.sleep(1)

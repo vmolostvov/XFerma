@@ -13,7 +13,7 @@ chrome.proxy.settings.set({value: config, scope: "regular"}, function() {});
 function callbackFn(details) {
     return {
         authCredentials: {
-            username: "vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-5daef2b226f74-filter-medium",
+            username: "vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-399a85c38e684-filter-medium",
             password: "e3ibl6cpq4"
         }
     };

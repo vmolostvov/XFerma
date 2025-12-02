@@ -1,12 +1,8 @@
-import time, traceback, telebot, pyautogui, os
+import time, traceback, telebot
 from alarm_bot import admin_error
-import asyncio, pyperclip
-from seleniumbase import cdp_driver
 # from seleniumbase import decorators
 # from seleniumbase import sb_cdp
 from seleniumbase import SB
-
-from twitter_search import parse_tweets_instructions
 
 
 def login(username, password, proxy):

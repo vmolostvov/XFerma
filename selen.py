@@ -105,6 +105,7 @@ def login(username, password, proxy):
 
             except Exception:
                 logger.exception(f"❌ [LOGIN] Ошибка проверки входа для @{username}")
+                web_audit_vip_user_message_with_photo_test('680688412', sb.driver.get_screenshot_as_png(), f"❌ [LOGIN] Ошибка проверки входа для @{username}")
                 return None
 
     except Exception:

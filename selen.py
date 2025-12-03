@@ -105,7 +105,8 @@ def login(username, password, proxy):
 
             except Exception:
                 logger.exception(f"❌ [LOGIN] Ошибка проверки входа для @{username}")
-                web_audit_vip_user_message_with_photo_test('680688412', sb.driver.get_screenshot_as_png(), f"❌ [LOGIN] Ошибка проверки входа для @{username}")
+                sb.cdp.save_screenshot('ss_test.png')
+                web_audit_vip_user_message_with_photo('680688412', 'ss_test.png', f"❌ [LOGIN] Ошибка проверки входа для @{username}")
                 return None
 
     except Exception:
@@ -115,15 +116,16 @@ def login(username, password, proxy):
         return None
 
 
-def web_audit_vip_user_message_with_photo_test(user, photo, text):
+def web_audit_vip_user_message_with_photo(user, path_to_photo, text):
     WebAuditBot = telebot.TeleBot('6408330846:AAFZLrHOqaTYveAlbeO8CzNdth_fTrbRGac')
     for i in range(3):
         try:
-            WebAuditBot.send_photo(user, photo=photo, caption=text, parse_mode='html')
+            with open(path_to_photo, 'rb') as photo:
+                WebAuditBot.send_photo(user, photo=photo, caption=text, parse_mode='html')
             break
         except:
-            admin_error(traceback.format_exc())
-            time.sleep(2)
+            if 'PHOTO_INVALID_DIMENSIONS' in traceback.format_exc():
+                time.sleep(15)
 
 
 def main():
@@ -179,13 +181,14 @@ def main():
                     except Exception as e:
                         logger.exception(f"❌ [REGEN] Ошибка save_cookies_and_sess_with_timeout() для @{sn}: {e}")
 
+                    time.sleep(10)
+
             else:
                 logger.debug("[REGEN] Нет аккаунтов, требующих регенерации")
 
         except Exception as e:
             logger.exception(f"🔥 [MAIN] Необработанная ошибка в главном цикле: {e}")
 
-        time.sleep(10)
 
 
 if __name__ == '__main__':

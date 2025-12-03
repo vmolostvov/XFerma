@@ -1,90 +1,117 @@
-import time, traceback, telebot
+import time, traceback, telebot, logging
 from alarm_bot import admin_error
+from database import Database
 # from seleniumbase import decorators
 # from seleniumbase import sb_cdp
 from seleniumbase import SB
+from tweeterpyapi import save_cookies_and_sess_with_timeout
+
+
+# ----------------------------
+# ЛОГГЕР (консоль + файл)
+# ----------------------------
+logger = logging.getLogger("xFerma_selen")
+logger.setLevel(logging.INFO)
+
+if not logger.handlers:
+    fmt = logging.Formatter(
+        "%(asctime)s [%(levelname)s] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S"
+    )
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    ch.setFormatter(fmt)
+
+    fh = logging.FileHandler("xferma_selen.log", encoding="utf-8")
+    fh.setLevel(logging.INFO)
+    fh.setFormatter(fmt)
+
+    logger.addHandler(ch)
+    logger.addHandler(fh)
 
 
 def login(username, password, proxy):
-    # pyperclip.copy(username)
+    logger.info(f"🔐 [LOGIN] Начинаю логин для @{username} | Proxy: {proxy}")
+
     try:
         with SB(uc=True, xvfb=True, proxy=proxy) as sb:
+            logger.debug("[LOGIN] Browser session инициализирована")
+
             sb.activate_cdp_mode("https://x.com/i/flow/login")
-            # sb.wait_for_element_visible("input[name='text']", timeout=30)
-            # sb.uc_gui_press_keys('ganusarkate199' + '3')
-            # sb.cdp.
-            # sb.uc_gui_press_keys(username)
-            # time.sleep(10)
-            # time.sleep(1)
-            # os.system("""osascript -e 'tell application "System Events" to keystroke "v" using command down'""")
-            # sb.cdp.gui_write(username)
-            sb.write("input[name='text']", username, timeout=30)
-            print('Entered the un!')
-            sb.sleep(1)
-            # sb.cdp.gui_click_with_offset("input[name='text']", 30, 20, timeframe=1)
-            # sb.click("input[name='text']", timeout=30)
-            # for i in range(10):
-            #     try:
-            #         sb.cdp.gui_click_element("input[name='texfghganusarkate1993t']")
-            #     except:
-            #         continue
-            # time.sleep(100)
-            # login_input = sb.wait_for_element_visible("input[name='text']", timeout=3000)
-            # login_input.send_keys(username)
-            # login_input = sb.wait_for_element_visible("input[name='teerfxt']", timeout=3000)
-            sb.sleep(1)
-            next_button = sb.cdp.find_element('Next', best_match=True)
-            # sb.cdp.gui_press_key('ENTER')
-            # sb.uc_gui_press_key('ENTER')
-            next_button.click()
-            print('Clicked on "Next" button!')
-            sb.sleep(1)
-            # sb.uc_gui_press_key('ENTER')
-            # for i in range(3):
-            #     try:
-            #         sb.cdp.gui_click_with_offset("input[name='password']", 30, 20, timeframe=1)
-            #     except:
-            #         continue
-            #
-            # time.sleep(1)
-            # sb.cdp.gui_write(password)
-            sb.write("input[name='password']", password, timeout=20)
-            print('Entered the pw!')
+            logger.info("[LOGIN] Открыта страница входа")
 
-            next_button = sb.cdp.find_element('Log in', best_match=True)
-            next_button.click()
-            print('Clicked on "Log in" button!')
-
-            # sb.wait_for_element_visible("input[name='password']").send_keys(password)
-            # sb.sleep(1)
-            # sb.cdp.gui_press_key('ENTER')
-            # sb.uc_gui_press_key('ENTER')
-
-            sb.cdp.open_new_tab('https://x.com/home')
+            # --- ввод username
             try:
+                sb.write("input[name='text']", username, timeout=30)
+                logger.info(f"[LOGIN] Ввел username @{username}")
+            except Exception:
+                logger.exception(f"❌ [LOGIN] Не удалось ввести username для @{username}")
+                return None
+
+            sb.sleep(1)
+
+            # --- кнопка Next
+            try:
+                next_btn = sb.cdp.find_element("Next", best_match=True)
+                next_btn.click()
+                logger.info("[LOGIN] Нажал кнопку Next")
+            except Exception:
+                logger.exception(f"❌ [LOGIN] Ошибка клика по кнопке Next для @{username}")
+                return None
+
+            sb.sleep(1)
+
+            # --- ввод пароля
+            try:
+                sb.write("input[name='password']", password, timeout=20)
+                logger.info("[LOGIN] Ввел пароль")
+            except Exception:
+                logger.exception(f"❌ [LOGIN] Не удалось ввести пароль для @{username}")
+                return None
+
+            # --- кнопка Log in
+            try:
+                login_btn = sb.cdp.find_element("Log in", best_match=True)
+                login_btn.click()
+                logger.info("[LOGIN] Клик по кнопке Log in")
+            except Exception:
+                logger.exception(f"❌ [LOGIN] Ошибка клика по кнопке Log in для @{username}")
+                return None
+
+            # --- Проверка входа
+            try:
+                sb.cdp.open_new_tab("https://x.com/home")
+
+                try:
+                    sb.cdp.click('div[aria-label="Post text"]', timeout=10)
+                except:
+                    pass
+
+                sb.get("https://x.com/home")
+
+                # пытаемся кликнуть в поле твита (признак успешного входа)
                 sb.cdp.click('div[aria-label="Post text"]', timeout=10)
-            except:
-                pass
-            sb.get('https://x.com/home')
 
-            try:
-                sb.cdp.click('div[aria-label="Post text"]', timeout=20)
-                # home = sb.cdp.find_element('div[aria-label="Post text"]', timeout=20)
-                print('logged in')
-                # print(sb.get_cookies()) # 'ad62c41319a26a159917e17868b0a3110cb372a9'
-                auth_token = next(c['value'] for c in sb.get_cookies() if c['name'] == 'auth_token')
+                # проверка генерации cookies
+                cookies = sb.get_cookies()
+                auth_token = next(c['value'] for c in cookies if c['name'] == 'auth_token')
+
+                logger.info(f"✅ [LOGIN] УСПЕХ! @{username} успешно вошёл")
                 return auth_token
 
-            except:
-                print(traceback.format_exc())
-                print('not logged in')
+            except StopIteration:
+                logger.error(f"❌ [LOGIN] Не найден auth_token для @{username}")
+                return None
 
-    except:
+            except Exception:
+                logger.exception(f"❌ [LOGIN] Ошибка проверки входа для @{username}")
+                return None
+
+    except Exception:
         trace = traceback.format_exc()
-        print(trace)
+        logger.exception(f"🔥 [LOGIN] Фатальная ошибка login() для @{username}")
         admin_error(trace)
-        # web_audit_vip_user_message_with_photo_test('680688412', sb.driver.get_screenshot_as_png(),
-        #                                            'log 1')
+        return None
 
 
 def web_audit_vip_user_message_with_photo_test(user, photo, text):
@@ -97,5 +124,68 @@ def web_audit_vip_user_message_with_photo_test(user, photo, text):
             admin_error(traceback.format_exc())
             time.sleep(2)
 
+
+def main():
+    db = Database()
+    logger.info("🚀 [REGEN] Запуск мониторинга аккаунтов для регенерации сессий...")
+
+    while True:
+        try:
+            regen_sess_accs = db.get_regen_sess_accounts()
+
+            if regen_sess_accs:
+                logger.info(f"🔄 [REGEN] Найдено аккаунтов для регенерации: {len(regen_sess_accs)}")
+
+                for acc in regen_sess_accs:
+                    sn = acc.get("screen_name")
+                    uid = acc.get("uid")
+
+                    logger.info(f"➡️  [REGEN] Обработка @{sn} (uid={uid})")
+
+                    try:
+                        new_auth_token = login(
+                            sn,
+                            acc['pass'],
+                            acc['proxy']
+                        )
+                    except Exception as e:
+                        logger.exception(f"❌ [REGEN] Ошибка login() для @{sn}: {e}")
+                        continue
+
+                    if not new_auth_token:
+                        logger.warning(f"⚠️ [REGEN] login() не вернул token для @{sn}")
+                        db.increment_rs_attempts(uid)
+                        continue
+
+                    # обновляем токен
+                    try:
+                        db.update_auth(uid, new_auth_token)
+                        db.update_regen_session(uid, False)
+                        logger.info(f"✅ [REGEN] Обновлен auth_token для @{sn}")
+                    except Exception as e:
+                        logger.exception(f"❌ [DB] Ошибка update_auth для @{sn}: {e}")
+                        continue
+
+                    acc['auth_token'] = new_auth_token
+
+                    # регенерация сессии + cookies
+                    try:
+                        status = save_cookies_and_sess_with_timeout(outdated_session=acc)
+                        if status == "ok":
+                            logger.info(f"🍪 [REGEN] Успешно перегенерирована сессия для @{sn}")
+                        else:
+                            logger.error(f"❌ [REGEN] Ошибка save_cookies_and_sess_with_timeout для @{sn}, статус={status}")
+                    except Exception as e:
+                        logger.exception(f"❌ [REGEN] Ошибка save_cookies_and_sess_with_timeout() для @{sn}: {e}")
+
+            else:
+                logger.debug("[REGEN] Нет аккаунтов, требующих регенерации")
+
+        except Exception as e:
+            logger.exception(f"🔥 [MAIN] Необработанная ошибка в главном цикле: {e}")
+
+        time.sleep(10)
+
+
 if __name__ == '__main__':
-    print(login('Tusharmandaliy1', 'ugMY536WpM', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-fa81984873c14-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'))
+    main()

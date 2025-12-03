@@ -86,7 +86,7 @@ class Database:
             return cur.fetchone() is not None
 
     def update_auth(self, uid: str, auth_token: str) -> bool:
-        sql = "UPDATE X_FERMA SET auth_token = %s WHERE uid = %s RETURNING uid;"
+        sql = "UPDATE X_FERMA SET auth_token = %s, rs_attempts = 0 WHERE uid = %s RETURNING uid;"
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute(sql, (auth_token, uid))
             return cur.fetchone() is not None
@@ -104,10 +104,74 @@ class Database:
             return cur.fetchone() is not None
 
     def update_regen_session(self, uid: str, value: bool) -> bool:
-        sql = "UPDATE X_FERMA SET regen_sess = %s WHERE uid = %s RETURNING uid;"
+        """
+        Если value == True:
+            UPDATE X_FERMA SET regen_sess = TRUE WHERE uid = ...
+        Если value == False:
+            UPDATE X_FERMA SET regen_sess = FALSE, rs_attempts = 0 WHERE uid = ...
+        """
+        if value:
+            sql = """
+                UPDATE X_FERMA 
+                SET regen_sess = TRUE 
+                WHERE uid = %s 
+                RETURNING uid;
+            """
+            params = (uid,)
+        else:
+            sql = """
+                UPDATE X_FERMA 
+                SET regen_sess = FALSE,
+                    rs_attempts = 0
+                WHERE uid = %s 
+                RETURNING uid;
+            """
+            params = (uid,)
+
         with self._conn() as conn, conn.cursor() as cur:
-            cur.execute(sql, (value, uid))
+            cur.execute(sql, params)
             return cur.fetchone() is not None
+
+    def increment_rs_attempts(self, uid: str):
+        """
+        Увеличивает rs_attempts на +1.
+        Если новое значение == 3 → автоматически баним аккаунт.
+
+        Возвращает:
+            "ok" — обычное увеличение
+            "limit_reached" — достигнут лимит (3), аккаунт забанен
+            "not_found" — uid нет в базе
+        """
+
+        # 1) Увеличиваем счётчик и получаем новое значение
+        sql_inc = """
+            UPDATE X_FERMA
+            SET rs_attempts = COALESCE(rs_attempts, 0) + 1
+            WHERE uid = %s
+            RETURNING rs_attempts;
+        """
+
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute(sql_inc, (uid,))
+            row = cur.fetchone()
+
+            if not row:
+                return "not_found"
+
+            new_value = row["rs_attempts"]
+
+            # 2) Если достигнут предел (3)
+            if new_value >= 3:
+                sql_ban = """
+                    UPDATE X_FERMA
+                    SET is_banned = TRUE,
+                        regen_sess = FALSE
+                    WHERE uid = %s
+                """
+                cur.execute(sql_ban, (uid,))
+                return "limit_reached"
+
+            return "ok"
 
     def delete_banned_by_uid(self, uid: str):
         sql = "DELETE FROM X_FERMA WHERE uid = %s;"

@@ -225,46 +225,46 @@ def process_account(acc):
                 session_refreshed = True
                 time.sleep(2)
 
-        for _ in range(100):
-            try:
-                tw_cl.get_user_data('elonmusk')
-                logger.info(f"[ACC] @{acc['screen_name']} session is OK")
-                break
-            except (ConnectionError, AttributeError, ReadTimeout, TimeoutError):
-                trace = traceback.format_exc()
-                print(trace)
-                if (('Connection aborted' in trace and 'Remote end closed connection without response' in trace) or
-                        "'Retry' object has no attribute 'backoff_max'" in trace):
-                    logger.warning(f"[ACC] @{acc['screen_name']} session outdated → refreshing…")
-
-                    # ВАЖНО: генерацию делаем в отдельном процессе с таймаутом+ретраями
-                    status = save_cookies_and_sess_with_timeout(
-                        outdated_session=acc,
-                        max_retries=3,
-                        timeout_sec=90,
-                        retry_sleep=3
-                    )
-                    if status != "ok":
-                        logger.error(f"[ACC] refresh session failed for @{acc['screen_name']} (status={status})")
-                        return {"status": "conn_error", "account": None}
-
-                    # после успешной генерации — перезагружаем сессию из файлов
-                    tw_cl = load_session(tw_cl, acc["screen_name"])
-                    session_refreshed = True
-                    time.sleep(2)
-                else:
-                    if _ == 99:
-                        logger.exception(f"[ACC] connection error 5 times for @{acc['screen_name']}")
-                        return {"status": "conn_error", "account": None}
-                    print(f"acc: {acc['screen_name']}; proxy: {acc['proxy']}")
-                    time.sleep(1)
-            except KeyError:
-                logger.warning(f"[ACC] @{acc['screen_name']} вероятно забанен")
-                try:
-                    db.update_is_banned(acc["uid"])
-                except Exception:
-                    logger.exception("[ACC] update_is_banned failed")
-                return {"status": "banned", "account": None}
+        # for _ in range(100):
+        #     try:
+        #         tw_cl.get_user_data('elonmusk')
+        #         logger.info(f"[ACC] @{acc['screen_name']} session is OK")
+        #         break
+        #     except (ConnectionError, AttributeError, ReadTimeout, TimeoutError):
+        #         trace = traceback.format_exc()
+        #         print(trace)
+        #         if (('Connection aborted' in trace and 'Remote end closed connection without response' in trace) or
+        #                 "'Retry' object has no attribute 'backoff_max'" in trace):
+        #             logger.warning(f"[ACC] @{acc['screen_name']} session outdated → refreshing…")
+        #
+        #             # ВАЖНО: генерацию делаем в отдельном процессе с таймаутом+ретраями
+        #             status = save_cookies_and_sess_with_timeout(
+        #                 outdated_session=acc,
+        #                 max_retries=3,
+        #                 timeout_sec=90,
+        #                 retry_sleep=3
+        #             )
+        #             if status != "ok":
+        #                 logger.error(f"[ACC] refresh session failed for @{acc['screen_name']} (status={status})")
+        #                 return {"status": "conn_error", "account": None}
+        #
+        #             # после успешной генерации — перезагружаем сессию из файлов
+        #             tw_cl = load_session(tw_cl, acc["screen_name"])
+        #             session_refreshed = True
+        #             time.sleep(2)
+        #         else:
+        #             if _ == 99:
+        #                 logger.exception(f"[ACC] connection error 5 times for @{acc['screen_name']}")
+        #                 return {"status": "conn_error", "account": None}
+        #             print(f"acc: {acc['screen_name']}; proxy: {acc['proxy']}")
+        #             time.sleep(1)
+        #     except KeyError:
+        #         logger.warning(f"[ACC] @{acc['screen_name']} вероятно забанен")
+        #         try:
+        #             db.update_is_banned(acc["uid"])
+        #         except Exception:
+        #             logger.exception("[ACC] update_is_banned failed")
+        #         return {"status": "banned", "account": None}
 
         acc['session'] = tw_cl
         return {"status": "session_refreshed" if session_refreshed else "ok", "account": acc}

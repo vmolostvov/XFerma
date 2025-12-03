@@ -1,5 +1,4 @@
-import time, json, random, os, emoji, math, logging, tempfile
-import traceback
+import time, json, random, os, emoji, logging, tempfile
 import zoneinfo
 import twitter_search
 # from twitter_search import load_accounts_cookies_login
@@ -476,25 +475,6 @@ class xFerma:
                 # if 0 <= hour < 23:
                     logger.info(f"[LIFE] Активный режим MOSCOW {now:%Y-%m-%d %H:%M:%S}")
 
-                    # планируем немного задач
-                    try:
-                        self.schedule_follows_tick(
-                            influencers_file="influencers.jsonl",
-                            per_tick=2,  # 1–2 задачи за тик на аккаунт
-                            quota_min=3,
-                            quota_max=10
-                        )
-                    except Exception:
-                        logger.exception("[LIFE] ошибка schedule_follows_tick")
-
-                    # обрабатываем очередь фоллов (можно в отдельном воркере)
-                    try:
-                        processed = self.process_follow_edges(batch_size=200, sleep_sec=1.0)
-                        if processed:
-                            self.finalize_new_flags()
-                    except Exception:
-                        logger.exception("[LIFE] ошибка process_follow_edges")
-
                     # жизнь аккаунтов
                     for x_working_acc in list(self.x_accounts_data):
                         logger.info(f"[ACC-LIFE] Работаю с аккаунтом ({x_working_acc['screen_name']}) !")
@@ -526,7 +506,25 @@ class xFerma:
                                 elif res == 'no_auth':
                                     x_working_acc["regen_sess"] = True
 
-                        time.sleep(1)
+                    # планируем немного задач
+                    try:
+                        self.schedule_follows_tick(
+                            influencers_file="influencers.jsonl",
+                            per_tick=2,  # 1–2 задачи за тик на аккаунт
+                            quota_min=3,
+                            quota_max=10
+                        )
+                    except Exception:
+                        logger.exception("[LIFE] ошибка schedule_follows_tick")
+
+                    # обрабатываем очередь фоллов (можно в отдельном воркере)
+                    try:
+                        processed = self.process_follow_edges(batch_size=200, sleep_sec=1.0)
+                        if processed:
+                            self.finalize_new_flags()
+                    except Exception:
+                        logger.exception("[LIFE] ошибка process_follow_edges")
+
                 else:
                     logger.info(f"[SLEEP] Ночь в MOSCOW ({now}), ферма отдыхает")
 
@@ -871,7 +869,7 @@ class xFerma:
             new_auth = db.get_auth_by_uid(uid)
             if new_auth != twitter_working_account['auth_token']:
                 twitter_working_account['auth_token'] = new_auth
-                save_cookies_and_sess_with_timeout(outdated_session=twitter_working_account)
+                # save_cookies_and_sess_with_timeout(outdated_session=twitter_working_account)
             else:
                 logger.info(f"[REGEN] Auth-token в базе не обновлен для аккаунта {screen_name}! Возможно сбой в работе Selen-regen скрипта!")
                 admin_error(f"[REGEN] Auth-token в базе не обновлен для аккаунта {screen_name}! Возможно сбой в работе Selen-regen скрипта!")

@@ -181,13 +181,15 @@ def main():
                     except Exception as e:
                         logger.exception(f"❌ [REGEN] Ошибка save_cookies_and_sess_with_timeout() для @{sn}: {e}")
 
-                    time.sleep(10)
+                    time.sleep(120)
 
             else:
                 logger.debug("[REGEN] Нет аккаунтов, требующих регенерации")
 
         except Exception as e:
             logger.exception(f"🔥 [MAIN] Необработанная ошибка в главном цикле: {e}")
+
+        time.sleep(30)
 
 
 

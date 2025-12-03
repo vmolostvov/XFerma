@@ -5,6 +5,7 @@ from database import Database
 # from seleniumbase import sb_cdp
 from seleniumbase import SB
 from tweeterpyapi import save_cookies_and_sess_with_timeout
+from datetime import datetime
 
 
 # ----------------------------
@@ -184,7 +185,7 @@ def main():
                     time.sleep(120)
 
             else:
-                logger.debug("[REGEN] Нет аккаунтов, требующих регенерации")
+                logger.info(f"[REGEN] Нет аккаунтов, требующих регенерации. Время сейчас: {datetime.now()}")
 
         except Exception as e:
             logger.exception(f"🔥 [MAIN] Необработанная ошибка в главном цикле: {e}")

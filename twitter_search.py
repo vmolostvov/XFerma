@@ -551,42 +551,29 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
                 if api_endpoint == 'View':
                     headers['content-type'] = 'application/x-www-form-urlencoded'
 
-                try:
-                    if api_endpoint in ['View', 'change_profile', 'change_pw']:
-                        # print('base url', base_url)
-                        # print('headers', headers)
-                        # print('variables', variables)
-                        response = twitter_working_account['session'].request_client.request(base_url, method='POST',
-                                                                                             data=params if params else variables,
-                                                                                             headers=headers)
-                    elif api_endpoint in ['FavoriteTweet', 'CreateRetweet', 'CreateBookmark', 'CreateTweet']:
-                        response = twitter_working_account['session'].request_client.request(base_url, method='POST',
-                                                                                             json=params if params else variables,
-                                                                                             headers=headers)
-                    else:
-                        response = twitter_working_account['session'].request_client.request(base_url, params=params if params else None, headers=headers)
+                if api_endpoint in ['View', 'change_profile', 'change_pw']:
+                    # print('base url', base_url)
+                    # print('headers', headers)
+                    # print('variables', variables)
+                    response = twitter_working_account['session'].request_client.request(base_url, method='POST',
+                                                                                         data=params if params else variables,
+                                                                                         headers=headers)
+                elif api_endpoint in ['FavoriteTweet', 'CreateRetweet', 'CreateBookmark', 'CreateTweet']:
+                    response = twitter_working_account['session'].request_client.request(base_url, method='POST',
+                                                                                         json=params if params else variables,
+                                                                                         headers=headers)
+                else:
+                    response = twitter_working_account['session'].request_client.request(base_url, params=params if params else None, headers=headers)
 
-                    if 'Authorization: Denied by access control' in str(response):
-                        print(response)
+                if 'Authorization: Denied by access control' in str(response):
+                    print(response)
 
-                except (ReadTimeout, ProxyError, ConnectTimeout, OSError, SSLError, ConnectionError):
-                    response = {}
-                    if i == 1:
-                        print(f'Error while sending request to X api! Acc name: {twitter_working_account["screen_name"]}')
-                        time.sleep(1.5)
-                        # proxy_analyze = proxy_check(make_proxy_str_for_pixelscan(twitter_working_account['proxy']), triple_check=True)
-                        # if proxy_analyze['ok']:
-                        #     continue
-                        # else:
-                        #     return 'proxy_dead'
-
-                response['twitter_working_account'] = twitter_working_account['screen_name']
-
-                # if not response:
-                #     # if i == 14:
-                #     admin_signal(
-                #         f'Error в функции twitter_api_call модуля twitter_search.py (scraper)! Response == None 14 раз подряд!')
-                    # continue
+        except (ReadTimeout, ProxyError, ConnectTimeout, OSError, SSLError, ConnectionError):
+            trace = traceback.format_exc()
+            print(trace)
+            time.sleep(5)
+            if i == 3:
+                return 'proxy_dead'
 
         except Exception as error:
             trace = traceback.format_exc()
@@ -630,6 +617,9 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
 
     elif 'Error code 32 - Could not authenticate you' in trace:
         return 'no_auth'
+
+    elif 'Error code 326 - Authorization' in trace:
+        return 'lock'
 
     elif 'Error code 141 - Authorization' in trace:
         return 'ban'
@@ -1101,7 +1091,7 @@ def like_tweet_by_tweet_id(working_acc, tweet_id):
 
     res = twitter_api_call('FavoriteTweet', variables=data, features={}, twitter_working_account=working_acc)
 
-    if res == ['139', 'ban', 'proxy_dead', 'no_auth']:
+    if res == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock']:
         return res
 
     if res and res['data']['favorite_tweet']:
@@ -1115,7 +1105,7 @@ def rt_tweet_by_tweet_id(working_acc, tweet_id):
 
     res = twitter_api_call('CreateRetweet', variables=data, features={}, twitter_working_account=working_acc)
 
-    if res == ['139', 'ban', 'proxy_dead', 'no_auth']:
+    if res == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock']:
         return res
 
     if res and res['data']['create_retweet']['retweet_results']['result']['rest_id']:
@@ -1129,7 +1119,7 @@ def bm_tweet_by_tweet_id(working_acc, tweet_id):
 
     res = twitter_api_call('CreateBookmark', variables=data, features={}, twitter_working_account=working_acc)
 
-    if res == ['139', 'ban', 'proxy_dead', 'no_auth']:
+    if res == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock']:
         return res
 
     if res and res['data']['tweet_bookmark_put']:
@@ -1195,7 +1185,7 @@ def reply_tweet_by_tweet_id(working_acc, reply_text, tweet_id):
     if res and res['data']['create_tweet']['tweet_results']['result']['rest_id']:
         return True
 
-    if res in ['ban', 'proxy_dead', 'no_auth']:
+    if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
         return res
 
     return False
@@ -1216,7 +1206,7 @@ def view_tweet_by_tweet_id(working_acc, tweet_id, author_id, profile_click=False
 
     res = twitter_api_call('View', variables=view_and_impression_data, features={}, twitter_working_account=working_acc)
 
-    if res in ['ban', 'proxy_dead', 'no_auth']:
+    if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
         return res
 
     if res:
@@ -1301,7 +1291,7 @@ def change_profile_info(working_acc, description, name=None):
     if res == '131':  # невозможно сменить аву (неизвестная ошибка)
         return res
 
-    if res in ['ban', 'proxy_dead', 'no_auth']:
+    if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
         return res
 
     if res:
@@ -1363,7 +1353,7 @@ def get_latest_timeline(working_acc, cursor=""):
     res = twitter_api_call('HomeTimeline', variables, features, twitter_working_account=working_acc)
 
     if res:
-        if res in ['ban', 'proxy_dead', 'no_auth']:
+        if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
             return res
         instructions = res["data"]["home"]["home_timeline_urt"]["instructions"]
         timeline = parse_tweets_instructions(instructions)

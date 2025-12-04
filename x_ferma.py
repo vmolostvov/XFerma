@@ -55,6 +55,7 @@ class xFerma:
 
         elif self.mode == 'work':
             self.x_accounts_data = load_accounts_tweeterpy(mode=self.mode)
+            random.shuffle(self.x_accounts_data)
             logger.info("INIT: mode=work, загружаю аккаунты и запускаю ferma_lifecycle()")
             self.ferma_lifecycle()
 
@@ -150,6 +151,32 @@ class xFerma:
 
                 if change_profile_res == '131':
                     new_user_name = None  # retry без имени
+                elif change_profile_res == 'ban':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                    try:
+                        db.update_is_banned(twitter_working_account["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
+                    return
+                elif change_profile_res == 'proxy_dead':
+                    logger.info(f"[VIEW] У аккаунта {twitter_working_account['screen_name']} умер прокси!")
+                    twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
+                    if twitter_working_account:
+                        continue
+                elif change_profile_res == 'no_auth':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_regen_session(twitter_working_account["uid"], True)
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
+                    return
+                elif change_profile_res == 'lock':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно временно заблокирован!")
+                    try:
+                        db.update_is_locked(twitter_working_account["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_locked: {e}")
+                    return
                 else:
                     break
 
@@ -487,21 +514,21 @@ class xFerma:
                             x_working_acc['regen_sess'] = False
 
                         timeline = self.get_timeline(x_working_acc)
-                        if timeline == 'ban':
+                        if timeline in ['ban', 'lock']:
                             self.x_accounts_data.remove(x_working_acc)
                         elif timeline == 'no_auth':
                             x_working_acc["regen_sess"] = True
 
                         elif timeline:
-                            res = self.view_all_tweets(timeline, x_working_acc)
+                            viewed_timeline = self.view_all_tweets(timeline, x_working_acc)
 
-                            if res == 'ban':
+                            if viewed_timeline in ['ban', 'lock']:
                                 self.x_accounts_data.remove(x_working_acc)
-                            elif res == 'no_auth':
+                            elif viewed_timeline == 'no_auth':
                                 x_working_acc["regen_sess"] = True
-                            else:
-                                res = self.random_like_timeline(timeline, x_working_acc)
-                                if res == 'ban':
+                            elif viewed_timeline:
+                                res = self.random_like_timeline(viewed_timeline, x_working_acc)
+                                if res in ['ban', 'lock']:
                                     self.x_accounts_data.remove(x_working_acc)
                                 elif res == 'no_auth':
                                     x_working_acc["regen_sess"] = True
@@ -528,7 +555,7 @@ class xFerma:
                 else:
                     logger.info(f"[SLEEP] Ночь в MOSCOW ({now}), ферма отдыхает")
 
-                pause = random.randint(1000, 10000)
+                pause = random.randint(1000, 3000)
                 pause_readable = format_duration(pause)
                 logger.info(f"[LIFE] Пауза {pause_readable}")
                 time.sleep(pause)
@@ -550,20 +577,20 @@ class xFerma:
                 uid = t["tweet"]["user_id"]
 
                 view_res = self.view(twitter_working_account, tid, uid)
-                if view_res in ['ban', 'no_auth']:
+                if view_res in ['ban', 'no_auth', 'lock']:
                     return view_res
 
                 like_res = self.like(twitter_working_account, tid)
-                if like_res in ['ban', 'no_auth']:
+                if like_res in ['ban', 'no_auth', 'lock']:
                     return like_res
 
                 if random.random() < 0.4:
                     rt_res = self.retweet(twitter_working_account, tid)
-                    if rt_res in ['ban', 'no_auth']:
+                    if rt_res in ['ban', 'no_auth', 'lock']:
                         return rt_res
                 if random.random() < 0.15:
                     bm_res = self.bookmark(twitter_working_account, tid)
-                    if bm_res in ['ban', 'no_auth']:
+                    if bm_res in ['ban', 'no_auth', 'lock']:
                         return bm_res
 
             logger.info(f"[LIKE] Обработано твитов: {len(chosen_tweets)} для @{twitter_working_account.get('screen_name')}")
@@ -572,42 +599,74 @@ class xFerma:
 
     def view_all_tweets(self, timeline, twitter_working_account, sleep_range=(0.2, 1.0)):
         """
-        Просматривает (self.view) ВСЕ твиты из timeline.
-        :param timeline: список твитов (как в твоей random_like_timeline)
-        :param twitter_working_account: аккаунт, от имени которого смотрим
-        :param sleep_range: (min_sec, max_sec) пауза между просмотрами
+        Просматривает верхнюю (первую) часть timeline — от 50% до 100% твитов.
+        Порядок сохраняется.
+        Возвращает:
+          - 'ban' / 'no_auth'  -> если self.view вернул один из этих статусов
+          - list[tweet_dict]   -> список твитов, которые были УСПЕШНО просмотрены
         """
         try:
             if not timeline:
                 logger.info(f"[VIEW-ALL] Пустой timeline для @{twitter_working_account.get('screen_name')}")
-                return
+                return []
+
+            total = len(timeline)
+
+            # 1) Выбираем процент просмотра (50%–100%)
+            percent = random.uniform(0.50, 1.00)
+            to_view = max(1, int(total * percent))
+
+            # 2) Берём первые N твитов (без shuffle!)
+            timeline_slice = timeline[:to_view]
+
+            logger.info(
+                f"[VIEW-ALL] Просмотрим первые {to_view}/{total} твитов "
+                f"({percent * 100:.1f}%) для @{twitter_working_account.get('screen_name')}"
+            )
 
             viewed = 0
-            for i, t in enumerate(timeline, start=1):
+            viewed_tweets = []  # сюда складываем только успешно просмотренные твиты
+
+            for i, t in enumerate(timeline_slice, start=1):
                 try:
                     tid = t["tweet"]["id"]
                     uid = t["tweet"]["user_id"]
                 except KeyError:
-                    logger.exception(f"[VIEW-ALL] Некорректный формат твита на позиции {i}: {t}")
+                    logger.exception(f"[VIEW-ALL] Некорректный твит в позиции {i}: {t}")
                     continue
 
                 try:
                     res = self.view(twitter_working_account, tid, uid)
-                    if res in ['ban', 'no_auth']:
-                        return res
-                    viewed += 1
-                except Exception:
-                    logger.exception(f"[VIEW-ALL] Ошибка просмотра tweetId={tid} (user_id={uid})")
-                    # продолжаем со следующим твитом
 
-                # лёгкий троттлинг
+                    if res in ("ban", "no_auth", "lock"):
+                        # При бане/неавторизованности возвращаем статус как раньше
+                        logger.warning(
+                            f"[VIEW-ALL] @{twitter_working_account.get('screen_name')} -> {res} во время просмотра")
+                        return res
+
+                    # если ошибок нет и бана нет — считаем твит успешно просмотренным
+                    viewed += 1
+                    viewed_tweets.append(t)
+
+                except Exception:
+                    logger.exception(f"[VIEW-ALL] Ошибка просмотра tweetId={tid}")
+                    # не добавляем твит в viewed_tweets, идём дальше
+
+                # Throttling
                 if sleep_range and sleep_range[0] >= 0:
                     time.sleep(random.uniform(*sleep_range))
 
             logger.info(
-                f"[VIEW-ALL] Просмотрено твитов: {viewed} из {len(timeline)} для @{twitter_working_account.get('screen_name')}")
+                f"[VIEW-ALL] Просмотрено {viewed} твитов из {to_view} "
+                f"для @{twitter_working_account.get('screen_name')}"
+            )
+
+            # Возвращаем только успешно просмотренные твиты в исходном формате
+            return viewed_tweets
+
         except Exception:
             logger.exception("[VIEW-ALL] Критическая ошибка в view_all_tweets")
+            return []
 
     # ----------------------------
     # TWITTER ACTIONS
@@ -647,6 +706,14 @@ class xFerma:
                     except Exception as e:
                         logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
                     return 'no_auth'
+                elif res == 'lock':
+                    logger.info(f"[VIEW] Аккаунт {src['screen_name']} вероятно временно заблокирован!")
+                    # admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_is_locked(src["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_locked: {e}")
+                    return 'lock'
                 break
 
         except Exception as e:
@@ -680,6 +747,14 @@ class xFerma:
                     except Exception as e:
                         logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
                     return 'no_auth'
+                elif res == 'lock':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно временно заблокирован!")
+                    # admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_is_locked(twitter_working_account["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_locked: {e}")
+                    return 'lock'
                 break
 
         except Exception as e:
@@ -712,6 +787,14 @@ class xFerma:
                     except Exception as e:
                         logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
                     return 'no_auth'
+                elif res == 'lock':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно временно заблокирован!")
+                    # admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_is_locked(twitter_working_account["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_locked: {e}")
+                    return 'lock'
                 break
         except Exception as e:
             logger.exception(f"[RT] Ошибка retweet: {e}")
@@ -743,6 +826,14 @@ class xFerma:
                     except Exception as e:
                         logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
                     return 'no_auth'
+                elif res == 'lock':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно временно заблокирован!")
+                    # admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_is_locked(twitter_working_account["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_locked: {e}")
+                    return 'lock'
                 break
         except Exception as e:
             logger.exception(f"[BM] Ошибка bookmark: {e}")
@@ -772,6 +863,14 @@ class xFerma:
                     except Exception as e:
                         logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
                     return 'no_auth'
+                elif res == 'lock':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно временно заблокирован!")
+                    # admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_is_locked(twitter_working_account["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_locked: {e}")
+                    return 'lock'
                 break
         except Exception as e:
             logger.exception(f"[REPLY] Ошибка reply: {e}")
@@ -801,6 +900,14 @@ class xFerma:
                     except Exception as e:
                         logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
                     return 'no_auth'
+                elif res == 'lock':
+                    logger.info(f"[VIEW] Аккаунт {twitter_working_account['screen_name']} вероятно временно заблокирован!")
+                    # admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_is_locked(twitter_working_account["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_locked: {e}")
+                    return 'lock'
                 break
         except Exception as e:
             logger.exception(f"[VIEW] Ошибка view: {e}")
@@ -840,6 +947,14 @@ class xFerma:
                     except Exception as e:
                         logger.exception(f"[SETUP] Ошибка при update_regen_session: {e}")
                     return 'no_auth'
+                elif timeline == 'lock':
+                    logger.info(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно временно заблокирован!")
+                    # admin_error(f"[VIEW] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+                    try:
+                        db.update_is_locked(x_working_acc["uid"])
+                    except Exception as e:
+                        logger.exception(f"[SETUP] Ошибка при update_is_locked: {e}")
+                    return 'lock'
                 elif timeline:
                     return timeline
                 else:
@@ -913,7 +1028,7 @@ class xFerma:
             except Exception:
                 logger.exception(f"[REGEN] Ошибка update_proxy для @{screen_name}")
 
-        return result
+        return result['account']
 
 
     def accounts_health_test(self, accs):

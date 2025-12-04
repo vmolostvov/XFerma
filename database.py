@@ -97,6 +97,12 @@ class Database:
             cur.execute(sql, (uid,))
             return cur.fetchone() is not None
 
+    def update_is_locked(self, uid: str) -> bool:
+        sql = "UPDATE X_FERMA SET is_locked = TRUE WHERE uid = %s RETURNING uid;"
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute(sql, (uid,))
+            return cur.fetchone() is not None
+
     def update_is_banned_by_sn(self, screen_name: str) -> bool:
         sql = "UPDATE X_FERMA SET is_banned = TRUE WHERE username = %s RETURNING username;"
         with self._conn() as conn, conn.cursor() as cur:
@@ -289,6 +295,7 @@ class Database:
                 FROM X_FERMA
                 WHERE is_banned IS NOT TRUE
                   AND is_influencer IS NOT TRUE
+                  AND is_locked IS NOT TRUE
             """
             params = []
 

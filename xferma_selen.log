@@ -1,0 +1,57 @@
+2025-12-04 11:21:03 [INFO] 🚀 [REGEN] Запуск мониторинга аккаунтов для регенерации сессий...
+2025-12-04 11:21:03 [INFO] 🔄 [REGEN] Найдено аккаунтов для регенерации: 1
+2025-12-04 11:21:03 [INFO] ➡️  [REGEN] Обработка @BambooMamaUK (uid=2613346584)
+2025-12-04 11:21:03 [INFO] 🔐 [LOGIN] Начинаю логин для @BambooMamaUK | Proxy: vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-51ac5156a7594-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080
+2025-12-04 11:21:14 [INFO] [LOGIN] Открыта страница входа
+2025-12-04 11:21:38 [ERROR] ❌ [LOGIN] Не удалось ввести username для @BambooMamaUK
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/selen.py", line 46, in login
+    sb.write("input[name='text']", username, timeout=30)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/seleniumbase/fixtures/base_case.py", line 9331, in write
+    self.update_text(selector, text, by=by, timeout=timeout, retry=retry)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/seleniumbase/fixtures/base_case.py", line 906, in update_text
+    self.cdp.type(selector, text, timeout=timeout)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/seleniumbase/core/sb_cdp.py", line 977, in type
+    element = self.select(selector, timeout=timeout)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/seleniumbase/core/sb_cdp.py", line 321, in select
+    raise Exception(message)
+Exception: 
+ Element {input[name='text']} was not found after 30 seconds!
+2025-12-04 11:21:42 [INFO] 🚀 [REGEN] Запуск мониторинга аккаунтов для регенерации сессий...
+2025-12-04 11:21:42 [INFO] 🔄 [REGEN] Найдено аккаунтов для регенерации: 1
+2025-12-04 11:21:42 [INFO] ➡️  [REGEN] Обработка @BambooMamaUK (uid=2613346584)
+2025-12-04 11:21:42 [INFO] 🔐 [LOGIN] Начинаю логин для @BambooMamaUK | Proxy: vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-51ac5156a7594-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080
+2025-12-04 11:21:49 [INFO] [LOGIN] Открыта страница входа
+2025-12-04 11:22:01 [ERROR] ❌ [LOGIN] Не удалось ввести username для @BambooMamaUK
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/selen.py", line 46, in login
+    sb.write("input[name='text']", username, timeout=30)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/seleniumbase/fixtures/base_case.py", line 9331, in write
+    self.update_text(selector, text, by=by, timeout=timeout, retry=retry)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/seleniumbase/fixtures/base_case.py", line 906, in update_text
+    self.cdp.type(selector, text, timeout=timeout)
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/seleniumbase/core/sb_cdp.py", line 977, in type
+    element = self.select(selector, timeout=timeout)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/seleniumbase/core/sb_cdp.py", line 321, in select
+    raise Exception(message)
+Exception: 
+ Element {input[name='text']} was not found after 30 seconds!
+2025-12-04 11:22:03 [INFO] 🚀 [REGEN] Запуск мониторинга аккаунтов для регенерации сессий...
+2025-12-04 11:22:03 [INFO] 🔄 [REGEN] Найдено аккаунтов для регенерации: 1
+2025-12-04 11:22:03 [INFO] ➡️  [REGEN] Обработка @BambooMamaUK (uid=2613346584)
+2025-12-04 11:22:03 [INFO] 🔐 [LOGIN] Начинаю логин для @BambooMamaUK | Proxy: vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-51ac5156a7594-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080
+2025-12-04 11:22:10 [INFO] [LOGIN] Открыта страница входа
+2025-12-04 11:22:32 [INFO] [LOGIN] Ввел username @BambooMamaUK
+2025-12-04 11:22:33 [INFO] [LOGIN] Нажал кнопку Next
+2025-12-04 11:22:38 [INFO] [LOGIN] Ввел пароль
+2025-12-04 11:22:44 [ERROR] ❌ [LOGIN] Ошибка клика по кнопке Log in для @BambooMamaUK
+Traceback (most recent call last):
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/selen.py", line 75, in login
+    login_btn = sb.cdp.find_element("Log in", best_match=True)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/vladmolostvov/Desktop/Projects/X_Booster/.venv/lib/python3.11/site-packages/seleniumbase/core/sb_cdp.py", line 205, in find_element
+    raise Exception(message)
+Exception: 
+ Element {Log in} was not found after 7 seconds!

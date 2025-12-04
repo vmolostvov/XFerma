@@ -133,6 +133,8 @@ def main():
     db = Database()
     logger.info("🚀 [REGEN] Запуск мониторинга аккаунтов для регенерации сессий...")
 
+    total_regenerated = 0  # <<=== новый счётчик
+
     while True:
         try:
             regen_sess_accs = db.get_regen_sess_accounts()
@@ -146,12 +148,9 @@ def main():
 
                     logger.info(f"➡️  [REGEN] Обработка @{sn} (uid={uid})")
 
+                    # логин
                     try:
-                        new_auth_token = login(
-                            sn,
-                            acc['pass'],
-                            acc['proxy']
-                        )
+                        new_auth_token = login(sn, acc['pass'], acc['proxy'])
                     except Exception as e:
                         logger.exception(f"❌ [REGEN] Ошибка login() для @{sn}: {e}")
                         continue
@@ -176,16 +175,29 @@ def main():
                     try:
                         status = save_cookies_and_sess_with_timeout(outdated_session=acc)
                         if status == "ok":
-                            logger.info(f"🍪 [REGEN] Успешно перегенерирована сессия для @{sn}")
+                            total_regenerated += 1  # <<=== увеличиваем счётчик
+                            logger.info(
+                                f"🍪 [REGEN] Сессия перегенерирована для @{sn}. "
+                                f"Всего успешно: {total_regenerated}"
+                            )
                         else:
-                            logger.error(f"❌ [REGEN] Ошибка save_cookies_and_sess_with_timeout для @{sn}, статус={status}")
+                            logger.error(
+                                f"❌ [REGEN] Ошибка save_cookies_and_sess_with_timeout для @{sn}, "
+                                f"статус={status}"
+                            )
                     except Exception as e:
-                        logger.exception(f"❌ [REGEN] Ошибка save_cookies_and_sess_with_timeout() для @{sn}: {e}")
+                        logger.exception(
+                            f"❌ [REGEN] Ошибка save_cookies_and_sess_with_timeout() для @{sn}: {e}"
+                        )
 
                     time.sleep(120)
 
             else:
-                logger.info(f"[REGEN] Нет аккаунтов, требующих регенерации. Время сейчас: {datetime.now()}")
+                logger.info(
+                    f"[REGEN] Нет аккаунтов, требующих регенерации. "
+                    f"Успешно восстановлено с момента запуска: {total_regenerated}. "
+                    f"Время сейчас: {datetime.now()}"
+                )
 
         except Exception as e:
             logger.exception(f"🔥 [MAIN] Необработанная ошибка в главном цикле: {e}")

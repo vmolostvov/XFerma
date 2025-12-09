@@ -33,6 +33,8 @@ if not logger.handlers:
     logger.addHandler(ch)
     logger.addHandler(fh)
 
+# 🔴 ВАЖНО: отключаем проброс в root-логгер
+logger.propagate = False
 
 STATS_FILE = "regen_stats.json"
 
@@ -197,7 +199,10 @@ def login(username, password, proxy):
                 sb.get("https://x.com/home")
 
                 # небольшой "санити чек": клик по Home
-                sb.cdp.click('a[aria-label="Home"]', timeout=30)
+                try:
+                    sb.cdp.click('div[aria-label="Post text"]', timeout=20)
+                except Exception:
+                    sb.cdp.click('a[aria-label="Home"]', timeout=10)
 
                 cookies = sb.get_cookies()
                 auth_token = next(c['value'] for c in cookies if c['name'] == 'auth_token')

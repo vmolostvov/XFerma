@@ -163,7 +163,7 @@ def generate_valid_sid_nodemaven_proxy(length=13):
     while True:
         sid = ''.join(random.choice(hex_chars) for _ in range(length))
         proxy_analyze = proxy_check(make_proxy_str_for_pixelscan(get_proxy_by_sid(sid)))
-        if proxy_analyze['ok']:
+        if proxy_analyze['ok'] and proxy_analyze['proxy_quality'] == 'high':
             return sid
 
 def make_proxy_str_for_pixelscan(proxy):
@@ -171,6 +171,6 @@ def make_proxy_str_for_pixelscan(proxy):
 
 
 if __name__ == '__main__':
-    proxy_str = 'http://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-d0d8eb5c9c0b4-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
-    proxy_check(proxy_str)
-
+    # proxy_str = 'http://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-d0d8eb5c9c0b4-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
+    # proxy_check(proxy_str)
+    print(generate_valid_sid_nodemaven_proxy())

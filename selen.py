@@ -91,7 +91,7 @@ def login(username, password, proxy):
                 sb.get("https://x.com/home")
 
                 # пытаемся кликнуть в поле твита (признак успешного входа)
-                sb.cdp.click('div[aria-label="Post text"]', timeout=10)
+                sb.cdp.click('a[aria-label="Home"]', timeout=30)
 
                 # проверка генерации cookies
                 cookies = sb.get_cookies()

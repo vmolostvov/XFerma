@@ -244,7 +244,7 @@ def web_audit_vip_user_message_with_photo(user, path_to_photo, text):
 #   MAIN-ЦИКЛ РЕГЕНЕРАЦИИ
 # =========================
 
-def main():
+def regen_auth():
     db = Database()
     logger.info("🚀 [REGEN] Запуск мониторинга аккаунтов для регенерации сессий...")
 
@@ -339,5 +339,20 @@ def main():
         time.sleep(30)
 
 
+def sss(email, pw):
+    proxy = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-3e85cb8c21134-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
+    with SB(uc=True, xvfb=True, proxy=proxy, locale_code='en') as sb:
+        sb.activate_cdp_mode("https://outlook.live.com/mail/0/?prompt=select_account&deeplink=mail%2F0%2F%3Fnlp%3D0")
+        email_input = sb.cdp.select('input[name="loginfmt"]', timeout=60)
+        email_input.send_keys(email)
+        time.sleep(0.5)
+        sb.cdp.click('input[type="submit"]')
+        pw_input = sb.cdp.select('name[name="passwd"]', timeout=60)
+        pw_input.send_keys(pw)
+        time.sleep(0.5)
+        sb.cdp.click('input[type="submit"]')
+        sb.cdp.click('input[href="/home"]', timeout=3000)
+
 if __name__ == '__main__':
-    main()
+    # sss('evdokiyabilan1984@outlook.com', 'zA6yyPBQnm(')
+    login('armyjattsunny', 'kvzQStMLnB', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080')

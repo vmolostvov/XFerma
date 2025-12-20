@@ -12,6 +12,7 @@ from database import Database
 from datetime import datetime
 from alarm_bot import admin_error
 from typing import Callable, Optional
+from selen import regen_auth
 
 NY_TZ = zoneinfo.ZoneInfo("America/New_York")
 MOS_TZ = zoneinfo.ZoneInfo("Europe/Moscow")
@@ -1362,6 +1363,7 @@ if __name__ == '__main__':
     print("  2 — Настройка новых аккаунтов (set_up)")
     print("  3 — Тестовый режим (testing)")
     print("  4 — Смена пароля")
+    print("  4 — Selen-regen")
     print("  0 — Выход\n")
 
     choice = input("👉 Введите номер режима: ").strip()
@@ -1429,6 +1431,10 @@ if __name__ == '__main__':
         else:
             print("\n❌ Неверный выбор режима смены пароля.")
 
+    elif choice == '5':
+        print("\n♻️ Запуск web режима регенерации аккаунтов...\n")
+        regen_auth()
+
 
     elif choice == '0':
         print("\n👋 Выход из программы. До встречи!")
@@ -1436,5 +1442,3 @@ if __name__ == '__main__':
 
     else:
         print("\n❌ Неверный выбор. Перезапустите программу и выберите правильный режим.")
-
-"""OSError: Tunnel connection failed: 503 Service Unavailable"""

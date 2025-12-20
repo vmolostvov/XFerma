@@ -176,6 +176,11 @@ def login(username, password, proxy):
                 logger.info("[LOGIN] Ввел пароль")
             except Exception:
                 logger.exception(f"❌ [LOGIN] Не удалось ввести пароль для @{username}")
+                web_audit_vip_user_message_with_photo(
+                    '680688412',
+                    'ss_test.png',
+                    f"❌ [TEST] Ошибка проверки входа для @{username}"
+                )
                 return None
 
             # --- кнопка Log in

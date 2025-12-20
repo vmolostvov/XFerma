@@ -153,6 +153,11 @@ def login(username, password, proxy):
             try:
                 sb.write("input[name='text']", username, timeout=30)
                 logger.info(f"[LOGIN] Ввел username @{username}")
+                web_audit_vip_user_message_with_photo(
+                    '680688412',
+                    'ss_test.png',
+                    f"❌ [TEST] Ошибка проверки входа для @{username}"
+                )
             except Exception:
                 logger.exception(f"❌ [LOGIN] Не удалось ввести username для @{username}")
                 return None

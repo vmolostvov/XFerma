@@ -151,11 +151,7 @@ def login(username, password, proxy):
 
             # --- ввод username
             try:
-                un_input = sb.cdp.find_element("input[name='text']", timeout=30)
-                un_input.click()
-                sb.sleep(1)
-                sb.uc_gui_press_keys(username)
-                # sb.write("input[name='text']", username, timeout=30)
+                sb.write("input[name='text']", username, timeout=30)
                 logger.info(f"[LOGIN] Ввел username @{username}")
                 web_audit_vip_user_message_with_photo(
                     '680688412',

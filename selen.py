@@ -150,17 +150,19 @@ def login(username, password, proxy):
             logger.info("[LOGIN] Открыта страница входа")
 
             # --- ввод username
-            try:
-                sb.write("input[name='text']", username, timeout=30)
-                logger.info(f"[LOGIN] Ввел username @{username}")
-                web_audit_vip_user_message_with_photo(
-                    '680688412',
-                    'ss_test.png',
-                    f"❌ [TEST] Ошибка проверки входа для @{username}"
-                )
-            except Exception:
-                logger.exception(f"❌ [LOGIN] Не удалось ввести username для @{username}")
-                return None
+            for i in range(3):
+                try:
+                    sb.write("input[name='text']", username, timeout=30)
+                    logger.info(f"[LOGIN] Ввел username @{username}")
+                    web_audit_vip_user_message_with_photo(
+                        '680688412',
+                        'ss_test.png',
+                        f"❌ [TEST] Ошибка проверки входа для @{username}"
+                    )
+                    sb.sleep(2)
+                except Exception:
+                    logger.exception(f"❌ [LOGIN] Не удалось ввести username для @{username}")
+                    return None
 
             sb.sleep(1)
 

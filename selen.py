@@ -5,10 +5,10 @@ import logging
 import json
 from datetime import datetime, timedelta, timezone
 
-from alarm_bot import admin_error
-from database import Database
+# from alarm_bot import admin_error
+# from database import Database
 from seleniumbase import SB
-from tweeterpyapi import save_cookies_and_sess_with_timeout
+# from tweeterpyapi import save_cookies_and_sess_with_timeout
 
 
 # ----------------------------
@@ -143,7 +143,7 @@ def login(username, password, proxy):
     logger.info(f"🔐 [LOGIN] Начинаю логин для @{username} | Proxy: {proxy}")
 
     try:
-        with SB(uc=True, xvfb=True, proxy=proxy, locale_code='en') as sb:
+        with SB(uc=True, proxy=proxy, locale_code='en') as sb:
         # with SB(xvfb=True) as sb:
             logger.debug("[LOGIN] Browser session инициализирована")
 
@@ -238,7 +238,7 @@ def login(username, password, proxy):
     except Exception:
         trace = traceback.format_exc()
         logger.exception(f"🔥 [LOGIN] Фатальная ошибка login() для @{username}")
-        admin_error(trace)
+        # admin_error(trace)
         return None
 
 

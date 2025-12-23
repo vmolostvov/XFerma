@@ -154,8 +154,12 @@ def login(username, password, proxy):
             # --- ввод username
             try:
                 # sb.write("input[name='text']", username, timeout=30)
-                sb.wait_for_element_visible("input", timeout=30)
-                sb.type("input[name='text']", username)
+                sel = "input[name='text']"
+                sb.wait_for_element_visible(sel, timeout=30)
+                sb.scroll_to(sel)
+                sb.click(sel)
+                sb.clear(sel)
+                sb.type(sel, username)
                 logger.info(f"[LOGIN] Ввел username @{username}")
                 web_audit_vip_user_message_with_photo(
                     '680688412',

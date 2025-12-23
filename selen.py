@@ -143,17 +143,18 @@ def login(username, password, proxy):
     logger.info(f"🔐 [LOGIN] Начинаю логин для @{username} | Proxy: {proxy}")
 
     try:
-        # with SB(uc=True, xvfb=True, proxy=proxy) as sb:
-        with SB(xvfb=True) as sb:
+        with SB(uc=True, xvfb=True, proxy=proxy) as sb:
             logger.debug("[LOGIN] Browser session инициализирована")
 
-            # sb.activate_cdp_mode("https://x.com/i/flow/login")
-            sb.open("https://x.com/i/flow/login")
+            sb.activate_cdp_mode("https://x.com/i/flow/login")
             logger.info("[LOGIN] Открыта страница входа")
 
             # --- ввод username
             try:
                 sb.write("input[name='text']", username, timeout=30)
+                html = sb.get_page_source()
+                with open(f"login_{username}.html", "w", encoding="utf-8") as f:
+                    f.write(html)
                 logger.info(f"[LOGIN] Ввел username @{username}")
                 web_audit_vip_user_message_with_photo(
                     '680688412',

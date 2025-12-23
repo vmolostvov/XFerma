@@ -151,6 +151,23 @@ def login(username, password, proxy):
             # sb.open("https://x.com/i/flow/login")
             logger.info("[LOGIN] Открыта страница входа")
 
+            info = sb.execute_script("""
+            const c = document.createElement('canvas');
+            const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+            if (!gl) return {webgl: null};
+            const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+            return {
+              ua: navigator.userAgent,
+              platform: navigator.platform,
+              webdriver: navigator.webdriver,
+              webgl_vendor: dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : null,
+              webgl_renderer: dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : null,
+              lang: navigator.language,
+              languages: navigator.languages
+            };
+            """)
+            print(info)
+
             # --- ввод username
             try:
                 sb.write("input[name='text']", username, timeout=30)

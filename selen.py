@@ -151,28 +151,10 @@ def login(username, password, proxy):
             # sb.open("https://x.com/i/flow/login")
             logger.info("[LOGIN] Открыта страница входа")
 
-            info = sb.execute_script("""
-            (() => {
-              const c = document.createElement('canvas');
-              const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
-              if (!gl) return { webgl: null };
-
-              const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-              const vendor = dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : null;
-              const renderer = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : null;
-
-              return {
-                ua: navigator.userAgent,
-                platform: navigator.platform,
-                webdriver: navigator.webdriver,
-                webgl_vendor: vendor,
-                webgl_renderer: renderer,
-                lang: navigator.language,
-                languages: navigator.languages
-              };
-            })()
-            """)
-            print(info)
+            sb.open("https://api.ipify.org/?format=json")
+            print("IPIFY:", sb.get_text("body"))
+            sb.open("https://ifconfig.me/ip")
+            print("IFCONFIG:", sb.get_text("body"))
 
             # --- ввод username
             try:

@@ -143,7 +143,7 @@ def login(username, password, proxy):
     logger.info(f"🔐 [LOGIN] Начинаю логин для @{username} | Proxy: {proxy}")
 
     try:
-        with SB(uc=True, xvfb=True, proxy=proxy) as sb:
+        with SB(uc=True, xvfb=True, proxy=proxy, locale_code='en') as sb:
         # with SB(xvfb=True) as sb:
             logger.debug("[LOGIN] Browser session инициализирована")
 

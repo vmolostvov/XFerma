@@ -151,7 +151,7 @@ def login(username, password, proxy):
             # sb.open("https://x.com/i/flow/login")
             logger.info("[LOGIN] Открыта страница входа")
 
-            info = sb.execute_script("""
+            info = sb.cdp.execute_script("""
             const c = document.createElement('canvas');
             const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
             if (!gl) return {webgl: null};

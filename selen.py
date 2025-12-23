@@ -154,19 +154,6 @@ def login(username, password, proxy):
             # --- ввод username
             try:
                 sb.write("input[name='text']", username, timeout=30)
-                # sel = "input[name='text']"
-                # sb.wait_for_element_visible(sel, timeout=30)
-                # sb.scroll_to(sel)
-                # sb.click(sel)
-                # sb.clear(sel)
-                # sb.type(sel, username)
-                # logger.info(f"[LOGIN] Ввел username @{username}")
-                sb.cdp.save_screenshot('ss_test.png')
-                web_audit_vip_user_message_with_photo(
-                    '680688412',
-                    'ss_test.png',
-                    f"❌ [TEST] Ошибка проверки входа для @{username}"
-                )
             except Exception:
                 logger.exception(f"❌ [LOGIN] Не удалось ввести username для @{username}")
                 return None
@@ -177,6 +164,13 @@ def login(username, password, proxy):
             try:
                 next_btn = sb.cdp.find_element("Next", best_match=True)
                 next_btn.click()
+                sb.sleep(0.5)
+                sb.cdp.save_screenshot('ss_test.png')
+                web_audit_vip_user_message_with_photo(
+                    '680688412',
+                    'ss_test.png',
+                    f"❌ [TEST] Ошибка проверки входа для @{username}"
+                )
                 logger.info("[LOGIN] Нажал кнопку Next")
             except Exception:
                 logger.exception(f"❌ [LOGIN] Ошибка клика по кнопке Next для @{username}")

@@ -161,7 +161,7 @@ def login(username, password, proxy):
                 sb.clear(sel)
                 sb.type(sel, username)
                 logger.info(f"[LOGIN] Ввел username @{username}")
-                sb.cdp.save_screenshot('ss_test.png')
+                sb.save_screenshot('ss_test.png')
                 web_audit_vip_user_message_with_photo(
                     '680688412',
                     'ss_test.png',

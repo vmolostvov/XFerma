@@ -144,7 +144,7 @@ def login(username, password, proxy):
 
     try:
         # with SB(uc=True, xvfb=True, proxy=proxy) as sb:
-        with SB(uc=True, xvfb=True) as sb:
+        with SB(xvfb=True) as sb:
             logger.debug("[LOGIN] Browser session инициализирована")
 
             # sb.activate_cdp_mode("https://x.com/i/flow/login")

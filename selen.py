@@ -143,25 +143,25 @@ def login(username, password, proxy):
     logger.info(f"🔐 [LOGIN] Начинаю логин для @{username} | Proxy: {proxy}")
 
     try:
-        # with SB(uc=True, xvfb=True, proxy=proxy) as sb:
-        with SB(xvfb=True) as sb:
+        with SB(uc=True, xvfb=True, proxy=proxy) as sb:
+        # with SB(xvfb=True) as sb:
             logger.debug("[LOGIN] Browser session инициализирована")
 
-            # sb.activate_cdp_mode("https://x.com/i/flow/login")
-            sb.open("https://x.com/i/flow/login")
+            sb.activate_cdp_mode("https://x.com/i/flow/login")
+            # sb.open("https://x.com/i/flow/login")
             logger.info("[LOGIN] Открыта страница входа")
 
             # --- ввод username
             try:
-                # sb.write("input[name='text']", username, timeout=30)
-                sel = "input[name='text']"
-                sb.wait_for_element_visible(sel, timeout=30)
-                sb.scroll_to(sel)
-                sb.click(sel)
-                sb.clear(sel)
-                sb.type(sel, username)
-                logger.info(f"[LOGIN] Ввел username @{username}")
-                sb.save_screenshot('ss_test.png')
+                sb.write("input[name='text']", username, timeout=30)
+                # sel = "input[name='text']"
+                # sb.wait_for_element_visible(sel, timeout=30)
+                # sb.scroll_to(sel)
+                # sb.click(sel)
+                # sb.clear(sel)
+                # sb.type(sel, username)
+                # logger.info(f"[LOGIN] Ввел username @{username}")
+                sb.cdp.save_screenshot('ss_test.png')
                 web_audit_vip_user_message_with_photo(
                     '680688412',
                     'ss_test.png',

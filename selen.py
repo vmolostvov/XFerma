@@ -151,16 +151,22 @@ def login(username, password, proxy):
             # sb.open("https://x.com/i/flow/login")
             logger.info("[LOGIN] Открыта страница входа")
 
-            sb.open("https://api.ipify.org/?format=json")
-            print("IPIFY:", sb.get_text("body"))
-            sb.open("https://ifconfig.me/ip")
-            print("IFCONFIG:", sb.get_text("body"))
+            # sb.open("https://api.ipify.org/?format=json")
+            # print("IPIFY:", sb.get_text("body"))
+            # sb.open("https://ifconfig.me/ip")
+            # print("IFCONFIG:", sb.get_text("body"))
 
             # --- ввод username
             try:
                 sb.write("input[name='text']", username, timeout=30)
             except Exception:
                 logger.exception(f"❌ [LOGIN] Не удалось ввести username для @{username}")
+                sb.cdp.save_screenshot('ss_test.png')
+                web_audit_vip_user_message_with_photo(
+                    '680688412',
+                    'ss_test.png',
+                    f"❌ [TEST] Ошибка проверки входа для @{username}"
+                )
                 return None
 
             sb.sleep(1)

@@ -77,19 +77,50 @@ def save_session(tw_cl, session_name: str):
 
 def save_cookies(cookies_name, cookie_jar):
     """
-        Сохраняет cookies из RequestsCookieJar в файл в формате JSON
+    Сохраняет cookies в JSON.
+    Принимает:
+      - RequestsCookieJar (итерация -> cookie objects)
+      - dict {"name": "value"}
+      - объект с get_dict()
+      - list/iterable cookie objects или (name, value)
+    """
+    os.makedirs("x_accs_cookies", exist_ok=True)
 
-        :param cookie_jar: Объект RequestsCookieJar с cookies
-        :param cookies_name: Путь к файлу для сохранения
-        """
-    # Преобразуем CookieJar в список словарей
-    cookies_list = [
-        {"name": cookie.name, "value": cookie.value}
-        for cookie in cookie_jar
-    ]
+    cookies_list = []
 
-    # Записываем в файл с красивым форматированием
-    with open(f"x_accs_cookies/{cookies_name}.json", 'w', encoding='utf-8') as f:
+    # 1) dict
+    if isinstance(cookie_jar, dict):
+        cookies_list = [{"name": k, "value": v} for k, v in cookie_jar.items()]
+
+    # 2) requests-like cookiejar with get_dict()
+    elif hasattr(cookie_jar, "get_dict"):
+        try:
+            d = cookie_jar.get_dict()
+            cookies_list = [{"name": k, "value": v} for k, v in d.items()]
+        except Exception:
+            cookies_list = []
+
+    # 3) iterable of cookie objects
+    if not cookies_list:
+        try:
+            for cookie in cookie_jar:
+                if hasattr(cookie, "name") and hasattr(cookie, "value"):
+                    cookies_list.append({"name": cookie.name, "value": cookie.value})
+                elif isinstance(cookie, tuple) and len(cookie) == 2:
+                    cookies_list.append({"name": cookie[0], "value": cookie[1]})
+                elif isinstance(cookie, str):
+                    # если это строки-ключи (как у dict при итерации), пропустим — ниже упадём с понятной ошибкой
+                    pass
+        except TypeError:
+            pass
+
+    if not cookies_list:
+        raise TypeError(
+            f"Unsupported cookie_jar type: {type(cookie_jar)}; "
+            f"repr={str(cookie_jar)[:200]}"
+        )
+
+    with open(f"x_accs_cookies/{cookies_name}.json", "w", encoding="utf-8") as f:
         json.dump(cookies_list, f, indent=4, ensure_ascii=False)
 
 def _dump_curl_cffi_cookies(s) -> dict:

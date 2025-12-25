@@ -1401,6 +1401,7 @@ if __name__ == '__main__':
                 print("❌ Вы не ввели username. Завершение работы.")
             else:
                 accs = db.get_working_accounts(screen_name=acc_un)
+                print(f"accs len: {len(accs)}")
                 save_cookies_and_sess_with_timeout(outdated_session=accs[0])
 
     elif choice == '4':

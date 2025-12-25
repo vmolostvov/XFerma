@@ -46,8 +46,17 @@ def load_session(tw_cl, session_name):
         return tw_cl
 
 def save_session(tw_cl, session_name):
-    with open(f"x_accs_pkl_sessions/{session_name}.pkl", "wb") as file:
-        pickle.dump(tw_cl.request_client, file)
+    path = f"x_accs_pkl_sessions/{session_name}.pkl"
+    rc = tw_cl.request_client
+
+    old_ct = getattr(rc, "client_transaction", None)
+    rc.client_transaction = None  # <- главное
+
+    try:
+        with open(path, "wb") as f:
+            pickle.dump(rc, f, protocol=pickle.HIGHEST_PROTOCOL)
+    finally:
+        rc.client_transaction = old_ct
 
 def save_cookies(cookies_name, cookie_jar):
     """

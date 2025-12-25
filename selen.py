@@ -380,10 +380,4 @@ def sss(email, pw):
 
 if __name__ == '__main__':
     # sss('evdokiyabilan1984@outlook.com', 'zA6yyPBQnm(')
-    # login('armyjattsunny', 'kvzQStMLnB', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080')
-    import multiprocessing as mp, sys, platform
-
-    print("py", sys.version)
-    print("platform", platform.platform())
-    print("start_method", mp.get_start_method(allow_none=True))
-    print("all_methods", mp.get_all_start_methods())
+    login('armyjattsunny', 'kvzQStMLnB', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080')

@@ -1,4 +1,4 @@
-import pickle, json, time, logging, os
+import pickle, json, time, logging
 import traceback
 import multiprocessing as mp
 from tweeterpy import TweeterPy
@@ -13,7 +13,6 @@ from math import ceil
 
 db = Database()
 logger = logging.getLogger("xFerma")
-SESS_DIR = "x_accs_pkl_sessions"
 
 def initialize_client(proxy=None, screen_name=None, max_attempts=3):
     for i in range(max_attempts):
@@ -40,145 +39,32 @@ def load_accounts():
         load_session(tw_cl, acc["screen_name"])
         acc['session'] = tw_cl
 
+def load_session(tw_cl, session_name):
+    with open(f"x_accs_pkl_sessions/{session_name}.pkl", "rb") as file:
+        tw_cl.request_client = pickle.load(file)
 
-def load_session(tw_cl, session_name: str):
-    with open(f"{SESS_DIR}/{session_name}.json", "r", encoding="utf-8") as f:
-        payload = json.load(f)
+        return tw_cl
 
-    # пересоздаём клиент (важно: с тем же proxy/impersonate, что и в initialize_client)
-    # поэтому лучше: initialize_client(proxy=...) вызывать ДО load_session, как у тебя и есть
-    s = tw_cl.request_client.session
-
-    # применяем state
-    if hasattr(s, "headers"):
-        s.headers.update(payload.get("headers", {}) or {})
-    if hasattr(s, "proxies"):
-        s.proxies.update(payload.get("proxies", {}) or {})
-    _load_curl_cffi_cookies(s, payload.get("cookies", {}) or {})
-
-    # client_transaction лучше пересоздавать
-    tw_cl.request_client.client_transaction = None
-    return tw_cl
-
-def save_session(tw_cl, session_name: str):
-    os.makedirs(SESS_DIR, exist_ok=True)
-    rc = tw_cl.request_client
-    s = rc.session  # curl_cffi Session
-
-    payload = {
-        "headers": dict(getattr(s, "headers", {}) or {}),
-        "proxies": dict(getattr(s, "proxies", {}) or {}),
-        # cookiejar у curl_cffi может быть разный — ниже универсальные фоллбеки
-        "cookies": _dump_curl_cffi_cookies(s),
-    }
-
-    with open(f"{SESS_DIR}/{session_name}.json", "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
+def save_session(tw_cl, session_name):
+    with open(f"x_accs_pkl_sessions/{session_name}.pkl", "wb") as file:
+        pickle.dump(tw_cl.request_client, file)
 
 def save_cookies(cookies_name, cookie_jar):
     """
-    Сохраняет cookies в JSON.
-    Принимает:
-      - RequestsCookieJar (итерация -> cookie objects)
-      - dict {"name": "value"}
-      - объект с get_dict()
-      - list/iterable cookie objects или (name, value)
-    """
-    os.makedirs("x_accs_cookies", exist_ok=True)
+        Сохраняет cookies из RequestsCookieJar в файл в формате JSON
 
-    cookies_list = []
+        :param cookie_jar: Объект RequestsCookieJar с cookies
+        :param cookies_name: Путь к файлу для сохранения
+        """
+    # Преобразуем CookieJar в список словарей
+    cookies_list = [
+        {"name": cookie.name, "value": cookie.value}
+        for cookie in cookie_jar
+    ]
 
-    # 1) dict
-    if isinstance(cookie_jar, dict):
-        cookies_list = [{"name": k, "value": v} for k, v in cookie_jar.items()]
-
-    # 2) requests-like cookiejar with get_dict()
-    elif hasattr(cookie_jar, "get_dict"):
-        try:
-            d = cookie_jar.get_dict()
-            cookies_list = [{"name": k, "value": v} for k, v in d.items()]
-        except Exception:
-            cookies_list = []
-
-    # 3) iterable of cookie objects
-    if not cookies_list:
-        try:
-            for cookie in cookie_jar:
-                if hasattr(cookie, "name") and hasattr(cookie, "value"):
-                    cookies_list.append({"name": cookie.name, "value": cookie.value})
-                elif isinstance(cookie, tuple) and len(cookie) == 2:
-                    cookies_list.append({"name": cookie[0], "value": cookie[1]})
-                elif isinstance(cookie, str):
-                    # если это строки-ключи (как у dict при итерации), пропустим — ниже упадём с понятной ошибкой
-                    pass
-        except TypeError:
-            pass
-
-    if not cookies_list:
-        raise TypeError(
-            f"Unsupported cookie_jar type: {type(cookie_jar)}; "
-            f"repr={str(cookie_jar)[:200]}"
-        )
-
-    with open(f"x_accs_cookies/{cookies_name}.json", "w", encoding="utf-8") as f:
+    # Записываем в файл с красивым форматированием
+    with open(f"x_accs_cookies/{cookies_name}.json", 'w', encoding='utf-8') as f:
         json.dump(cookies_list, f, indent=4, ensure_ascii=False)
-
-def _dump_curl_cffi_cookies(s) -> dict:
-    cj = getattr(s, "cookies", None)
-    if cj is None:
-        return {}
-
-    # вариант 1: как requests (get_dict)
-    if hasattr(cj, "get_dict"):
-        try:
-            return cj.get_dict()
-        except Exception:
-            pass
-
-    # вариант 2: dict напрямую
-    if isinstance(cj, dict):
-        return dict(cj)
-
-    # вариант 3: перебор
-    out = {}
-    try:
-        for c in cj:
-            # cookie object с name/value
-            name = getattr(c, "name", None)
-            value = getattr(c, "value", None)
-            if name is not None:
-                out[name] = value
-    except Exception:
-        pass
-
-    return out
-
-
-def _load_curl_cffi_cookies(s, cookies: dict):
-    cj = getattr(s, "cookies", None)
-    if cj is None or not cookies:
-        return
-
-    # вариант 1: как requests (update)
-    if hasattr(cj, "update"):
-        try:
-            cj.update(cookies)
-            return
-        except Exception:
-            pass
-
-    # вариант 2: set(name, value)
-    if hasattr(cj, "set"):
-        for k, v in cookies.items():
-            try:
-                cj.set(k, v)
-            except Exception:
-                pass
-        return
-
-    # вариант 3: если cookies это dict
-    if isinstance(cj, dict):
-        cj.update(cookies)
 
 def get_proxies_for_twitter_account(twitter_working_account):
     # https://github.com/edeng23/binance-trade-bot/issues/438

@@ -1,4 +1,4 @@
-import random, re, aiohttp, string
+import random, re, string
 
 # database
 
@@ -55,13 +55,6 @@ def get_random_mob_proxy():
         "https": f"http://{proxy}"
     }
     return proxies
-
-
-def get_random_mob_proxy_aiohttp():
-    proxy = random.choices(population=nodemaven_mob_proxy_data)[0]
-    proxy_url = f"http://{proxy.split('@')[-1]}"
-    proxy_auth = aiohttp.BasicAuth(proxy.split('@')[0].split(':')[0], proxy.split('@')[0].split(':')[1])
-    return proxy_url, proxy_auth
 
 # some help func
 

@@ -1,10 +1,10 @@
-import requests, json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading, logging
+import requests, json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading
 from multiprocessing.managers import SyncManager
-from alarm_bot import admin_signal, admin_error
+from alarm_bot import admin_error
 from tweeterpyapi import load_accounts_tweeterpy
 from config import parse_accounts_to_list, generate_password
 from requests.exceptions import ReadTimeout, ProxyError, ConnectTimeout, SSLError
-from pixelscan_checker import proxy_check, make_proxy_str_for_pixelscan
+# from pixelscan_checker import proxy_check, make_proxy_str_for_pixelscan
 
 twitter_url = 'twitter.com/'
 

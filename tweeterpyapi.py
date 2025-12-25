@@ -136,9 +136,7 @@ def worker_generate_and_save(acc):
     """
     proxy = get_proxies_for_twitter_account(acc)
     tw_cl = initialize_client(proxy=proxy)
-    print('initialized')
     tw_cl.generate_session(auth_token=acc['auth_token'])
-    print('generated')
     save_session(tw_cl, acc["screen_name"])
     cookies = tw_cl.get_cookies()
     if cookies:

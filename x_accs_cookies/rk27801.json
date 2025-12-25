@@ -1,38 +1,30 @@
 [
     {
-        "name": "guest_id_marketing",
-        "value": "v1%3A176365227787347180"
-    },
-    {
-        "name": "guest_id_ads",
-        "value": "v1%3A176365227787347180"
-    },
-    {
-        "name": "personalization_id",
-        "value": "\"v1_nDFZSAi3tCrKbVUO8Y2O7w==\""
-    },
-    {
-        "name": "guest_id",
-        "value": "v1%3A176365227787347180"
-    },
-    {
-        "name": "__cf_bm",
-        "value": "iUnG8HNrWJ.mxynG8AqX7.cXcnEyNFACrXZ7wegQ8DA-1763652282.5760038-1.0.1.1-9bBnYUASmax9YogJ5l7S7JB1EURyXtJXmiv3R28zUgMy7jIGWM2wKWFjdx7bFOw.cNmhnXLs7iGo4ZRTnWF81GcKXMdKAShTyqT5uVLrXGw8hNwQlYQev769ns7ml6xH"
-    },
-    {
-        "name": "twid",
-        "value": "u%3D460829419"
-    },
-    {
-        "name": "ct0",
-        "value": "357b06f45761ed3addd2645e9f704d95baa483d218897148ab4b18e7eabfa4b82a38e5d2093a7075db11eaabcd82b4fee8981491d0ba48123a0e3a03e6bf0c2de4a9b9a8194326535b67348f00dfb865"
+        "name": "auth_token",
+        "value": "884a5a5c859fff4382da609a2c0e415a5d130093"
     },
     {
         "name": "gt",
-        "value": "1991528132558377053"
+        "value": "2002636445106753846"
     },
     {
-        "name": "auth_token",
-        "value": "064207d1e4385dd890df1f0c8b8af492b312490c"
+        "name": "__cf_bm",
+        "value": "uNEZN2JC1eNUCTRv31mPtvk6.1tZ447PJNR1Qz0_s.4-1766300710.725075-1.0.1.1-g.aALo8TawCDVisWvlczJyTK4ll6b1HwJy7NKoV4OJ4L.12AN2bTrvy21Lv3BJdj5KQdjVK4So9RTE3NUWhVe.uby9HHU7spXKqLE2E4u7WiRGU9MwCaWIkVqU_mPoFS"
+    },
+    {
+        "name": "guest_id",
+        "value": "v1%3A176630070830719844"
+    },
+    {
+        "name": "guest_id_ads",
+        "value": "v1%3A176630070830719844"
+    },
+    {
+        "name": "guest_id_marketing",
+        "value": "v1%3A176630070830719844"
+    },
+    {
+        "name": "personalization_id",
+        "value": "\"v1_hd8cEQmX57t5oO/v1TAkuQ==\""
     }
 ]

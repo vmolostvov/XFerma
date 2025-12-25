@@ -1,42 +1,30 @@
 [
     {
-        "name": "guest_id_marketing",
-        "value": "v1%3A176079429547259196"
-    },
-    {
-        "name": "guest_id_ads",
-        "value": "v1%3A176079429547259196"
-    },
-    {
-        "name": "personalization_id",
-        "value": "\"v1_H1uPfBphuZZGzs8478SaTA==\""
-    },
-    {
-        "name": "guest_id",
-        "value": "v1%3A176079429547259196"
-    },
-    {
-        "name": "twid",
-        "value": "u%3D776722962"
-    },
-    {
-        "name": "ct0",
-        "value": "2c33211ac220e312dfedcbde8e2a0ff294aa8606d07606a7539da346b065826f61c32b0afb18d03e4cf196ba0588362d78484eed6c51fca6c118fd2c65fc3bd63c26f1fc6469fca978febc747db77fb1"
-    },
-    {
-        "name": "__cf_bm",
-        "value": "YDm.f07ADwyonSmSR8XeW6IzRFrrJH7jGxElG0uYlqU-1760794302.5611227-1.0.1.1-vz0l3pawh5OmeDj3r2V_UZ_j2GTGPFdi2l.DLAL2vniV4nexI5lY07j9PbPAKCyZd_8PEFSUK2MTiZAIIijpLcCqJ7I16MVjoYx45YzBHfR0VL7gNsRc3HOb0CtNElFH"
-    },
-    {
-        "name": "__cf_bm",
-        "value": "3Ukd6kyljZ3siChc47EUyfbw76euJQXoUcOnyvHEzts-1760794301.008949-1.0.1.1-VsO4605F_tjNkUD2gJ4dmKmd4XvmJLCOXfvSFdEgOGEIwQIi8WE8PQq..PgAMc2euWiz.D_bHzLjETfbzY67de3o1UW5cOUMxvUtOhZczccI5YD36BKikhFTxhXArBrK"
+        "name": "auth_token",
+        "value": "7a821a8094d643f35bc00b775c5afffcba774272"
     },
     {
         "name": "gt",
-        "value": "1979540890491183296"
+        "value": "2002638470909424056"
     },
     {
-        "name": "auth_token",
-        "value": "966ff3055159bb4bd00e7356bcd18b0380d72e69"
+        "name": "__cf_bm",
+        "value": "pByBpdWJOpouyduOwxi7yuilDISoveveltWqm9Lr1IM-1766301193.7452908-1.0.1.1-_OrlxUIxcxV766AJFK.AIvUTbujROdH3TFmvElb2BH73aN0kORPnmyqt5lyacpf5Z0cIVZnicuSszoK1rKI65KVAFnejDU8iG0wyOrQw9UDcl0pgvV3G3Ck1Y8mXFthQ"
+    },
+    {
+        "name": "guest_id",
+        "value": "v1%3A176630119156664014"
+    },
+    {
+        "name": "guest_id_ads",
+        "value": "v1%3A176630119156664014"
+    },
+    {
+        "name": "guest_id_marketing",
+        "value": "v1%3A176630119156664014"
+    },
+    {
+        "name": "personalization_id",
+        "value": "\"v1_45Ec6Fy1+OLAQEeI2zJWYQ==\""
     }
 ]

@@ -52,6 +52,12 @@ def save_session(tw_cl, session_name):
     old_ct = getattr(rc, "client_transaction", None)
     rc.client_transaction = None  # <- главное
 
+    for k, v in vars(rc).items():
+        try:
+            pickle.dumps(v)
+        except Exception as e:
+            print("UNPICKLABLE FIELD:", k, type(v), e)
+
     try:
         with open(path, "wb") as f:
             pickle.dump(rc, f, protocol=pickle.HIGHEST_PROTOCOL)

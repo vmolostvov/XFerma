@@ -137,7 +137,8 @@ def worker_generate_and_save(acc):
     proxy = get_proxies_for_twitter_account(acc)
     tw_cl = initialize_client(proxy=proxy)
     tw_cl.generate_session(auth_token=acc['auth_token'])
-    save_session(tw_cl, acc["screen_name"])
+    # save_session(tw_cl, acc["screen_name"])
+    tw_cl.save_session(path='x_accs_pkl_sessions')
     cookies = tw_cl.get_cookies()
     if cookies:
         save_cookies(acc["screen_name"], cookies)
@@ -197,7 +198,8 @@ def process_account(acc):
     try:
         session_refreshed = False
         try:
-            tw_cl = load_session(tw_cl, acc["screen_name"])
+            # tw_cl = load_session(tw_cl, acc["screen_name"])
+            tw_cl.load_session(path=f'x_accs_pkl_sessions/{acc["screen_name"]}.pkl')
             if tw_cl.logged_in():
                 logger.info(f"[ACC] @{acc['screen_name']} successfully logged in")
             else:

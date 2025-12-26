@@ -135,22 +135,33 @@ def save_session(tw_cl, session_name: str):
     with open(f"{SESS_DIR}/{session_name}.pkl", "wb") as f:
         pickle.dump(state, f, protocol=pickle.HIGHEST_PROTOCOL)
 
-def save_cookies(cookies_name, cookie_jar):
-    """
-        Сохраняет cookies из RequestsCookieJar в файл в формате JSON
+def save_cookies(screen_name: str, cookie_jar):
+    os.makedirs("x_accs_cookies", exist_ok=True)
 
-        :param cookie_jar: Объект RequestsCookieJar с cookies
-        :param cookies_name: Путь к файлу для сохранения
-        """
-    # Преобразуем CookieJar в список словарей
-    cookies_list = [
-        {"name": cookie.name, "value": cookie.value}
-        for cookie in cookie_jar
-    ]
+    cookies_list = []
 
-    # Записываем в файл с красивым форматированием
-    with open(f"x_accs_cookies/{cookies_name}.json", 'w', encoding='utf-8') as f:
-        json.dump(cookies_list, f, indent=4, ensure_ascii=False)
+    # cookie_jar iterable of cookie objects (requests, curl_cffi часто так же)
+    for c in cookie_jar:
+        item = {
+            "name": getattr(c, "name", None),
+            "value": getattr(c, "value", None),
+            "domain": getattr(c, "domain", None),
+            "path": getattr(c, "path", "/"),
+            "secure": bool(getattr(c, "secure", False)),
+            "expires": getattr(c, "expires", None),
+        }
+        # иногда httpOnly лежит в rest/._rest
+        rest = getattr(c, "rest", None) or getattr(c, "_rest", None) or {}
+        if isinstance(rest, dict):
+            item["httpOnly"] = bool(rest.get("HttpOnly") or rest.get("httponly") or rest.get("httpOnly"))
+            item["sameSite"] = rest.get("SameSite") or rest.get("samesite")
+        cookies_list.append(item)
+
+    if not cookies_list:
+        raise TypeError(f"cookie_jar is not iterable of cookie objects: {type(cookie_jar)}")
+
+    with open(f"x_accs_cookies/{screen_name}.json", "w", encoding="utf-8") as f:
+        json.dump(cookies_list, f, ensure_ascii=False, indent=2)
 
 def get_proxies_for_twitter_account(twitter_working_account):
     # https://github.com/edeng23/binance-trade-bot/issues/438

@@ -1507,7 +1507,7 @@ if __name__ == '__main__':
         if not acc_un:
             print("❌ Вы не ввели username. Завершение работы.")
         else:
-            db.update_proxy(generate_valid_sid_nodemaven_proxy())
+            db.update_proxy(generate_valid_sid_nodemaven_proxy(), un=acc_un)
             time.sleep(1)
             print('ok')
 

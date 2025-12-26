@@ -1,4 +1,4 @@
-import pickle, json, time, logging, os
+import pickle, json, time, logging, os, inspect
 import traceback
 import multiprocessing as mp
 from tweeterpy import TweeterPy
@@ -40,10 +40,27 @@ def load_accounts():
         load_session(tw_cl, acc["screen_name"])
         acc['session'] = tw_cl
 
+def _cookies_set_safe(cj, **kwargs):
+    """
+    Вызывает cj.set(...) только с поддерживаемыми keyword args.
+    Работает и для requests-cookiejar, и для curl_cffi cookies.
+    """
+    fn = cj.set
+    try:
+        sig = inspect.signature(fn)
+        allowed = set(sig.parameters.keys())
+    except Exception:
+        # если сигнатуру не получить — используем минимальный набор
+        allowed = {"name", "value", "domain", "path", "secure"}
+
+    filtered = {k: v for k, v in kwargs.items() if k in allowed and v is not None}
+    return fn(**filtered)
+
+
 def _apply_state_to_client(tw_cl, state: dict):
     s = tw_cl.request_client.session
 
-    # headers/proxies
+    # headers / proxies
     if hasattr(s, "headers"):
         s.headers.clear()
         s.headers.update(state.get("headers", {}) or {})
@@ -53,6 +70,7 @@ def _apply_state_to_client(tw_cl, state: dict):
     # cookies
     cj = getattr(s, "cookies", None)
     cookies_full = state.get("cookies_full", []) or []
+
     if cj is not None and cookies_full:
         if hasattr(cj, "set"):
             for c in cookies_full:
@@ -60,13 +78,18 @@ def _apply_state_to_client(tw_cl, state: dict):
                 value = c.get("value")
                 if not name:
                     continue
-                cj.set(
-                    name, value,
+
+                # expires кладём только если set() поддерживает (в curl_cffi чаще нет)
+                _cookies_set_safe(
+                    cj,
+                    name=name,
+                    value=value,
                     domain=c.get("domain"),
                     path=c.get("path") or "/",
                     secure=bool(c.get("secure", False)),
-                    expires=c.get("expires"),
+                    expires=c.get("expires"),  # будет отфильтровано, если не поддерживается
                 )
+
         elif isinstance(cj, dict):
             for c in cookies_full:
                 if c.get("name"):

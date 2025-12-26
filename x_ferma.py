@@ -1359,6 +1359,68 @@ if __name__ == '__main__':
             print(f"❌ Ошибка при попытке изменить пароль на аккаунте {acc['screen_name']}")
 
 
+    def regen_all_sessions():
+        from collections import Counter
+
+        accs = db.get_working_accounts()
+        total = len(accs)
+
+        stats = Counter()
+        ok_list = []
+        fail_list = []  # (screen_name, status)
+
+        started = datetime.now()
+        print(f"🧾 Всего аккаунтов: {total}")
+        print(f"🕒 Старт: {started:%Y-%m-%d %H:%M:%S}\n")
+
+        for i, acc in enumerate(accs, 1):
+            sn = acc.get("screen_name") or acc.get("username") or acc.get("login") or f"uid={acc.get('uid')}"
+            try:
+                res = save_cookies_and_sess_with_timeout(outdated_session=acc)
+            except Exception as e:
+                logger.exception(f"[REGEN_ALL] @{sn} unexpected exception")
+                res = f"exception:{type(e).__name__}"
+
+            stats[res] += 1
+
+            if res == "ok":
+                ok_list.append(sn)
+                print(f"[{i}/{total}] ✅ @{sn} -> ok")
+            else:
+                fail_list.append((sn, res))
+                print(f"[{i}/{total}] ❌ @{sn} -> {res}")
+
+        finished = datetime.now()
+        print("\n" + "=" * 80)
+        print("📊 ИТОГОВАЯ СТАТИСТИКА РЕГЕНЕРАЦИИ")
+        print("-" * 80)
+        print(f"🧾 Всего:      {total}")
+        print(f"✅ Успешно:    {stats.get('ok', 0)}")
+        print(f"❌ Неудачно:   {total - stats.get('ok', 0)}")
+        print(f"🕒 Старт:      {started:%Y-%m-%d %H:%M:%S}")
+        print(f"🕒 Финиш:      {finished:%Y-%m-%d %H:%M:%S}")
+        print(f"⏱ Длительность: {str(finished - started).split('.')[0]}")
+        print("-" * 80)
+        print("📌 Распределение статусов:")
+        for k, v in stats.most_common():
+            print(f"  • {k}: {v}")
+        print("=" * 80)
+
+        if fail_list:
+            print("\n🚫 НЕУДАЧНЫЕ АККАУНТЫ (первые 50):")
+            for sn, st in fail_list[:50]:
+                print(f"  - @{sn}: {st}")
+
+        return {
+            "total": total,
+            "stats": dict(stats),
+            "ok": ok_list,
+            "fail": fail_list,
+            "started_at": started,
+            "finished_at": finished,
+        }
+
+
     print("\n🚀  Добро пожаловать в xFerma!")
     print("Выберите режим работы:")
     print("  1 — Работа фермы (work)")
@@ -1383,6 +1445,7 @@ if __name__ == '__main__':
         print("\n🧪 Тестовый режим...\n")
         print("  1 — Health-test аккаунта (load & view tweet)")
         print("  2 — Регенерация сессии аккаунта (save_cookies_and_sess)\n")
+        print("  3 — Регенерация сессии всех аккаунтов (save_cookies_and_sess)\n")
 
         choice = input("👉 Введите номер режима: ").strip()
         ferma = xFerma(mode='test')
@@ -1404,6 +1467,10 @@ if __name__ == '__main__':
             else:
                 accs = db.get_working_accounts(screen_name=acc_un)
                 save_cookies_and_sess_with_timeout(outdated_session=accs[0])
+
+        elif choice == '3':
+            print("\n⚙ Запуск режима регенерации сессии ВСЕХ аккаунтов...\n")
+            regen_all_sessions()
 
     elif choice == '4':
         print("\n🔐 Режим смены пароля\n")

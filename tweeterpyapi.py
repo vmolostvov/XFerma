@@ -1,4 +1,4 @@
-import pickle, json, time, logging
+import pickle, json, time, logging, os
 import traceback
 import multiprocessing as mp
 from tweeterpy import TweeterPy
@@ -13,6 +13,7 @@ from math import ceil
 
 db = Database()
 logger = logging.getLogger("xFerma")
+SESS_DIR = 'x_accs_pkl_sessions'
 
 def initialize_client(proxy=None, screen_name=None, max_attempts=3):
     for i in range(max_attempts):
@@ -39,15 +40,100 @@ def load_accounts():
         load_session(tw_cl, acc["screen_name"])
         acc['session'] = tw_cl
 
-def load_session(tw_cl, session_name):
-    with open(f"x_accs_pkl_sessions/{session_name}.pkl", "rb") as file:
-        tw_cl.request_client = pickle.load(file)
+def _apply_state_to_client(tw_cl, state: dict):
+    s = tw_cl.request_client.session
 
-        return tw_cl
+    # headers/proxies
+    if hasattr(s, "headers"):
+        s.headers.clear()
+        s.headers.update(state.get("headers", {}) or {})
+    if hasattr(s, "proxies"):
+        s.proxies.update(state.get("proxies", {}) or {})
 
-def save_session(tw_cl, session_name):
-    with open(f"x_accs_pkl_sessions/{session_name}.pkl", "wb") as file:
-        pickle.dump(tw_cl.request_client, file)
+    # cookies
+    cj = getattr(s, "cookies", None)
+    cookies_full = state.get("cookies_full", []) or []
+    if cj is not None and cookies_full:
+        if hasattr(cj, "set"):
+            for c in cookies_full:
+                name = c.get("name")
+                value = c.get("value")
+                if not name:
+                    continue
+                cj.set(
+                    name, value,
+                    domain=c.get("domain"),
+                    path=c.get("path") or "/",
+                    secure=bool(c.get("secure", False)),
+                    expires=c.get("expires"),
+                )
+        elif isinstance(cj, dict):
+            for c in cookies_full:
+                if c.get("name"):
+                    cj[c["name"]] = c.get("value", "")
+
+def load_session(tw_cl, session_name: str):
+    with open(f"{SESS_DIR}/{session_name}.pkl", "rb") as f:
+        state = pickle.load(f)
+    _apply_state_to_client(tw_cl, state)
+    return tw_cl
+
+def _dump_cookie_full(c):
+    # максимум атрибутов, чтобы cookie реально работали
+    rest = getattr(c, "rest", None) or getattr(c, "_rest", None) or {}
+    if not isinstance(rest, dict):
+        rest = {}
+    return {
+        "name": getattr(c, "name", None),
+        "value": getattr(c, "value", None),
+        "domain": getattr(c, "domain", None),
+        "path": getattr(c, "path", "/"),
+        "secure": bool(getattr(c, "secure", False)),
+        "expires": getattr(c, "expires", None),
+        "rest": rest,
+        "version": getattr(c, "version", None),
+        "discard": getattr(c, "discard", None),
+    }
+
+def _extract_state_from_client(tw_cl) -> dict:
+    s = tw_cl.request_client.session
+    headers = dict(getattr(s, "headers", {}) or {})
+    proxies = dict(getattr(s, "proxies", {}) or {})
+
+    cj = getattr(s, "cookies", None)
+    cookies_full = []
+    if cj is not None:
+        try:
+            for c in cj:
+                # если вдруг итерируется строками, пропустим и попробуем другой путь ниже
+                if hasattr(c, "name") and hasattr(c, "value"):
+                    cookies_full.append(_dump_cookie_full(c))
+        except Exception:
+            pass
+
+        # fallback: dict cookies
+        if not cookies_full and isinstance(cj, dict):
+            cookies_full = [{"name": k, "value": v, "domain": ".x.com", "path": "/", "secure": True, "expires": None, "rest": {}} for k, v in cj.items()]
+
+        # fallback: get_dict()
+        if not cookies_full and hasattr(cj, "get_dict"):
+            try:
+                d = cj.get_dict()
+                cookies_full = [{"name": k, "value": v, "domain": ".x.com", "path": "/", "secure": True, "expires": None, "rest": {}} for k, v in d.items()]
+            except Exception:
+                pass
+
+    return {
+        "headers": headers,
+        "proxies": proxies,
+        "cookies_full": cookies_full,
+    }
+
+def save_session(tw_cl, session_name: str):
+    os.makedirs(SESS_DIR, exist_ok=True)
+    state = _extract_state_from_client(tw_cl)
+    with open(f"{SESS_DIR}/{session_name}.pkl", "wb") as f:
+        pickle.dump(state, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 def save_cookies(cookies_name, cookie_jar):
     """

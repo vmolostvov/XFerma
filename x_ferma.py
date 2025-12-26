@@ -1427,7 +1427,8 @@ if __name__ == '__main__':
     print("  2 — Настройка новых аккаунтов (set_up)")
     print("  3 — Тестовый режим (testing)")
     print("  4 — Смена пароля")
-    print("  5 — Selen-regen")
+    print("  5 — Смена proxy")
+    print("  6 — Selen-regen")
     print("  0 — Выход\n")
 
     choice = input("👉 Введите номер режима: ").strip()
@@ -1501,6 +1502,16 @@ if __name__ == '__main__':
             print("\n❌ Неверный выбор режима смены пароля.")
 
     elif choice == '5':
+        print("\n▶ Запуск режима смены прокси...\n")
+        acc_un = input("🔹 Enter the name of account to change proxy (without @): ").strip()
+        if not acc_un:
+            print("❌ Вы не ввели username. Завершение работы.")
+        else:
+            db.update_proxy(generate_valid_sid_nodemaven_proxy())
+            time.sleep(1)
+            print('ok')
+
+    elif choice == '6':
         print("\n♻️ Запуск web режима регенерации аккаунтов...\n")
         regen_auth()
 

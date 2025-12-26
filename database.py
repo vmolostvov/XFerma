@@ -73,10 +73,40 @@ class Database:
             cur.execute(sql, (desc_id, uid))
             return cur.fetchone() is not None
 
-    def update_proxy(self, uid: str, proxy: str) -> bool:
-        sql = "UPDATE X_FERMA SET proxy = %s WHERE uid = %s RETURNING uid;"
+    def update_proxy(
+            self,
+            proxy: str,
+            uid: str | None = None,
+            un: str | None = None
+    ) -> bool:
+        """
+        Обновляет proxy аккаунта.
+        - Если передан un → обновляет по username
+        - Иначе → обновляет по uid
+        """
+
+        if un:
+            sql = """
+                UPDATE X_FERMA
+                SET proxy = %s
+                WHERE username = %s
+                RETURNING uid;
+            """
+            params = (proxy, un)
+        else:
+            if not uid:
+                raise ValueError("uid is required if username is not provided")
+
+            sql = """
+                UPDATE X_FERMA
+                SET proxy = %s
+                WHERE uid = %s
+                RETURNING uid;
+            """
+            params = (proxy, uid)
+
         with self._conn() as conn, conn.cursor() as cur:
-            cur.execute(sql, (proxy, uid))
+            cur.execute(sql, params)
             return cur.fetchone() is not None
 
     def update_pw(self, uid: str, pw: str) -> bool:

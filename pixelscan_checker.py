@@ -155,6 +155,7 @@ def proxy_check(proxy_string: str, timeout: float = 15.0, triple_check: bool = F
 
 
 def get_proxy_by_sid(sid):
+    """get formatted proxy str login:pw@server:port """
     return f"{nodemaven_proxy_login.format(sid)}:{nodemaven_proxy_pw}@{nodemaven_proxy_server}:{nodemaven_proxy_port}"
 
 

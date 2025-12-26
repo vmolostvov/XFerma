@@ -199,7 +199,7 @@ def process_account(acc):
         session_refreshed = False
         try:
             # tw_cl = load_session(tw_cl, acc["screen_name"])
-            tw_cl.load_session(path=f'x_accs_pkl_sessions/{acc["screen_name"]}.pkl')
+            tw_cl = tw_cl.load_session(path=f'x_accs_pkl_sessions/{acc["screen_name"]}.pkl')
             if tw_cl.logged_in():
                 logger.info(f"[ACC] @{acc['screen_name']} successfully logged in")
             else:

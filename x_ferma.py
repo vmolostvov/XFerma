@@ -1038,6 +1038,8 @@ class xFerma:
             time.sleep(1)
             self.like(acc, 2004307581599469917)
             time.sleep(2)
+            self.get_timeline(acc)
+            time.sleep(2)
             self.like(acc, 2004296606020190305)
             time.sleep(2)
             self.like(acc, 2004401789567742030)

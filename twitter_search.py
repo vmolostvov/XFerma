@@ -558,7 +558,7 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
                     'user-agent': twitter_working_account['ua']
                 }
 
-                if api_endpoint == 'View':
+                if api_endpoint in ['View', 'verify_pw']:
                     headers['content-type'] = 'application/x-www-form-urlencoded'
 
                 if api_endpoint in ['View', 'change_profile', 'change_pw', 'add_email', 'begin_email_verif']:

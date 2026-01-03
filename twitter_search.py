@@ -1329,7 +1329,7 @@ def get_phone_pass_data(working_acc):
 def change_email(working_acc, pw, new_email):
 
     # verify_pw = {'password': pw}
-    verify_pw = f'"password": {pw}'
+    verify_pw = f'password={pw}'
     res = twitter_api_call('verify_pw', variables=verify_pw, features={}, twitter_working_account=working_acc)
     print(res)
 

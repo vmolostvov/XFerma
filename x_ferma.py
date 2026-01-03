@@ -1034,7 +1034,7 @@ class xFerma:
 
     def accounts_health_test(self, accs):
         for acc in accs:
-            print(twitter_search.change_email(acc, ''))
+            print(twitter_search.change_email(acc, 'X9ZLXXTb5f', ''))
             # self.view(acc,2003894829424824683, 44196397)
             # time.sleep(1)
             # self.like(acc, 2004307581599469917)

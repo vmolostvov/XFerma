@@ -561,14 +561,14 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
                 if api_endpoint == 'View':
                     headers['content-type'] = 'application/x-www-form-urlencoded'
 
-                if api_endpoint in ['View', 'change_profile', 'change_pw', 'add_email', 'begin_email_verif', 'verify_pw']:
+                if api_endpoint in ['View', 'change_profile', 'change_pw', 'add_email', 'begin_email_verif']:
                     # print('base url', base_url)
                     # print('headers', headers)
                     # print('variables', variables)
                     response = twitter_working_account['session'].request_client.request(base_url, method='POST',
                                                                                          data=params if params else variables,
                                                                                          headers=headers)
-                elif api_endpoint in ['FavoriteTweet', 'CreateRetweet', 'CreateBookmark', 'CreateTweet']:
+                elif api_endpoint in ['FavoriteTweet', 'CreateRetweet', 'CreateBookmark', 'CreateTweet', 'verify_pw']:
                     response = twitter_working_account['session'].request_client.request(base_url, method='POST',
                                                                                          json=params if params else variables,
                                                                                          headers=headers)
@@ -1328,7 +1328,7 @@ def get_phone_pass_data(working_acc):
 
 def change_email(working_acc, pw, new_email):
 
-    verify_pw = f'password={pw}'
+    verify_pw = {'password': pw}
     res = twitter_api_call('verify_pw', variables=verify_pw, features={}, twitter_working_account=working_acc)
     print(res)
 

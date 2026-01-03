@@ -1034,17 +1034,18 @@ class xFerma:
 
     def accounts_health_test(self, accs):
         for acc in accs:
-            self.view(acc,2003894829424824683, 44196397)
-            time.sleep(1)
-            self.like(acc, 2004307581599469917)
-            time.sleep(2)
-            self.get_timeline(acc)
-            time.sleep(2)
-            self.like(acc, 2004296606020190305)
-            time.sleep(2)
-            self.like(acc, 2004401789567742030)
-            time.sleep(2)
-            self.like(acc, 2004209430561542238)
+            print(twitter_search.get_phone_pass_data(acc))
+            # self.view(acc,2003894829424824683, 44196397)
+            # time.sleep(1)
+            # self.like(acc, 2004307581599469917)
+            # time.sleep(2)
+            # self.get_timeline(acc)
+            # time.sleep(2)
+            # self.like(acc, 2004296606020190305)
+            # time.sleep(2)
+            # self.like(acc, 2004401789567742030)
+            # time.sleep(2)
+            # self.like(acc, 2004209430561542238)
 
 # ----------------------------
 # ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (logging вместо print)

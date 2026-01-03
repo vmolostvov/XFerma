@@ -487,6 +487,9 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
     elif api_endpoint == 'View':
         base_url = "https://x.com/i/api/1.1/graphql/user_flow.json"
         referer = 'https://x.com/vladik_sol/status/1935709990523691058'
+    elif api_endpoint == 'pw_mp':
+        base_url = "https://x.com/i/api/1.1/users/email_phone_info.json"
+        referer = 'https://x.com/settings/your_twitter_data/account'
     elif api_endpoint == "CreateTweet":
         base_url = "https://x.com/i/api/graphql/Q0m4wAWzUFfjoQY7CXIXrQ/CreateTweet"
     elif api_endpoint == "change_profile":
@@ -1296,6 +1299,22 @@ def change_profile_info(working_acc, description, name=None):
 
     if res:
         return True
+
+    return False
+
+
+def get_phone_pass_data(working_acc):
+
+    res = twitter_api_call('pw_mp', variables={}, features={}, twitter_working_account=working_acc)
+
+    if res == '131':
+        return res
+
+    if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
+        return res
+
+    if res:
+        return res
 
     return False
 

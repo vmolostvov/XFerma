@@ -3,7 +3,7 @@ import random, re, string
 # database
 
 DB_HOST_SERVER = 'localhost'
-DB_HOST_LOCAL = '185.247.18.169'
+DB_HOST_LOCAL = '195.208.16.1'
 DB_PORT = 5432
 DB_USERNAME = 'postgres'
 DB_PASSWORD = 'Opg123opg'
@@ -35,7 +35,7 @@ nodemaven_proxy_port = '8080'
 nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-{}-filter-medium'
 # nodemaven_proxy_login = 'https://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
 # nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-64bc6e4fc5d64-filter-medium'
-# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium'
+# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-399a85c38e684-filter-medium'
 nodemaven_proxy_pw = 'e3ibl6cpq4'
 
 

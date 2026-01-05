@@ -1328,11 +1328,11 @@ def get_phone_pass_data(working_acc):
 
 def change_email(working_acc, pw, new_email):
 
-    # verify_pw = f'password={pw}'
-    # res = twitter_api_call('verify_pw', variables=verify_pw, features={}, twitter_working_account=working_acc)
-    # print(res)
-    #
-    # time.sleep(3)
+    verify_pw = f'password={pw}'
+    res = twitter_api_call('verify_pw', variables=verify_pw, features={}, twitter_working_account=working_acc)
+    print(res)
+
+    time.sleep(3)
 
     add_email_data = {"input_flow_data":{"flow_context":{"debug_overrides":{},"start_location":{"location":"settings"}}},"subtask_versions":{"action_list":2,"alert_dialog":1,"app_download_cta":1,"check_logged_in_account":1,"choice_selection":3,"contacts_live_sync_permission_prompt":0,"cta":7,"email_verification":2,"end_flow":1,"enter_date":1,"enter_email":2,"enter_password":5,"enter_phone":2,"enter_recaptcha":1,"enter_text":5,"enter_username":2,"generic_urt":3,"in_app_notification":1,"interest_picker":3,"js_instrumentation":1,"menu_dialog":1,"notifications_permission_prompt":2,"open_account":2,"open_home_timeline":1,"open_link":1,"phone_verification":4,"privacy_options":1,"security_key":3,"select_avatar":4,"select_banner":2,"settings_list":7,"show_code":1,"sign_up":2,"sign_up_review":4,"tweet_selection_urt":1,"update_users":1,"upload_media":1,"user_recommendations_list":4,"user_recommendations_urt":1,"wait_spinner":3,"web_modal":1}}
     res = twitter_api_call('add_email', variables=add_email_data, features={}, twitter_working_account=working_acc)

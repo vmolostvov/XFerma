@@ -561,14 +561,14 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
                 if api_endpoint in ['View', 'verify_pw']:
                     headers['content-type'] = 'application/x-www-form-urlencoded'
 
-                if api_endpoint in ['View', 'change_profile', 'change_pw', 'add_email', 'begin_email_verif', 'verify_pw']:
+                if api_endpoint in ['View', 'change_profile', 'change_pw', 'add_email', 'verify_pw']:
                     # print('base url', base_url)
                     # print('headers', headers)
                     # print('variables', variables)
                     response = twitter_working_account['session'].request_client.request(base_url, method='POST',
                                                                                          data=params if params else variables,
                                                                                          headers=headers)
-                elif api_endpoint in ['FavoriteTweet', 'CreateRetweet', 'CreateBookmark', 'CreateTweet']:
+                elif api_endpoint in ['FavoriteTweet', 'CreateRetweet', 'CreateBookmark', 'CreateTweet', 'begin_email_verif']:
                     response = twitter_working_account['session'].request_client.request(base_url, method='POST',
                                                                                          json=params if params else variables,
                                                                                          headers=headers)

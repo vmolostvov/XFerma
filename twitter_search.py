@@ -1328,11 +1328,11 @@ def get_phone_pass_data(working_acc):
 
 def change_email(working_acc, pw, new_email):
 
-    verify_pw = f'password={pw}'
-    res = twitter_api_call('verify_pw', variables=verify_pw, features={}, twitter_working_account=working_acc)
-    print(res)
-
-    time.sleep(3)
+    # verify_pw = f'password={pw}'
+    # res = twitter_api_call('verify_pw', variables=verify_pw, features={}, twitter_working_account=working_acc)
+    # print(res)
+    #
+    # time.sleep(3)
 
     add_email_data = {"input_flow_data":{"flow_context":{"debug_overrides":{},"start_location":{"location":"settings"}}},"subtask_versions":{"action_list":2,"alert_dialog":1,"app_download_cta":1,"check_logged_in_account":1,"choice_selection":3,"contacts_live_sync_permission_prompt":0,"cta":7,"email_verification":2,"end_flow":1,"enter_date":1,"enter_email":2,"enter_password":5,"enter_phone":2,"enter_recaptcha":1,"enter_text":5,"enter_username":2,"generic_urt":3,"in_app_notification":1,"interest_picker":3,"js_instrumentation":1,"menu_dialog":1,"notifications_permission_prompt":2,"open_account":2,"open_home_timeline":1,"open_link":1,"phone_verification":4,"privacy_options":1,"security_key":3,"select_avatar":4,"select_banner":2,"settings_list":7,"show_code":1,"sign_up":2,"sign_up_review":4,"tweet_selection_urt":1,"update_users":1,"upload_media":1,"user_recommendations_list":4,"user_recommendations_urt":1,"wait_spinner":3,"web_modal":1}}
     res = twitter_api_call('add_email', variables=add_email_data, features={}, twitter_working_account=working_acc)
@@ -1340,7 +1340,7 @@ def change_email(working_acc, pw, new_email):
 
     time.sleep(3)
 
-    castle_token = 'undefined'
+    castle_token = 'Z2plnhdXwfVM-5jq2tFtWGt3TAuVqpqSzaUHltALASCdeu3aC5onaewLvTPHkZz7d6Y5C85ZEsW0KIeCzlELjmOOCOf9ViQy7jXb9oMiEqqaxKtPUkAPmoSRpaovu-S1BU_9BUpIRzJesL9rH6B1imZcAmBfsjGyOKGzZ7y3wcnVFBPGcdp3cPCcvcdv5KI4qJuTI5CCY8AUT7_z4l4CNwTaaLh0wkh8hdoIsiltrFWb4VngwamS9o9imL1nk0lofnTM7RfrQEgBi8K-Iv2SQDF9N0GgA_E4x8vclwTVKVoJ30SmH4f5oOFXY4nZ3ywZi3CRZn1En4OTJnJ66P7vfQhnVNZj57B5lNk31nAJV7seguFHPRDpvtMNtDNsjTvCUnon2XeR2VldWIWo-gBrRdet0EWMLLppQp6mN4HyRWjXYjTGrDsjjjq0VRHF9oJvKVT9qBx_9GcyuenR9jbkLIr7beagSJKm0zhdi5ctSGkTvmuNF1PoEhLZME-33I3E1jdq61A9roM4DGQQN0PlqRqc3lbK8DoCbU2C5k9bkGHFRWNFqiDTpecBQ_ktUtvRDTHg_3MH-uySNu3F9UqN7jIIcU6Shq8-jdjwOLUoo2PcYhGuPTDYfxUCEHrMw-6ATqS_obvv9iLTXhrGmZ1_3LJLbm7h0s6Msk2wG46Ajg7lnG4P9j6ufYTLN-_WY_u1yg6P6HefZEw_uwrzAz821h3Vg4h_TuUlDbNAbvpurvXSXvuIkJGim2UoF016jz1Ojpv9FdcuVWN2e-yYthYpe9eW81pbl5FqbTTZGVNfW58ftKoBuzHkPiY-G7eznJQO1ClV_osNiGhF2b4wLoyAbxR3FsRzhjU-o7zIwI77Y9XUn9wtL7Ue1Rqe-d9ubPolauvL95wVE1oXyjxlIlVK-hjkIPNpseiGAt2tOjJI-GudrTvu_Iec9girTUipiduruumS784R7F90lH1SDOham7oRyEfTzJW7QKKpMizmYMbPsnzaE6-v1z-9ABAvz8bn0nisYhVPFVh_yD6p7cRT5K9DLmQSYTeSkA7i6p0TD2gaQAFM4B4xPnnZHtcS2O6Yglz9P7CtRxmXOC5wsJhuSsds17P6OA_V468kt4C2lvJaPOy2LdzGIyv4O-FbkF2ujTzEK2YmPPF3bmSiHuatuNW4uhK3MAWfMRA-UyYM26JjdpCDGfs8x9VkIuu9fIzhyAuRgVmflucQZX9ThDz1I2aK_A6narrmLIeJe4Bm5rX7f7UYkJ2DTBttOjh9pJfPAcqZbPBQNoxr8x_fmAeH_oeIz54rjLhKwea7KFHYoG8YvXQEkY-7qeVS1VbOyYeZROcO7CxCLO21Q2S0QyH9vevfSqRLqpso6oXzYiKaWbpPhP6Gwk0_aw2cptNmuIbvzlHrKaE445mIzF4YfUUjAnNxGlWrQKWmjZ3-NsbIleeTPGgGTcgrepfeiMNCM8oEhcHx-WY9xWq_yRa03DWOaKzN-PU-ftWEwWHc5-Kj2DIM9PyjnfHhC-2xcjAPK0g21y3yG6LCiUMcAYMDwZU1XoUEOH9QOhU-SFyL5tfu-NbOGZ1DsOnuygaLLutYn91GPXMig3B2BoQQbZnMgzbOxkuKiBYKuOaS_RPPz-cLtCCERAFLWKP6_7-cVJcMMhym-cHhfkh9opEjpFlj5RqTayiEeZOwmPIDLcYDX-RNrdDcmmuYtTFE-JncrxOlvTt6k_6ZbCM7dsWiGDwcgHuc5EnR5G7cmUZHIZ8lUgpl3Fj0RitC7_PVd56oa4kyaM2YWceOtTu87lV8eQUc7YJOQ0LF8-dzQcvBS2PjTlGnFC6IyVKLjansqYS_HmXeUA1V0_0W0Klz-VvtFTZ3TJ30hA9Nl6GT2XMhTKXm5-H9wjLLz2Tjc1T5_i7YrApaEzSaY-3G7doI0ay4CNVzQCSHHsemTujlFyEkCZrRLhSfLmsd3b0FMB4DOvJ6RsmPaH_GubePtUXvXOw6tX6Dh1IjBOjJK0HRUp8wj97nqOSsnb_JWOeqm49NvDoI5D1WjJWW4eVmkRoUPXZzA-gsNr6otBtSQ6u4IqaD7JtMkvDTe-A4G85toGtgUBlXM-VJCBFbhsxo5PZu_QxGWXSO9giuQtIr1cIr4nXl4jdu88aKLKtFWkE7sqQk1OkD6B7_k6hGL_fKMc7CQPLZET9RZ_v9I_FAEA_LO_EFVOo7VgnofHJCk1lBI1-uBKUcHBJ8mdyn5ekQDRlfr4jvB4lZOpm7Dp803VpyBG0BRRSoqmSWMgEMIXYCDf7HUC-wYeuHRlccMBcQryS5F6gNuqpTCUuEvh8A4PG4h_D22seC-vX_jx7NegWcPRXztK6U4YLm9XCyqeUxzNBVvX_EzyXzWwterkV9Y47BHIIcrOAhJw9XFprO7Kn6LhMg-1Bdq17yGKGvw1VcY5FBB9gHTcN1Z0KHm9XlawbHXlwsZKmzn-jP8v5dgS3d4uA92jZIKGtJ6ACj5hk6EZvzbQQlLo0chhZpeIF0PeszJj63fZYwxwpyduH1gWLyzFzisTtl39YGGuCDIqZR-HsAFUdnlkhEaN4ZK11uCMCGXJlfZ-EFBGBj_iYzxEuWLRHegHwWQs8-q8f7_1WBck9RwX4k_Of3u6KmZZhOfp3X7k2lO9TKErafmq-VkV9-l_z4ZnXw_bTZ9Cba_O0l9apncuFVto97E9SU5kZfSwnhfBI5cvGn3MfFI4jx3q-r9FLwPNsk-ZQy2bnv40adOocn6xFwqWakvgrIzfWMwytIGbtnaNu4iIRvkqKX5vVYvMdhEEy0M7ekmMG6mbe2a93T61HwSlmEDo_ggPiwGKfjgxfJRD-8kX456w70koSYwAWzv5RNMeGZ8kR5GqwV1l5dLHX_rWkj-BozKAskVtm3dnj-G_3OsvDDuAxs72v4rqriUTnYX1W20ZCk-Wv75XKmiP8MRZV0i1hNZ8PHJazUwYnE83GIOoKDMu6fCbjXlVhk-39gPfM'
     flow_token = res['flow_token']
     print(f'flow: {flow_token}')
     begin_data = {

@@ -708,7 +708,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                         if 'privacynotice' not in url and 'ppsecure' not in url:
                             if i ==4:  # chrome-error://chromewebdata
                                 print(f"Unexpected final URL: {url}")
-                                sb.sleep(20)
+                                sb.sleep(5)
                                 raise RuntimeError(f"Unexpected final URL: {url}")
                             else:
                                 continue
@@ -757,6 +757,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                     continue
 
                 ok()
+                continue
 
         except Exception:
             logger.exception("🔥 [MAIL] Фатальная ошибка create_new_acc()")

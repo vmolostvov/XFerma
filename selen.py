@@ -710,6 +710,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                                 raise RuntimeError(f"Unexpected final URL: {url}")
                             else:
                                 continue
+                        break
                     logger.info("✅ [MAIL] Аккаунт успешно создан!")
                 except Exception:
                     logger.exception("❌ [MAIL] Финальная проверка провалилась")

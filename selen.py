@@ -703,6 +703,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                 try:
                     # sb.cdp.wait_for_element_visible('div[id="app-host"]', timeout=40)
                     for i in range(5):
+                        sb.sleep(10)
                         url = sb.cdp.get_current_url()
                         if 'privacynotice' not in url or 'ppsecure' not in url:
                             if i ==4:

@@ -630,6 +630,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                 try:
                     first, last = get_random_name()
                     sb.write('input[id="lastNameInput"]', last)
+                    sb.sleep(0.5)
                     sb.write('input[id="firstNameInput"]', first)
                     sb.sleep(0.5)
                     sb.cdp.click('button[type="submit"]')
@@ -637,6 +638,12 @@ def create_new_acc(stats_path: str = STATS_PATH):
                 except Exception:
                     logger.exception("❌ [MAIL] Ошибка шага имени")
                     fail("name_step_failed")
+                    sb.cdp.save_screenshot('ss_test.png')
+                    web_audit_vip_user_message_with_photo(
+                        '680688412',
+                        'ss_test.png',
+                        f"❌ [MAIL] Ошибка шага имени"
+                    )
                     continue
 
                 # CHALLENGE

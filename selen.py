@@ -585,6 +585,12 @@ def create_new_acc(stats_path: str = STATS_PATH):
                 except Exception:
                     logger.exception("❌ [MAIL] Не удалось заполнить email")
                     fail("email_step_failed")
+                    sb.cdp.save_screenshot('ss_test.png')
+                    web_audit_vip_user_message_with_photo(
+                        '680688412',
+                        'ss_test.png',
+                        f"❌ [MAIL] Ошибка шага email"
+                    )
                     continue
 
                 # PASSWORD
@@ -597,6 +603,12 @@ def create_new_acc(stats_path: str = STATS_PATH):
                 except Exception:
                     logger.exception("❌ [MAIL] Не удалось заполнить пароль")
                     fail("password_step_failed")
+                    sb.cdp.save_screenshot('ss_test.png')
+                    web_audit_vip_user_message_with_photo(
+                        '680688412',
+                        'ss_test.png',
+                        f"❌ [MAIL] Ошибка шага пароля"
+                    )
                     continue
 
                 # BIRTH DATE
@@ -624,6 +636,12 @@ def create_new_acc(stats_path: str = STATS_PATH):
                 except Exception:
                     logger.exception("❌ [MAIL] Ошибка шага даты рождения")
                     fail("birth_step_failed")
+                    sb.cdp.save_screenshot('ss_test.png')
+                    web_audit_vip_user_message_with_photo(
+                        '680688412',
+                        'ss_test.png',
+                        f"❌ [MAIL] Ошибка шага даты рождения"
+                    )
                     continue
 
                 # NAME
@@ -649,26 +667,36 @@ def create_new_acc(stats_path: str = STATS_PATH):
                 # CHALLENGE
                 try:
                     logger.info("🧩 [MAIL] Проверка challenge")
-                    for _ in range(10):
+                    for _ in range(7):
                         try:
                             sb.cdp.click('input[href="/home"]', timeout=6)
                         except Exception:
                             if is_text_on_ss('accessible challenge'):
                                 logger.warning("⚠️ [MAIL] accessible challenge")
                                 break
+                            elif _ == 6:
+                                raise
                     sb.cdp.gui_press_key('ENTER')
 
-                    for _ in range(10):
+                    for _ in range(7):
                         try:
                             sb.cdp.click('input[href="/home"]', timeout=6)
                         except Exception:
                             if is_text_on_ss('press again'):
                                 logger.warning("⚠️ [MAIL] press again challenge")
                                 break
+                            elif _ == 6:
+                                raise
                     sb.cdp.gui_press_key('ENTER')
                 except Exception:
                     logger.exception("❌ [MAIL] Ошибка challenge части")
                     fail("challenge_step_failed")
+                    sb.cdp.save_screenshot('ss_test.png')
+                    web_audit_vip_user_message_with_photo(
+                        '680688412',
+                        'ss_test.png',
+                        f"❌ [MAIL] Ошибка challenge части"
+                    )
                     continue
 
                 # FINAL CHECK
@@ -681,6 +709,12 @@ def create_new_acc(stats_path: str = STATS_PATH):
                 except Exception:
                     logger.exception("❌ [MAIL] Финальная проверка провалилась")
                     fail("final_check_failed")
+                    sb.cdp.save_screenshot('ss_test.png')
+                    web_audit_vip_user_message_with_photo(
+                        '680688412',
+                        'ss_test.png',
+                        f"❌ [MAIL] Ошибка финальной проверки"
+                    )
                     continue
 
                 # SAVE TO DB

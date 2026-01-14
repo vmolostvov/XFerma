@@ -706,12 +706,25 @@ def create_new_acc(stats_path: str = STATS_PATH):
                         sb.sleep(10)
                         url = sb.cdp.get_current_url()
                         if 'privacynotice' not in url or 'ppsecure' not in url:
-                            if i ==4:
+                            if i ==4:  # chrome-error://chromewebdata
                                 print(f"Unexpected final URL: {url}")
                                 sb.sleep(20)
                                 raise RuntimeError(f"Unexpected final URL: {url}")
                             else:
                                 continue
+                        elif 'chrome-error' in url:
+                            sb.open('https://outlook.live.com/mail/0/')
+                            try:
+                                sb.cdp.click('input[href="/home"]', timeout=20)
+                            except Exception:
+                                pass
+                            sb.cdp.save_screenshot('ss_test.png')
+                            web_audit_vip_user_message_with_photo(
+                                '680688412',
+                                'ss_test.png',
+                                f"❌ [MAIL] Ошибка финальной проверки"
+                            )
+                            return 
                         break
                     logger.info("✅ [MAIL] Аккаунт успешно создан!")
                 except Exception:

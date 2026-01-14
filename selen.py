@@ -701,10 +701,14 @@ def create_new_acc(stats_path: str = STATS_PATH):
 
                 # FINAL CHECK
                 try:
-                    sb.cdp.wait_for_element_visible('div[id="app-host"]', timeout=40)
-                    url = sb.cdp.get_current_url()
-                    if 'privacynotice' not in url:
-                        raise RuntimeError(f"Unexpected final URL: {url}")
+                    # sb.cdp.wait_for_element_visible('div[id="app-host"]', timeout=40)
+                    for i in range(5):
+                        url = sb.cdp.get_current_url()
+                        if 'privacynotice' not in url or 'ppsecure' not in url:
+                            if i ==4:
+                                raise RuntimeError(f"Unexpected final URL: {url}")
+                            else:
+                                continue
                     logger.info("✅ [MAIL] Аккаунт успешно создан!")
                 except Exception:
                     logger.exception("❌ [MAIL] Финальная проверка провалилась")

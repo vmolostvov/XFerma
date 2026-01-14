@@ -707,6 +707,8 @@ def create_new_acc(stats_path: str = STATS_PATH):
                         url = sb.cdp.get_current_url()
                         if 'privacynotice' not in url or 'ppsecure' not in url:
                             if i ==4:
+                                print(f"Unexpected final URL: {url}")
+                                sb.sleep(20)
                                 raise RuntimeError(f"Unexpected final URL: {url}")
                             else:
                                 continue

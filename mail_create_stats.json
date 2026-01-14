@@ -1,0 +1,24 @@
+{
+  "created_success_total": 0,
+  "failed_total": 3,
+  "events": [
+    {
+      "ts": "2026-01-14T06:36:28.404958+00:00",
+      "success": false,
+      "email": "supplementalbeckon832@outlook.com",
+      "reason": "challenge_step_failed"
+    },
+    {
+      "ts": "2026-01-14T06:40:45.829910+00:00",
+      "success": false,
+      "email": "l_corruptly3500@outlook.com",
+      "reason": "challenge_step_failed"
+    },
+    {
+      "ts": "2026-01-14T06:41:48.607740+00:00",
+      "success": false,
+      "email": "stina9375@outlook.com",
+      "reason": "challenge_step_failed"
+    }
+  ]
+}

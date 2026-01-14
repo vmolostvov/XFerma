@@ -8,7 +8,7 @@ import easyocr
 #     return pytesseract.image_to_string(Image.open(img_filename))
 
 def extract_text_easyocr(img_filename):
-    reader = easyocr.Reader(['en'])
+    reader = easyocr.Reader(['en'], gpu=False)
     results = reader.readtext(img_filename)
     recognised_text = []
     for bbox, text, prob in results:

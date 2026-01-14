@@ -558,138 +558,148 @@ def create_new_acc(stats_path: str = STATS_PATH):
                 return True
         return False
 
-    logger.info("🆕 [MAIL] Начинаю создание нового Outlook аккаунта")
+    while True:
 
-    proxy_sid = generate_valid_sid_nodemaven_proxy()
-    proxy = (
-        f'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-'
-        f'sid-{proxy_sid}-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
-    )
-    logger.info(f"🌐 [MAIL] Proxy SID={proxy_sid}")
+        logger.info("🆕 [MAIL] Начинаю создание нового Outlook аккаунта")
 
-    try:
-        with SB(uc=True, xvfb=True, proxy=proxy, locale_code='en', pls="none") as sb:
-            sb.activate_cdp_mode('https://signup.live.com/signup')
-            logger.info("🌍 [MAIL] Открыта страница регистрации")
+        proxy_sid = generate_valid_sid_nodemaven_proxy()
+        proxy = (
+            f'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-'
+            f'sid-{proxy_sid}-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
+        )
+        logger.info(f"🌐 [MAIL] Proxy SID={proxy_sid}")
 
-            # EMAIL
-            try:
-                email_un = generate_unique_outlook_un()
-                email_un_with_domen = email_un + '@outlook.com'
-                sb.write('input[id="floatingLabelInput4"]', email_un_with_domen)
-                sb.sleep(0.5)
-                sb.cdp.click('button[type="submit"]')
-                logger.info(f"📧 [MAIL] Username: {email_un_with_domen}")
-            except Exception:
-                logger.exception("❌ [MAIL] Не удалось заполнить email")
-                return fail("email_step_failed")
+        try:
+            with SB(uc=True, xvfb=True, proxy=proxy, locale_code='en', pls="none") as sb:
+                sb.activate_cdp_mode('https://signup.live.com/signup')
+                logger.info("🌍 [MAIL] Открыта страница регистрации")
 
-            # PASSWORD
-            try:
-                email_pw = generate_password()
-                sb.write('input[type="password"]', email_pw)
-                sb.sleep(0.5)
-                sb.cdp.click('button[type="submit"]')
-                logger.info("🔐 [MAIL] Пароль введён")
-            except Exception:
-                logger.exception("❌ [MAIL] Не удалось заполнить пароль")
-                return fail("password_step_failed")
+                # EMAIL
+                try:
+                    email_un = generate_unique_outlook_un()
+                    email_un_with_domen = email_un + '@outlook.com'
+                    sb.write('input[id="floatingLabelInput4"]', email_un_with_domen)
+                    sb.sleep(0.5)
+                    sb.cdp.click('button[type="submit"]')
+                    logger.info(f"📧 [MAIL] Username: {email_un_with_domen}")
+                except Exception:
+                    logger.exception("❌ [MAIL] Не удалось заполнить email")
+                    fail("email_step_failed")
+                    continue
 
-            # BIRTH DATE
-            try:
-                sb.cdp.gui_click_element('button[name="BirthDay"]')
-                arrow_count = random.randint(1, 30)
-                birth_day = arrow_count + 1
-                for _ in range(arrow_count):
-                    sb.cdp.gui_press_key('DOWN')
-                sb.cdp.gui_press_key('ENTER')
+                # PASSWORD
+                try:
+                    email_pw = generate_password()
+                    sb.write('input[type="password"]', email_pw)
+                    sb.sleep(0.5)
+                    sb.cdp.click('button[type="submit"]')
+                    logger.info("🔐 [MAIL] Пароль введён")
+                except Exception:
+                    logger.exception("❌ [MAIL] Не удалось заполнить пароль")
+                    fail("password_step_failed")
+                    continue
 
-                sb.cdp.click('button[name="BirthMonth"]')
-                arrow_count = random.randint(1, 11)
-                birth_month = arrow_count + 1
-                for _ in range(arrow_count):
-                    sb.cdp.gui_press_key('DOWN')
-                sb.cdp.gui_press_key('ENTER')
+                # BIRTH DATE
+                try:
+                    sb.cdp.gui_click_element('button[name="BirthDay"]')
+                    arrow_count = random.randint(1, 30)
+                    birth_day = arrow_count + 1
+                    for _ in range(arrow_count):
+                        sb.cdp.gui_press_key('DOWN')
+                    sb.cdp.gui_press_key('ENTER')
 
-                birth_year = random.randint(1970, 2005)
-                sb.write('input[name="BirthYear"]', str(birth_year))
-                sb.sleep(0.5)
-                sb.cdp.click('button[type="submit"]')
+                    sb.cdp.click('button[name="BirthMonth"]')
+                    arrow_count = random.randint(1, 11)
+                    birth_month = arrow_count + 1
+                    for _ in range(arrow_count):
+                        sb.cdp.gui_press_key('DOWN')
+                    sb.cdp.gui_press_key('ENTER')
 
-                logger.info(f"🎂 [MAIL] Дата рождения: {birth_day}.{birth_month}.{birth_year}")
-            except Exception:
-                logger.exception("❌ [MAIL] Ошибка шага даты рождения")
-                return fail("birth_step_failed")
+                    birth_year = random.randint(1970, 2005)
+                    sb.write('input[name="BirthYear"]', str(birth_year))
+                    sb.sleep(0.5)
+                    sb.cdp.click('button[type="submit"]')
 
-            # NAME
-            try:
-                first, last = get_random_name()
-                sb.write('input[id="lastNameInput"]', last)
-                sb.write('input[id="firstNameInput"]', first)
-                sb.sleep(0.5)
-                sb.cdp.click('button[type="submit"]')
-                logger.info(f"👤 [MAIL] Имя: {first} {last}")
-            except Exception:
-                logger.exception("❌ [MAIL] Ошибка шага имени")
-                return fail("name_step_failed")
+                    logger.info(f"🎂 [MAIL] Дата рождения: {birth_day}.{birth_month}.{birth_year}")
+                except Exception:
+                    logger.exception("❌ [MAIL] Ошибка шага даты рождения")
+                    fail("birth_step_failed")
+                    continue
 
-            # CHALLENGE
-            try:
-                logger.info("🧩 [MAIL] Проверка challenge")
-                for _ in range(10):
-                    try:
-                        sb.cdp.click('input[href="/home"]', timeout=6)
-                    except Exception:
-                        if is_text_on_ss('accessible challenge'):
-                            logger.warning("⚠️ [MAIL] accessible challenge")
-                            break
-                sb.cdp.gui_press_key('ENTER')
+                # NAME
+                try:
+                    first, last = get_random_name()
+                    sb.write('input[id="lastNameInput"]', last)
+                    sb.write('input[id="firstNameInput"]', first)
+                    sb.sleep(0.5)
+                    sb.cdp.click('button[type="submit"]')
+                    logger.info(f"👤 [MAIL] Имя: {first} {last}")
+                except Exception:
+                    logger.exception("❌ [MAIL] Ошибка шага имени")
+                    fail("name_step_failed")
+                    continue
 
-                for _ in range(10):
-                    try:
-                        sb.cdp.click('input[href="/home"]', timeout=6)
-                    except Exception:
-                        if is_text_on_ss('press again'):
-                            logger.warning("⚠️ [MAIL] press again challenge")
-                            break
-                sb.cdp.gui_press_key('ENTER')
-            except Exception:
-                logger.exception("❌ [MAIL] Ошибка challenge части")
-                return fail("challenge_step_failed")
+                # CHALLENGE
+                try:
+                    logger.info("🧩 [MAIL] Проверка challenge")
+                    for _ in range(10):
+                        try:
+                            sb.cdp.click('input[href="/home"]', timeout=6)
+                        except Exception:
+                            if is_text_on_ss('accessible challenge'):
+                                logger.warning("⚠️ [MAIL] accessible challenge")
+                                break
+                    sb.cdp.gui_press_key('ENTER')
 
-            # FINAL CHECK
-            try:
-                sb.cdp.wait_for_element_visible('div[id="app-host"]', timeout=40)
-                url = sb.cdp.get_current_url()
-                if 'privacynotice' not in url:
-                    raise RuntimeError(f"Unexpected final URL: {url}")
-                logger.info("✅ [MAIL] Аккаунт успешно создан!")
-            except Exception:
-                logger.exception("❌ [MAIL] Финальная проверка провалилась")
-                return fail("final_check_failed")
+                    for _ in range(10):
+                        try:
+                            sb.cdp.click('input[href="/home"]', timeout=6)
+                        except Exception:
+                            if is_text_on_ss('press again'):
+                                logger.warning("⚠️ [MAIL] press again challenge")
+                                break
+                    sb.cdp.gui_press_key('ENTER')
+                except Exception:
+                    logger.exception("❌ [MAIL] Ошибка challenge части")
+                    fail("challenge_step_failed")
+                    continue
 
-            # SAVE TO DB
-            try:
-                db.insert_new_mail(
-                    email_un_with_domen,
-                    email_pw,
-                    birth_day,
-                    birth_month,
-                    birth_year,
-                    first,
-                    last,
-                    proxy_sid
-                )
-                logger.info(f"💾 [MAIL] Сохранено в БД: {email_un_with_domen}")
-            except Exception:
-                logger.exception("❌ [MAIL] Не удалось сохранить в БД")
-                return fail("db_insert_failed")
+                # FINAL CHECK
+                try:
+                    sb.cdp.wait_for_element_visible('div[id="app-host"]', timeout=40)
+                    url = sb.cdp.get_current_url()
+                    if 'privacynotice' not in url:
+                        raise RuntimeError(f"Unexpected final URL: {url}")
+                    logger.info("✅ [MAIL] Аккаунт успешно создан!")
+                except Exception:
+                    logger.exception("❌ [MAIL] Финальная проверка провалилась")
+                    fail("final_check_failed")
+                    continue
 
-            return ok()
+                # SAVE TO DB
+                try:
+                    db.insert_new_mail(
+                        email_un_with_domen,
+                        email_pw,
+                        birth_day,
+                        birth_month,
+                        birth_year,
+                        first,
+                        last,
+                        proxy_sid
+                    )
+                    logger.info(f"💾 [MAIL] Сохранено в БД: {email_un_with_domen}")
+                except Exception:
+                    logger.exception("❌ [MAIL] Не удалось сохранить в БД")
+                    fail("db_insert_failed")
+                    continue
 
-    except Exception:
-        logger.exception("🔥 [MAIL] Фатальная ошибка create_new_acc()")
-        return fail("fatal_exception")
+                ok()
+
+        except Exception:
+            logger.exception("🔥 [MAIL] Фатальная ошибка create_new_acc()")
+            fail("fatal_exception")
+            continue
 
 
 if __name__ == '__main__':

@@ -558,6 +558,12 @@ def create_new_acc(stats_path: str = STATS_PATH):
                 return True
         return False
 
+    def save_cookies(sb, path):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        cookies = sb.get_cookies()
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(cookies, f, ensure_ascii=False, indent=2)
+
     while True:
 
         logger.info("🆕 [MAIL] Начинаю создание нового Outlook аккаунта")
@@ -614,7 +620,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                 # BIRTH DATE
                 try:
                     sb.cdp.gui_click_element('button[name="BirthDay"]')
-                    arrow_count = random.randint(1, 30)
+                    arrow_count = random.randint(1, 28)
                     birth_day = arrow_count + 1
                     for _ in range(arrow_count):
                         sb.cdp.gui_press_key('DOWN')
@@ -706,7 +712,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                         sb.sleep(10)
                         url = sb.cdp.get_current_url()
                         if 'privacynotice' not in url and 'ppsecure' not in url:
-                            if i ==4:  # chrome-error://chromewebdata
+                            if i ==4:  # chrome-error://chromewebdata ; https://signup.live.com/error.aspx?errcode=
                                 print(f"Unexpected final URL: {url}")
                                 sb.sleep(5)
                                 raise RuntimeError(f"Unexpected final URL: {url}")
@@ -756,8 +762,10 @@ def create_new_acc(stats_path: str = STATS_PATH):
                     fail("db_insert_failed")
                     continue
 
+                cookies_path = f"email_cookies/{email_un}.json"
+                save_cookies(sb, cookies_path)
+                print('saved cookies')
                 ok()
-                continue
 
         except Exception:
             logger.exception("🔥 [MAIL] Фатальная ошибка create_new_acc()")

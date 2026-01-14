@@ -1,8 +1,8 @@
 from typing import Iterable, Sequence, Tuple, Dict, List, Optional, Set
 from datetime import datetime, timedelta, timezone
-import psycopg, platform, logging, random, json
+import psycopg, platform, logging, json
 from psycopg.rows import dict_row
-from config import DB_PORT, DB_HOST_SERVER, DB_HOST_LOCAL, DB_PASSWORD, DB_BASE_NAME, DB_USERNAME
+from config import *
 from pixelscan_checker import get_proxy_by_sid
 from zoneinfo import ZoneInfo
 
@@ -18,8 +18,16 @@ def get_host():
         return DB_HOST_LOCAL
 
 
+def get_port():
+    system = platform.system().lower()
+    if system == "linux":
+        return DB_PORT_SERVER
+    elif system == "darwin":
+        return DB_PORT_LOCAL
+
+
 class Database:
-    def __init__(self, dsn=f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@{get_host()}:{DB_PORT}/{DB_BASE_NAME}"):
+    def __init__(self, dsn=f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@{get_host()}:{get_port()}/{DB_BASE_NAME}"):
         """
         dsn пример: "postgresql://user:pass@host:5432/dbname"
         """
@@ -113,6 +121,18 @@ class Database:
         sql = "UPDATE X_FERMA SET pass = %s, pass_changed = True WHERE uid = %s RETURNING uid;"
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute(sql, (pw, uid))
+            return cur.fetchone() is not None
+
+    def update_phone(self, username: str, phone: str) -> bool:
+        sql = "UPDATE X_FERMA SET phone = %s WHERE LOWER(username) = LOWER(%s) RETURNING username;"
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute(sql, (phone, username))
+            return cur.fetchone() is not None
+
+    def update_email(self, username: str, email: str, email_pass: str) -> bool:
+        sql = "UPDATE X_FERMA SET email = %s, email_pass = %s, email_changed = True WHERE LOWER(username) = LOWER(%s) RETURNING username;"
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute(sql, (email, email_pass, username))
             return cur.fetchone() is not None
 
     def update_auth(self, uid: str, auth_token: str) -> bool:
@@ -665,7 +685,74 @@ class Database:
             cur.executemany(sql, [(i["uid"], i["screen_name"]) for i in infls])
             return cur.rowcount
 
+    # =======================
+    #  MAIL_FERMA (основные методы)
+    # =======================
+
+    def insert_new_mail(
+        self,
+        email: str,
+        password: str,
+        birth_day: int,
+        birth_month: int,
+        birth_year: int,
+        first_name: str,
+        last_name: str,
+        proxy_sid: str
+    ) -> bool:
+        """
+        Вставка записи в MAIL_FERMA.
+        """
+        sql = """
+        INSERT INTO MAIL_FERMA (email, pass, addition_date, birth_day, birth_month, birth_year, first_name, last_name, proxy_sid)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        try:
+            with self._conn() as conn, conn.cursor() as cur:
+                cur.execute(sql, (email, password, datetime.now(), birth_day, birth_month, birth_year, first_name, last_name, proxy_sid))
+            return True
+        except Exception as e:
+            return False
+
 
 if __name__ == '__main__':
+    from typing import List, Dict
+
     db = Database()
-    print(db.fetch_influencers_with_uid())
+
+
+    def parse_accounts_file(path: str) -> List[Dict]:
+        accounts = []
+
+        with open(path, "r", encoding="utf-8") as f:
+            for line_num, line in enumerate(f, start=1):
+                line = line.strip()
+                if not line:
+                    continue
+
+                parts = line.split(":")
+
+                if len(parts) != 5:
+                    print(f"[WARN] Строка {line_num}: ожидалось 5 полей, получено {len(parts)} → пропущена")
+                    continue
+
+                username, password, phone, auth_token, cookie = parts
+
+                accounts.append({
+                    "username": username,
+                    "password": password,
+                    "phone": phone,
+                    "auth_token": auth_token,
+                    "cookie": cookie,
+                })
+
+        return accounts
+
+
+    accs = parse_accounts_file(
+        '/Users/vladmolostvov/Documents/6134718_202511063058de966bd699552e9b06f3edc92c3a3a3583601282984c190cc0ce471208.txt')
+    print(accs)
+    for _, acc in enumerate(accs):
+        print(f'updating {acc["username"]} | {_}')
+        # db.update_email(acc['username'], acc['email'], acc['email_pass'])
+        db.update_phone(acc['username'], acc['phone'])

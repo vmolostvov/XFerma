@@ -172,6 +172,6 @@ def make_proxy_str_for_pixelscan(proxy):
 
 
 if __name__ == '__main__':
-    proxy_str = 'http://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-d60aaaefdfd8d-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
+    proxy_str = 'http://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-7d0a575e412a4-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
     proxy_check(proxy_str)
     # print(generate_valid_sid_nodemaven_proxy())

@@ -1,10 +1,13 @@
 import random, re, string
 
+import requests
+
 # database
 
 DB_HOST_SERVER = 'localhost'
-DB_HOST_LOCAL = '195.208.16.1'
-DB_PORT = 5432
+DB_HOST_LOCAL = 'localhost'
+DB_PORT_SERVER = 5432
+DB_PORT_LOCAL = 5433
 DB_USERNAME = 'postgres'
 DB_PASSWORD = 'Opg123opg'
 DB_BASE_NAME = 'postgres'
@@ -35,7 +38,7 @@ nodemaven_proxy_port = '8080'
 nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-{}-filter-medium'
 # nodemaven_proxy_login = 'https://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
 # nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-64bc6e4fc5d64-filter-medium'
-# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-399a85c38e684-filter-medium'
+# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-7d0a575e412a4-filter-medium'
 nodemaven_proxy_pw = 'e3ibl6cpq4'
 
 
@@ -291,7 +294,3 @@ def append_user_agents(file_path: str, mobile_ratio: float = 0.8, desktop_chrome
 def make_main_file_with_accs():
     merge_files_with_delimiter('x_accs.txt', 'proxy.txt')
     append_user_agents('x_accs.txt')
-
-
-if __name__ == '__main__':
-    print(generate_password())

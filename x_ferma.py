@@ -12,7 +12,7 @@ from database import Database
 from datetime import datetime
 from alarm_bot import admin_error
 from typing import Callable, Optional
-from selen import regen_auth
+from selen import regen_auth, create_new_acc
 
 NY_TZ = zoneinfo.ZoneInfo("America/New_York")
 MOS_TZ = zoneinfo.ZoneInfo("Europe/Moscow")
@@ -1032,21 +1032,32 @@ class xFerma:
         return result['account']
 
 
+    def verify_new_email(self, twitter_working_account, new_email):
+        res = twitter_search.change_email(twitter_working_account, twitter_working_account['pass'], new_email)
+        if res:
+            acc_new_data = twitter_search.get_phone_mail_data(twitter_working_account)
+            if acc_new_data['emails'][0]['email'] == new_email.lower() and acc_new_data['emails'][0]['email_verified']:
+                logger.info(f"[MAIL_VERIF] @{twitter_working_account['screen_name']} успешно верефицирована новая почта {new_email}")
+            else:
+                logger.warning(
+                    f"[MAIL_VERIF] @{twitter_working_account['screen_name']} не удалось привязать новую почту!")
+
+
     def accounts_health_test(self, accs):
         for acc in accs:
             # print(twitter_search.change_email(acc, 'X9ZLXXTb5f', 'archivas.ai@outlook.com'))
-            print(twitter_search.get_phone_pass_data(acc))
-            # self.view(acc,2003894829424824683, 44196397)
-            # time.sleep(1)
-            # self.like(acc, 2004307581599469917)
-            # time.sleep(2)
-            # self.get_timeline(acc)
-            # time.sleep(2)
-            # self.like(acc, 2004296606020190305)
-            # time.sleep(2)
-            # self.like(acc, 2004401789567742030)
-            # time.sleep(2)
-            # self.like(acc, 2004209430561542238)
+            # print(twitter_search.get_phone_mail_data(acc))
+            self.view(acc,2003894829424824683, 44196397)
+            time.sleep(1)
+            self.like(acc, 2004307581599469917)
+            time.sleep(2)
+            self.get_timeline(acc)
+            time.sleep(2)
+            self.like(acc, 2004296606020190305)
+            time.sleep(2)
+            self.like(acc, 2004401789567742030)
+            time.sleep(2)
+            self.like(acc, 2004209430561542238)
 
 # ----------------------------
 # ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (logging вместо print)
@@ -1431,6 +1442,7 @@ if __name__ == '__main__':
     print("  4 — Смена пароля")
     print("  5 — Смена proxy")
     print("  6 — Selen-regen")
+    print("  7 — MFerma")
     print("  0 — Выход\n")
 
     choice = input("👉 Введите номер режима: ").strip()
@@ -1516,6 +1528,10 @@ if __name__ == '__main__':
     elif choice == '6':
         print("\n♻️ Запуск web режима регенерации аккаунтов...\n")
         regen_auth()
+
+    elif choice == '7':
+        print("\n▶ Запуск MFerma...\n")
+        create_new_acc()
 
 
     elif choice == '0':

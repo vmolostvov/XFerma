@@ -705,7 +705,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                     for i in range(5):
                         sb.sleep(10)
                         url = sb.cdp.get_current_url()
-                        if 'privacynotice' not in url or 'ppsecure' not in url:
+                        if 'privacynotice' not in url and 'ppsecure' not in url:
                             if i ==4:  # chrome-error://chromewebdata
                                 print(f"Unexpected final URL: {url}")
                                 sb.sleep(20)
@@ -722,9 +722,9 @@ def create_new_acc(stats_path: str = STATS_PATH):
                             web_audit_vip_user_message_with_photo(
                                 '680688412',
                                 'ss_test.png',
-                                f"❌ [MAIL] Ошибка финальной проверки"
+                                f"❌ [MAIL] chrome-error test"
                             )
-                            return 
+                            return
                         break
                     logger.info("✅ [MAIL] Аккаунт успешно создан!")
                 except Exception:

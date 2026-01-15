@@ -1,6 +1,6 @@
 {
-  "created_success_total": 0,
-  "failed_total": 3,
+  "created_success_total": 4,
+  "failed_total": 8,
   "events": [
     {
       "ts": "2026-01-14T06:36:28.404958+00:00",
@@ -19,6 +19,60 @@
       "success": false,
       "email": "stina9375@outlook.com",
       "reason": "challenge_step_failed"
+    },
+    {
+      "ts": "2026-01-14T09:53:20.854554+00:00",
+      "success": false,
+      "email": "merger.lucie145@outlook.com",
+      "reason": "email_step_failed"
+    },
+    {
+      "ts": "2026-01-14T09:57:09.701357+00:00",
+      "success": false,
+      "email": "donnell4162@outlook.com",
+      "reason": "fatal_exception"
+    },
+    {
+      "ts": "2026-01-14T10:03:30.798156+00:00",
+      "success": false,
+      "email": "hyperemesis.flunk2558@outlook.com",
+      "reason": "fatal_exception"
+    },
+    {
+      "ts": "2026-01-14T10:50:56.624898+00:00",
+      "success": false,
+      "email": "wigram.uhd3941@outlook.com",
+      "reason": "name_step_failed"
+    },
+    {
+      "ts": "2026-01-14T10:53:28.713486+00:00",
+      "success": true,
+      "email": "centurybahar9481@outlook.com",
+      "reason": null
+    },
+    {
+      "ts": "2026-01-15T03:21:17.076428+00:00",
+      "success": true,
+      "email": "campsiesamp47@outlook.com",
+      "reason": null
+    },
+    {
+      "ts": "2026-01-15T03:28:18.092026+00:00",
+      "success": false,
+      "email": "bermudez.dors59@outlook.com",
+      "reason": "final_check_failed"
+    },
+    {
+      "ts": "2026-01-15T03:30:50.266667+00:00",
+      "success": true,
+      "email": "deeming984@outlook.com",
+      "reason": null
+    },
+    {
+      "ts": "2026-01-15T05:31:00.879663+00:00",
+      "success": true,
+      "email": "t.carre729@outlook.com",
+      "reason": null
     }
   ]
 }

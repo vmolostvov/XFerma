@@ -638,6 +638,17 @@ def create_new_acc(stats_path: str = STATS_PATH):
                     sb.sleep(0.5)
                     sb.cdp.click('button[type="submit"]')
 
+                    if 'Enter your birthdate' in sb.get_page_source():
+                        logger.warning(f"🎂 [MAIL] BirthDay не введен! Попробуем ввести еще раз...")
+                        sb.cdp.gui_click_element('button[name="BirthDay"]')
+                        arrow_count = random.randint(1, 28)
+                        birth_day = arrow_count + 1
+                        for _ in range(arrow_count):
+                            sb.cdp.gui_press_key('DOWN')
+                        sb.cdp.gui_press_key('ENTER')
+                        sb.sleep(0.5)
+                        sb.cdp.click('button[type="submit"]')
+
                     logger.info(f"🎂 [MAIL] Дата рождения: {birth_day}.{birth_month}.{birth_year}")
                 except Exception:
                     logger.exception("❌ [MAIL] Ошибка шага даты рождения")
@@ -684,9 +695,9 @@ def create_new_acc(stats_path: str = STATS_PATH):
                                 raise
                     sb.cdp.gui_press_key('ENTER')
 
-                    for _ in range(7):
+                    for _ in range(6):
                         try:
-                            sb.cdp.click('input[href="/home"]', timeout=6)
+                            sb.cdp.click('input[href="/home"]', timeout=10)
                         except Exception:
                             if is_text_on_ss('press again'):
                                 logger.warning("⚠️ [MAIL] press again challenge")
@@ -762,9 +773,13 @@ def create_new_acc(stats_path: str = STATS_PATH):
                     fail("db_insert_failed")
                     continue
 
-                cookies_path = f"email_cookies/{email_un}.json"
-                save_cookies(sb, cookies_path)
-                print('saved cookies')
+                # SAVE COOKIES
+                try:
+                    sb.cdp.save_cookies(file=f"email_cookies/{email_un}.session.dat")
+                    print(f"💾 [MAIL] Cookies были успешно сохранены")
+                except Exception:
+                    logger.exception("❌ [MAIL] Не удалось сохранить cookie")
+
                 ok()
 
         except Exception:

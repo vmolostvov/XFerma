@@ -238,7 +238,7 @@ async def sniff_headers(
 
     matches = sniffer.matches
     sniffer.close()
-    await driver.close()
+    await driver.quit()
     return matches
 
 

@@ -1,7 +1,10 @@
+import time
+
 import requests, contextlib, json
 from typing import Any, Dict, List, Optional, Set
 import asyncio
 from cdp_sniffer import sniff_headers, SniffMatch
+from multiprocessing import Process, Queue
 
 # FOLDER = "inbox"
 # TOKEN_URL = "https://login.microsoftonline.com/common/oauth2/v2.0/token"
@@ -184,7 +187,7 @@ def check_avail_un(un_to_check):
                 return content.get('isAvailable')
         except KeyError:
             if i == 2:
-                new_outlook_headers = get_canary_key_outlook()
+                new_outlook_headers = get_canary_key_outlook_mp()
                 headers['canary'] = new_outlook_headers['canary']
                 headers['cookie'] = new_outlook_headers['cookie']
 
@@ -250,6 +253,21 @@ def get_canary_key_outlook(
 
     return asyncio.run(runner())
 
+def get_canary_key_outlook_worker(q):
+    res = get_canary_key_outlook()
+    q.put(res)
+
+def get_canary_key_outlook_mp():
+    q = Queue()
+    p = Process(target=get_canary_key_outlook_worker, args=(q,))
+    p.start()
+    p.join(timeout=60)
+
+    if p.is_alive():
+        p.terminate()
+
+    return q.get()
+
 
 def load_outlook_headers(
     path: str = "outlook_headers.json",
@@ -284,3 +302,6 @@ def load_outlook_headers(
         "canary": None,
         "cookie": None,
     }
+
+if __name__ == '__main__':
+    print(check_avail_un('sdss23423423'))

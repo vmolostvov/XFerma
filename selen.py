@@ -150,7 +150,7 @@ def login(username, password, proxy):
     logger.info(f"🔐 [LOGIN] Начинаю логин для @{username} | Proxy: {proxy}")
 
     try:
-        with SB(uc=True, proxy=proxy, locale_code='en') as sb:
+        with SB(uc=True, proxy=proxy, locale_code='en', agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36') as sb:
         # with SB(xvfb=True) as sb:
             logger.debug("[LOGIN] Browser session инициализирована")
 
@@ -816,6 +816,6 @@ def create_new_acc(stats_path: str = STATS_PATH):
 
 
 if __name__ == '__main__':
-    sss('evdokiyabilan1984@outlook.com', 'zA6yyPBQnm', 'galkina_0803@outlook.com')
-    # login('armyjattsunny', 'kvzQStMLnB', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080')
+    # sss('evdokiyabilan1984@outlook.com', 'zA6yyPBQnm', 'galkina_0803@outlook.com')
+    login('armyjattsunny', 'kvzQStMLnB', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080')
     # create_new_acc()

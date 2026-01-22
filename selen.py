@@ -222,6 +222,13 @@ def login(username, password, proxy):
                 login_btn = sb.cdp.find_element("Log in", best_match=True)
                 login_btn.click()
                 logger.info("[LOGIN] Клик по кнопке Log in")
+                sb.sleep(1)
+                sb.cdp.save_screenshot('ss_test.png')
+                web_audit_vip_user_message_with_photo(
+                    '680688412',
+                    'ss_test.png',
+                    f"❌ [TEST] Контрольный скрин после клика на логин для @{username}"
+                )
             except Exception:
                 logger.exception(f"❌ [LOGIN] Ошибка клика по кнопке Log in для @{username}")
                 return None

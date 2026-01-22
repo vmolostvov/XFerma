@@ -182,13 +182,13 @@ def login(username, password, proxy):
             try:
                 next_btn = sb.cdp.find_element("Next", best_match=True)
                 next_btn.click()
-                # sb.sleep(0.5)
-                # sb.cdp.save_screenshot('ss_test.png')
-                # web_audit_vip_user_message_with_photo(
-                #     '680688412',
-                #     'ss_test.png',
-                #     f"❌ [TEST] Ошибка проверки входа для @{username}"
-                # )
+                sb.sleep(0.5)
+                sb.cdp.save_screenshot('ss_test.png')
+                web_audit_vip_user_message_with_photo(
+                    '680688412',
+                    'ss_test.png',
+                    f"❌ [TEST] Ошибка проверки входа для @{username}"
+                )
                 logger.info("[LOGIN] Нажал кнопку Next")
             except Exception:
                 logger.exception(f"❌ [LOGIN] Ошибка клика по кнопке Next для @{username}")
@@ -371,9 +371,15 @@ def regen_auth():
 
 
 def sss(email, pw, alt_mail):
-    proxy = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-3e85cb8c21134-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
+    # proxy = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-3e85cb8c21134-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
+    proxy = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-truedexsc-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
     with SB(uc=True, xvfb=True, proxy=proxy, locale_code='en', pls="none") as sb:
-        sb.activate_cdp_mode("https://outlook.live.com/mail/0/?prompt=select_account&deeplink=mail%2F0%2F%3Fnlp%3D0")
+        # sb.activate_cdp_mode("https://outlook.live.com/mail/0/?prompt=select_account&deeplink=mail%2F0%2F%3Fnlp%3D0")
+        sb.activate_cdp_mode("https://google.com")
+        try:
+            sb.cdp.click('input[href="/home"]', timeout=3000)
+        except:
+            pass
         email_input = sb.cdp.wait_for_element_visible('input[id="loginfmt"]', timeout=60)
         email_input.send_keys(email)
         time.sleep(0.5)
@@ -776,7 +782,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                 # SAVE COOKIES
                 try:
                     sb.cdp.save_cookies(file=f"email_cookies/{email_un}.session.dat")
-                    print(f"💾 [MAIL] Cookies были успешно сохранены")
+                    logger.info(f"💾 [MAIL] Cookies были успешно сохранены")
                 except Exception:
                     logger.exception("❌ [MAIL] Не удалось сохранить cookie")
 
@@ -789,6 +795,6 @@ def create_new_acc(stats_path: str = STATS_PATH):
 
 
 if __name__ == '__main__':
-    # sss('evdokiyabilan1984@outlook.com', 'zA6yyPBQnm', 'galkina_0803@outlook.com')
+    sss('evdokiyabilan1984@outlook.com', 'zA6yyPBQnm', 'galkina_0803@outlook.com')
     # login('armyjattsunny', 'kvzQStMLnB', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080')
-    create_new_acc()
+    # create_new_acc()

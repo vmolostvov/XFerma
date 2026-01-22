@@ -150,7 +150,7 @@ def login(username, password, proxy):
     logger.info(f"🔐 [LOGIN] Начинаю логин для @{username} | Proxy: {proxy}")
 
     try:
-        with SB(uc=True, proxy=proxy, locale_code='en', headless=False) as sb:
+        with SB(uc=True, proxy=proxy, locale_code='en') as sb:
         # with SB(xvfb=True) as sb:
             logger.debug("[LOGIN] Browser session инициализирована")
 
@@ -221,12 +221,19 @@ def login(username, password, proxy):
 
             # --- Проверка входа
             try:
-                sb.cdp.open_new_tab("https://x.com/home")
+                # sb.cdp.open_new_tab("https://x.com/home")
 
                 try:
                     sb.cdp.click('div[aria-label="Post text"]', timeout=10)
                 except Exception:
                     pass
+
+                sb.cdp.save_screenshot('ss_test.png')
+                web_audit_vip_user_message_with_photo(
+                    '680688412',
+                    'ss_test.png',
+                    f"❌ [TEST] Ошибка проверки входа для @{username}"
+                )
 
                 sb.get("https://x.com/home")
 

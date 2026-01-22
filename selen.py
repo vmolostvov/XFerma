@@ -200,6 +200,13 @@ def login(username, password, proxy):
             try:
                 sb.write("input[name='password']", password, timeout=20)
                 logger.info("[LOGIN] Ввел пароль")
+                sb.sleep(3)
+                sb.cdp.save_screenshot('ss_test.png')
+                web_audit_vip_user_message_with_photo(
+                    '680688412',
+                    'ss_test.png',
+                    f"❌ [TEST] Контрольный скрин после ввода пароля для @{username}"
+                )
             except Exception:
                 logger.exception(f"❌ [LOGIN] Не удалось ввести пароль для @{username}")
                 sb.cdp.save_screenshot('ss_test.png')
@@ -232,7 +239,7 @@ def login(username, password, proxy):
                 web_audit_vip_user_message_with_photo(
                     '680688412',
                     'ss_test.png',
-                    f"❌ [TEST] Ошибка проверки входа для @{username}"
+                    f"❌ [TEST] Контрольный скрин для @{username}"
                 )
 
                 sb.get("https://x.com/home")

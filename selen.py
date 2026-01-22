@@ -150,7 +150,7 @@ def login(username, password, proxy):
     logger.info(f"🔐 [LOGIN] Начинаю логин для @{username} | Proxy: {proxy}")
 
     try:
-        with SB(uc=True, proxy=proxy, locale_code='en', agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36') as sb:
+        with SB(uc=True, proxy=proxy, locale_code='en') as sb:
         # with SB(xvfb=True) as sb:
             logger.debug("[LOGIN] Browser session инициализирована")
 

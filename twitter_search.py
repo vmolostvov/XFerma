@@ -1439,7 +1439,49 @@ def flow_login(working_acc):
                     "start_location": {"location": "splash_screen"},
                 }
             },
-            "subtask_versions": { ... }  # ← без изменений
+            "subtask_versions": {
+                "action_list": 2,
+                "alert_dialog": 1,
+                "app_download_cta": 1,
+                "check_logged_in_account": 1,
+                "choice_selection": 3,
+                "contacts_live_sync_permission_prompt": 0,
+                "cta": 7,
+                "email_verification": 2,
+                "end_flow": 1,
+                "enter_date": 1,
+                "enter_email": 2,
+                "enter_password": 5,
+                "enter_phone": 2,
+                "enter_recaptcha": 1,
+                "enter_text": 5,
+                "enter_username": 2,
+                "generic_urt": 3,
+                "in_app_notification": 1,
+                "interest_picker": 3,
+                "js_instrumentation": 1,
+                "menu_dialog": 1,
+                "notifications_permission_prompt": 2,
+                "open_account": 2,
+                "open_home_timeline": 1,
+                "open_link": 1,
+                "phone_verification": 4,
+                "privacy_options": 1,
+                "security_key": 3,
+                "select_avatar": 4,
+                "select_banner": 2,
+                "settings_list": 7,
+                "show_code": 1,
+                "sign_up": 2,
+                "sign_up_review": 4,
+                "tweet_selection_urt": 1,
+                "update_users": 1,
+                "upload_media": 1,
+                "user_recommendations_list": 4,
+                "user_recommendations_urt": 1,
+                "wait_spinner": 3,
+                "web_modal": 1,
+            }
         }
 
         res = twitter_api_call(
@@ -1468,7 +1510,17 @@ def flow_login(working_acc):
                 {
                     "subtask_id": "LoginJsInstrumentationSubtask",
                     "js_instrumentation": {
-                        "response": json.dumps({...}),
+                        "response": json.dumps(
+                            {
+                                "rf": {
+                                    "ec2dd29fc4a651efa258a6d8ee80882756a7baa8584420bd2eb17457f9344a22": -1,
+                                    "aa1d709ed9884c2954bf64630edc4571dc03d70f27392289e0208d5273e37d91": -132,
+                                    "add94acd2cd14239adef2a2609477207a229d67ac6690921dd6ac76e5f93bdb7": -138,
+                                    "a79ff8bf51ea041fc878f1f82d3ab54e0aec833e4d9166652c9e504766a505f1": 187,
+                                },
+                                "s": "Z4Z0ziwX2n8dGFypz52losLlgzT6tNk932kgp9LAOMfo87oDQpXFGjT9lwY6-Ef_zdBObdKKshS1ozgL_dWCkZOpbxyKShK0vjk2S9__KwoZHSNOvMHROAFPAcHIVaPgfPingn9qY1E7-vzQpRpfS3Mr6gbZIS__hmt-NIRfYbCFhZPMU-AAsKDYkidZr8CCXr6dFQGESg3wjXWc3OCvLV-QmyeteJ3omzSmj6YGCbY1V6ikhRcDc-6FAhRyZ5NdXj47MDzpJmzqyyeyya0gM2wY7dQPBSBNXPcXSbQ9F5yz4CsyaL0D7WZybnUDVJ6cSBnPkEEgnhCB-1xwmSYEzQAAAZs_HPwu",
+                            }
+                        ),
                         "link": "next_link",
                     },
                 }

@@ -1,0 +1,30 @@
+{
+  "headers": {
+    "authority": "x.com",
+    "accept-language": "en-US,en;q=0.9",
+    "cache-control": "no-cache",
+    "referer": "https://x.com/",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
+    "x-twitter-active-user": "yes",
+    "x-twitter-client-language": "en",
+    "authorization": "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs=1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA",
+    "x-guest-token": "2004067689333965234",
+    "x-csrf-token": "e3ca2793d30a51a355cc644a1c57ae05b2095b294b8ac1265beb309fdd7108ce57009460e3f4e84e57b7b12cec9e3de61409c1120d29bf0da17f28d3d2745131fa2761ffa0ad14a8bffbcd3fe1ab7246",
+    "x-twitter-auth-type": "OAuth2Session"
+  },
+  "proxies": {
+    "http": "http://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-d60aaaefdfd8d-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080",
+    "https": "http://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-d60aaaefdfd8d-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080"
+  },
+  "cookies": {
+    "auth_token": "92daa018b2215be8c26b7adc36f08025e2203f6c",
+    "gt": "2004067689333965234",
+    "__cf_bm": "GmtVQWFxquKlBPlCzmkQUoG2UTLB3OHZtLlK3RF0ZI4-1766641945.867136-1.0.1.1-xYpWe6.d1fzljUGEIPJZ701Z9zbzvRb_EJq.uRJHuesCg8qEcO9V4V_aO381kzorYrbqn_X0bgUQX4QmH3SVzA7.WUC9mxO.UEJ38Po._JZ5ddDfqINJOdFhhmrIwfHZ",
+    "ct0": "e3ca2793d30a51a355cc644a1c57ae05b2095b294b8ac1265beb309fdd7108ce57009460e3f4e84e57b7b12cec9e3de61409c1120d29bf0da17f28d3d2745131fa2761ffa0ad14a8bffbcd3fe1ab7246",
+    "guest_id": "v1%3A176664194354786598",
+    "guest_id_ads": "v1%3A176664194354786598",
+    "guest_id_marketing": "v1%3A176664194354786598",
+    "personalization_id": "v1_Q6udkRv7UJ4NLLpoHuTKqA==",
+    "twid": "u%3D1090291830"
+  }
+}

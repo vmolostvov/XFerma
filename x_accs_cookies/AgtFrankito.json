@@ -1,42 +1,112 @@
 [
-    {
-        "name": "guest_id_marketing",
-        "value": "v1%3A176079338707467767"
-    },
-    {
-        "name": "guest_id_ads",
-        "value": "v1%3A176079338707467767"
-    },
-    {
-        "name": "personalization_id",
-        "value": "\"v1_tK7Cxk56k4DiZOZTUnd5wg==\""
-    },
-    {
-        "name": "guest_id",
-        "value": "v1%3A176079338707467767"
-    },
-    {
-        "name": "twid",
-        "value": "u%3D3250863976"
-    },
-    {
-        "name": "ct0",
-        "value": "58357126b3b7c1e59e4cd630c96103923d5f2649b29fe803eecffc49eddcd214c356f55c1537f551c8863f2bc0ccb680e3baf00709503db40c61fa1bf89cee1cc1df9a299dbe2f04eebc73fc9f4aef05"
-    },
-    {
-        "name": "__cf_bm",
-        "value": "Yi0527YncJI5lYARiPNbR6hn4mhKPaStP66bN59OMVo-1760793391.9593394-1.0.1.1-IHq1_7gG7aP8lKDGOLeLXMwDE9AVp3rd5uyAs1ikYKn.yElMeYlB6hd0izX_S0YJr_Mk14LFnY5kzHE5fXu0bfqkp1Ik4eN6cLIy6MJ_QA5qQAJ6QE317UyXD4G.Xaf1"
-    },
-    {
-        "name": "__cf_bm",
-        "value": "v5irN.VwwlCJ5qO1kBeRaIWStExDdfN.TmTlyIZQEaw-1760793391.4992566-1.0.1.1-zqGP2F9dfY.RAVClx2QBbWdRaVgXx_Dr0Hu1SvaRvggtb2qToty0YkLhbccaKmKQl6csByuBmFxCDbLDsz77HBnXZc.tkwC2Vox6CxaDDHhbMdsNlfX6F7uOC_qJ4qv4"
-    },
-    {
-        "name": "gt",
-        "value": "1979537075708821518"
-    },
-    {
-        "name": "auth_token",
-        "value": "388591da473dff54b195d52a745f6ec2f58fe124"
-    }
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  }
 ]

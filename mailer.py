@@ -304,4 +304,4 @@ def load_outlook_headers(
     }
 
 if __name__ == '__main__':
-    print(check_avail_un('sdss23423423'))
+    print(get_canary_key_outlook_mp())

@@ -1,6 +1,6 @@
 {
   "total_success": 31,
-  "total_fail": 8,
+  "total_fail": 9,
   "events": [
     {
       "timestamp": "2025-12-20T18:39:07.369167",
@@ -243,53 +243,25 @@
       "uid": 460829419,
       "result": "fail_login",
       "reason": "no_auth_token"
+    },
+    {
+      "timestamp": "2026-01-22T10:12:41.177988",
+      "screen_name": "armyjattsunny",
+      "uid": 2903339994,
+      "result": "fail_login",
+      "reason": "no_auth_token"
     }
   ],
   "today": {
-    "success": 19,
-    "fail": 7
+    "success": 0,
+    "fail": 1
   },
   "last_24h": {
-    "events": 39,
-    "distinct_accounts": 33,
-    "success_users": [
-      "63637f8d4811473",
-      "AajuV0709",
-      "Amitsin61666423",
-      "Dineshj31",
-      "Janmeja18899797",
-      "JerinJo06596560",
-      "Mahendr22699261",
-      "ManishSonker4",
-      "MithunSudeep",
-      "NirupVaishav",
-      "PRATHVIRAJSHAR2",
-      "Parshurama2",
-      "Ponrasu11",
-      "Saravan48864327",
-      "ShaikMa89221299",
-      "Snehal6616",
-      "Sselvak42644532",
-      "Sunilpushparaj3",
-      "UkaniAdarsh",
-      "VibhuteOmkar",
-      "anshadkkareem",
-      "armyjattsunny",
-      "duraipc1717",
-      "ganusarkate1993",
-      "ikbal786deshwal",
-      "kabirve36913148",
-      "navinmittal009",
-      "rajeev4368",
-      "ram51672234",
-      "satishk38691536",
-      "shashik00057242"
-    ],
+    "events": 1,
+    "distinct_accounts": 1,
+    "success_users": [],
     "fail_users": [
-      "AamirAn39468029",
-      "Amitsin61666423",
-      "anshadkkareem",
-      "rk27801"
+      "armyjattsunny"
     ]
   },
   "all_time_distinct_accounts": 33

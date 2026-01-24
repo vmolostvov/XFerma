@@ -1,38 +1,112 @@
 [
-    {
-        "name": "guest_id_marketing",
-        "value": "v1%3A176624142946560609"
-    },
-    {
-        "name": "guest_id_ads",
-        "value": "v1%3A176624142946560609"
-    },
-    {
-        "name": "personalization_id",
-        "value": "\"v1_VPdDqj1l+9xNIO447WBlVw==\""
-    },
-    {
-        "name": "guest_id",
-        "value": "v1%3A176624142946560609"
-    },
-    {
-        "name": "__cf_bm",
-        "value": "lEZ5Jrc1rSk47ZyFGZPwbkpiWVTVHrGxgCl0IUbcMHk-1766241433.1144233-1.0.1.1-AygImiQCt0YGtyRLPEjkGaUt3EnUK1wSpWtYJtE..mIdHoLDLkmMJnEPT8l7QkZK3T_vOJ_PuxyWND3gUgl2LxkicywDz86Rw.rFDkDnHZMO2xfoQNx9HaqOxl8qr44z"
-    },
-    {
-        "name": "twid",
-        "value": "u%3D775274138579656704"
-    },
-    {
-        "name": "ct0",
-        "value": "4b040ffa5208d61e02013ba3c99583db563bd005eb22d06271f7a5a68ae5c09d488ae5a5bec852c540cbc6da6b4c91d06ab26b2c0d9b6398c56904ee712703a52feb703d7e61d119c8186e60d1f576b5"
-    },
-    {
-        "name": "gt",
-        "value": "2002387818429947952"
-    },
-    {
-        "name": "auth_token",
-        "value": "7bb02570b389cf3119b72ae45191fed54c71bc7a"
-    }
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  },
+  {
+    "name": null,
+    "value": null,
+    "domain": null,
+    "path": "/",
+    "secure": false,
+    "expires": null,
+    "httpOnly": false,
+    "sameSite": null
+  }
 ]

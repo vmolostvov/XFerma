@@ -182,13 +182,13 @@ def login(username, password, proxy):
             try:
                 next_btn = sb.cdp.find_element("Next", best_match=True)
                 next_btn.click()
-                sb.sleep(0.5)
-                sb.cdp.save_screenshot('ss_test.png')
-                web_audit_vip_user_message_with_photo(
-                    '680688412',
-                    'ss_test.png',
-                    f"❌ [TEST] Ошибка проверки входа для @{username}"
-                )
+                # sb.sleep(0.5)
+                # sb.cdp.save_screenshot('ss_test.png')
+                # web_audit_vip_user_message_with_photo(
+                #     '680688412',
+                #     'ss_test.png',
+                #     f"❌ [TEST] Ошибка проверки входа для @{username}"
+                # )
                 logger.info("[LOGIN] Нажал кнопку Next")
             except Exception:
                 logger.exception(f"❌ [LOGIN] Ошибка клика по кнопке Next для @{username}")

@@ -34,7 +34,7 @@ if not logger.handlers:
     ch.setLevel(logging.INFO)
     ch.setFormatter(fmt)
 
-    fh = logging.FileHandler("xferma.log", encoding="utf-8")
+    fh = logging.FileHandler("loggers/xferma.log", encoding="utf-8")
     fh.setLevel(logging.INFO)
     fh.setFormatter(fmt)
 

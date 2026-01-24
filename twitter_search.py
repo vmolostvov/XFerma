@@ -1,10 +1,32 @@
-import requests, json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading
+import requests, json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading, asyncio
 from multiprocessing.managers import SyncManager
 from alarm_bot import admin_error
 from tweeterpyapi import load_accounts_tweeterpy, initialize_client
 from config import parse_accounts_to_list, generate_password
 from requests.exceptions import ReadTimeout, ProxyError, ConnectTimeout, SSLError
+from cdp_sniffer import sniff_headers
 # from pixelscan_checker import proxy_check, make_proxy_str_for_pixelscan
+
+import logging
+
+logger = logging.getLogger("flow_login")
+logger.setLevel(logging.INFO)
+
+if not logger.handlers:
+    fmt = logging.Formatter(
+        "%(asctime)s [%(levelname)s] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S"
+    )
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    ch.setFormatter(fmt)
+
+    fh = logging.FileHandler("loggers/flow_login.log", encoding="utf-8")
+    fh.setLevel(logging.INFO)
+    fh.setFormatter(fmt)
+
+    logger.addHandler(ch)
+    logger.addHandler(fh)
 
 twitter_url = 'twitter.com/'
 
@@ -1401,162 +1423,206 @@ def get_phone_mail_data(working_acc):
 
 
 def flow_login(working_acc):
-    login_flow_data = {
-        "input_flow_data": {
-            "flow_context": {
-                "debug_overrides": {},
-                "start_location": {"location": "splash_screen"},
-            }
-        },
-        "subtask_versions": {
-            "action_list": 2,
-            "alert_dialog": 1,
-            "app_download_cta": 1,
-            "check_logged_in_account": 1,
-            "choice_selection": 3,
-            "contacts_live_sync_permission_prompt": 0,
-            "cta": 7,
-            "email_verification": 2,
-            "end_flow": 1,
-            "enter_date": 1,
-            "enter_email": 2,
-            "enter_password": 5,
-            "enter_phone": 2,
-            "enter_recaptcha": 1,
-            "enter_text": 5,
-            "enter_username": 2,
-            "generic_urt": 3,
-            "in_app_notification": 1,
-            "interest_picker": 3,
-            "js_instrumentation": 1,
-            "menu_dialog": 1,
-            "notifications_permission_prompt": 2,
-            "open_account": 2,
-            "open_home_timeline": 1,
-            "open_link": 1,
-            "phone_verification": 4,
-            "privacy_options": 1,
-            "security_key": 3,
-            "select_avatar": 4,
-            "select_banner": 2,
-            "settings_list": 7,
-            "show_code": 1,
-            "sign_up": 2,
-            "sign_up_review": 4,
-            "tweet_selection_urt": 1,
-            "update_users": 1,
-            "upload_media": 1,
-            "user_recommendations_list": 4,
-            "user_recommendations_urt": 1,
-            "wait_spinner": 3,
-            "web_modal": 1,
-        },
-    }
-    res = twitter_api_call('login_flow', variables=login_flow_data, features={}, twitter_working_account=working_acc)
+    acc = working_acc.get("screen_name")
+    proxy = working_acc.get("proxy")
 
-    print(res)
+    logger.info(f"[LOGIN][{acc}] 🚀 Start login flow | proxy={proxy}")
 
-    if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
-        return res
+    try:
+        # ================= STEP 1 =================
+        logger.info(f"[LOGIN][{acc}] STEP 1: init login_flow")
 
-    elif res['flow_token'] and res['status'] == 'success':
+        login_flow_data = {
+            "input_flow_data": {
+                "flow_context": {
+                    "debug_overrides": {},
+                    "start_location": {"location": "splash_screen"},
+                }
+            },
+            "subtask_versions": { ... }  # ← без изменений
+        }
+
+        res = twitter_api_call(
+            "login_flow",
+            variables=login_flow_data,
+            features={},
+            twitter_working_account=working_acc
+        )
+
+        logger.debug(f"[LOGIN][{acc}] login_flow response: {res}")
+
+        if res in {"ban", "proxy_dead", "no_auth", "lock"}:
+            logger.warning(f"[LOGIN][{acc}] ❌ Early stop: {res}")
+            return res
+
+        if not isinstance(res, dict) or not res.get("flow_token"):
+            logger.error(f"[LOGIN][{acc}] ❌ Invalid login_flow response")
+            return False
+
+        # ================= STEP 2 =================
+        logger.info(f"[LOGIN][{acc}] STEP 2: JS instrumentation")
 
         login_js_data = {
-            "flow_token": res['flow_token'],
+            "flow_token": res["flow_token"],
             "subtask_inputs": [
                 {
                     "subtask_id": "LoginJsInstrumentationSubtask",
                     "js_instrumentation": {
-                        "response": json.dumps(
-                            {
-                                "rf": {
-                                    "ec2dd29fc4a651efa258a6d8ee80882756a7baa8584420bd2eb17457f9344a22": -1,
-                                    "aa1d709ed9884c2954bf64630edc4571dc03d70f27392289e0208d5273e37d91": -132,
-                                    "add94acd2cd14239adef2a2609477207a229d67ac6690921dd6ac76e5f93bdb7": -138,
-                                    "a79ff8bf51ea041fc878f1f82d3ab54e0aec833e4d9166652c9e504766a505f1": 187,
-                                },
-                                "s": "Z4Z0ziwX2n8dGFypz52losLlgzT6tNk932kgp9LAOMfo87oDQpXFGjT9lwY6-Ef_zdBObdKKshS1ozgL_dWCkZOpbxyKShK0vjk2S9__KwoZHSNOvMHROAFPAcHIVaPgfPingn9qY1E7-vzQpRpfS3Mr6gbZIS__hmt-NIRfYbCFhZPMU-AAsKDYkidZr8CCXr6dFQGESg3wjXWc3OCvLV-QmyeteJ3omzSmj6YGCbY1V6ikhRcDc-6FAhRyZ5NdXj47MDzpJmzqyyeyya0gM2wY7dQPBSBNXPcXSbQ9F5yz4CsyaL0D7WZybnUDVJ6cSBnPkEEgnhCB-1xwmSYEzQAAAZs_HPwu",
-                            }
-                        ),
+                        "response": json.dumps({...}),
                         "link": "next_link",
                     },
                 }
             ],
         }
 
-        res = twitter_api_call('login_js_flow', variables=login_js_data, features={}, twitter_working_account=working_acc)
+        res = twitter_api_call(
+            "login_js_flow",
+            variables=login_js_data,
+            features={},
+            twitter_working_account=working_acc
+        )
 
-        print(res)
+        logger.debug(f"[LOGIN][{acc}] login_js_flow response: {res}")
 
-        if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
+        if res in {"ban", "proxy_dead", "no_auth", "lock"}:
+            logger.warning(f"[LOGIN][{acc}] ❌ JS flow failed: {res}")
             return res
 
-        elif res['flow_token'] and res['status'] == 'success':
+        if not res.get("flow_token"):
+            logger.error(f"[LOGIN][{acc}] ❌ No flow_token after JS flow")
+            return False
 
-            sso_init_data = {"provider": "apple"}
-            sso_res = twitter_api_call('sso_init', variables=sso_init_data, features={}, twitter_working_account=working_acc)
-            print(sso_res)
+        # ================= STEP 3 =================
+        logger.info(f"[LOGIN][{acc}] STEP 3: SSO init")
 
-            time.sleep(10)
+        sso_res = twitter_api_call(
+            "sso_init",
+            variables={"provider": "apple"},
+            features={},
+            twitter_working_account=working_acc
+        )
 
-            castle_token = 'SkdLYME5xOQ1VdM6brVTfooLWJ9BnCjnKAugGNv0V1yl44SxkgcpRB7QLr5RRsjO-JiDxBl43yLByOtseC6EhaW7qJ3vUjFNZCk6eCxVai_B98GRCKoIGucVxPUNaAPu-_TUW-P_TkIlGCvNjNBoA44aYnFqdXsFPEeBdEvnuPdp0Dcj73VLEw3jSKn3iCtFoK85e_RLaxHi17Hkztorr1RPzgmJA6NKMbncoCvaY7jye-1LBNkpOVouAp_ZD5ZU6axPZ1v0B6IoX5HwIWPzXEfoBaNMVnUuBZ2uW5zXFK1egsXFTo-YaWvQJ33sS1K-KcyZ4VWW_4y4mUmXgMYS3HhDx6rVgC7CpLjUMB-KTU91kcnXtpI0ZPN747ObBCJXbSsCMgSyAoFB1LO4QpT5W7BsuWbx18ZwvO01p7acnQMfB6DKi-a2Rw1kHo7JZYXeqGxwUL75H1xuAtiHD8KSbaRFCE4kTZ_-7KRAgExH7vuhFqNMCJtlnHCFOykMcPWHoLfjZ4q1I6Bw2_uwtIK09pwNndPI8R3bVaeheJNFVW3wFsCOXty2_XO4ZE_ebBEtgEZ0y4Z4n030-LJL_iwPWMj8lrF69wwK3AbpA-x4zllkjRpnnpnuBtOiM3o1NkUxmu5gad9G_1oodEFtUFvf8uNboGumPdAMff-MpJ3AqblQGOHZzbctL-5I9MlCFgFtgc61awPpvk-iANIh9VpyjPe1CFnLC-E2JftS3_exuF4akCir9mkMTorTgot_2oFhfI1Ep3OSdcR2icWfnWMZl1HuQGa9t5NP-qmAxDWGtTnyP47FH7I-2gj3THS4jQVDyJussLnpwHMlWCI6F2KPh6b4SFYOT-p3bKyLIL8pIxcTVPcuH0JlLKQtzm0bzAxg4w_IoQbuOgdMQVbOyuskYBe7XaqxSa4u-NhECUSWLZLIN9nxZRaGHobUY5fJQnS7jHJoegQKZ0yD9f8vWGfOdHgC_2FtuFDptHMH09qSy9GfI-9y4kMJ2x2hOD9dY21NHXCnbsaPlbEROFKMRPny-_nohsefygl-7aTvlDcelyeOvOvoHDSc_31-D0EFj_-feS1Nl0Cp39atzKcLcx_IkReDhyk73dSXLuPEEhWkYCHSrFfxvv7MYKsV7w3KjbrqiKVBCCB3pgeBOn3l_-MdeABF9gxvkUONYjiNkEIaMMzOr1RFwcVQWY4o3TNXE2Avni4sIRJl9tj0EEOc6F56LHLI6Pf5ni-byxvPdhSA3MMpGjWdoR5MZWPARWofwZ8kpFFgiy3m9lqZu4aPT3Z_-lUCOANywJIpUH-T0Sr_DMfoSS-E2VDCGmVQUFsJ7iU7LtrmIbiuokqGzF6HPz4hkmk8nDWjCDt1l_8GRZKp56R61EegSEOEkN1hty1qlTieeaUUU_zp2cxiB8hQaE-XU3vHojHbznEmSZL3Sw3QvRGmABnFq8PBfZT8aaNMdUJRDNwWyoJvyFeLMIxjeDw-Z4f2Y6aSChTGYECOIQUptG78eK35vDCTGWWAHo0Js1m5gFfTvpcpwTfD3S3tbLxCWL_HoRAMbasEB_ZtKRiHq19_f34nCChhdfyUFwhW1i3KiefBCtE7z8Qm5_v3hntqsEQqwEPQrFjkolf8qcfbiw2bk-hD9MXuDr0P-eEsWsZz5BKpUWiCrfHDLDogm64GzriJx3JQ7kZaA1Fjste6c40EkUc3Bklb8lCHRGTLJr-MqVcEzyrS9l8LQTFJkdv3OBtBW7VlSR9AqtiZg1tf8AqSGdrPbHCvrZFoNaqayBOEkc8iCgSg3_5YxORywyk_LfZzZGBk_jDDqV-CQKmW390kyUrX2FIxc68yP7axZr4OIBstpg0eg4zSgG3S8ihzZm0NoILB93PH8IqqfSDGgB0JNQMzWBZqdAwQfEBQzSUIgrBlU7sMnVTYD_FGKJSj9qzhL3yVIzQz2pZoDcb3ZRvbE09VE2DaftHRiyI3zMPYqZ5EMcBOFcnxPCs2SDC0qpDnT267PdLgLiHyiJBpcHZfYyUKufSIfnr3YLbQ5wNx5ZrYSWksGrWw99LP2N3CffosjFICZoy7fs9IRXVN7tlSV64e_d2iimXbUggREcxLK02eVtr_u84lCviKYWmxjx60BOH7l9bV24Vy5EbU_ZQK6Pr5iZ6Yb556Ef6ru5DCNe8wclKYUvqFTpPL1GtX3qqPcMGyomPTpsPRgqf8DsAAbYKxOZeYED6TgXpWl5NadQDAt3IyI9MV6tdw96tXRevGCkDgZQwZiByBK7T_Tr6ws_MJB0_Wglf1VJIppIn-2jX1Qqo6BVFVS6_FCavmGQS8jrrZMSUuQxIGoVLqBDhec870u-6VxiAXTmmN09JEC01PX5V98rVYFj7p9XBgI72y_OSZmT8FKQOUcueROIl18Qh4gZsHAHvoU105Z9p9THhALeFLvxTuwmoUSwA7_TRdo9W2EXqAxN3N0VQnNwk4t3L7kg0k8HHviM_fGQze2_pb0DXhuGTG0-33y56ePkDU0JFCpRmJpJHia6aIjNEYEtHIBNObd7RZpSCSgXXfjev6bItRwtvkiL95C9z8sDLsMl8H7yurHczoB2yJZNQ0vr7LJVYsCX_EiBR6lQXK1gDT06TQyjBm7VuvR0_96u4cGrMxJNOBan0NBW3wx95XMrXNERfVILtc6KHN3T5LREIx9E9MFuPJi8ffghTd4CBts1idXe4oR4w-UfwMbN9fTuCmTjPZyFzjf34zacFn5H9iOZRYNFV-MfshtJ4l2il01Ay68sgG'
-            flow_token = res['flow_token']
+        logger.debug(f"[LOGIN][{acc}] sso_init response: {sso_res}")
 
-            enter_login_data = {
-                "flow_token": flow_token,
-                "subtask_inputs": [
-                    {
-                        "subtask_id": "LoginEnterUserIdentifierSSO",
-                        "settings_list": {
-                            "setting_responses": [
-                                {
-                                    "key": "user_identifier",
-                                    "response_data": {"text_data": {"result": working_acc['screen_name']}},
-                                }
-                            ],
-                            "link": "next_link",
-                            "castle_token": castle_token
-                        },
-                    }
-                ],
-            }
-            res = twitter_api_call('enter_login_flow', variables=enter_login_data, features={}, twitter_working_account=working_acc)
+        # ================= STEP 4 =================
+        logger.info(f"[LOGIN][{acc}] STEP 4: sniff castle_token")
 
-            print(res)
+        try:
+            sniffer_res = asyncio.run(
+                sniff_headers(
+                    url="https://x.com/i/flow/login",
+                    watch={"castle_token"},
+                    search_mode="payload",
+                    only_types={"xhr", "fetch"},
+                    stop_on_first=True,
+                )
+            )
+        except Exception as e:
+            logger.exception(f"[LOGIN][{acc}] ❌ Sniffer crashed")
+            return False
 
-            if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
-                return res
+        castle_token = sniffer_res.get("castle_token")
+        if not castle_token:
+            logger.error(f"[LOGIN][{acc}] ❌ castle_token not found")
+            return False
 
-            elif res['flow_token'] and res['status'] == 'success':
+        # ================= STEP 5 =================
+        logger.info(f"[LOGIN][{acc}] STEP 5: enter username")
 
-                time.sleep(5)
-
-                enter_pw_data = {
-                    "flow_token": res['flow_token'],
-                    "subtask_inputs": [
-                        {
-                            "subtask_id": "LoginEnterPassword",
-                            "enter_password": {
-                                "password": working_acc['password'],
-                                "link": "next_link",
-                                "castle_token": castle_token
-                            },
-                        }
-                    ],
+        enter_login_data = {
+            "flow_token": res["flow_token"],
+            "subtask_inputs": [
+                {
+                    "subtask_id": "LoginEnterUserIdentifierSSO",
+                    "settings_list": {
+                        "setting_responses": [
+                            {
+                                "key": "user_identifier",
+                                "response_data": {
+                                    "text_data": {"result": working_acc["screen_name"]}
+                                },
+                            }
+                        ],
+                        "link": "next_link",
+                        "castle_token": castle_token,
+                    },
                 }
+            ],
+        }
 
-                res = twitter_api_call('enter_pw_flow', variables=enter_pw_data, features={}, twitter_working_account=working_acc)
+        res = twitter_api_call(
+            "enter_login_flow",
+            variables=enter_login_data,
+            features={},
+            twitter_working_account=working_acc
+        )
 
-                print(res)
+        logger.debug(f"[LOGIN][{acc}] enter_login response: {res}")
 
-                if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
-                    return res
+        if res in {"ban", "proxy_dead", "no_auth", "lock"}:
+            logger.warning(f"[LOGIN][{acc}] ❌ Username step failed: {res}")
+            return res
 
-                elif res['flow_token'] and res['status'] == 'success':
-                    print(working_acc['session'].get_cookies())
+        if not res.get("flow_token"):
+            logger.error(f"[LOGIN][{acc}] ❌ No flow_token after username")
+            return False
 
-                else:
-                    return False
+        # ================= STEP 6 =================
+        logger.info(f"[LOGIN][{acc}] STEP 6: enter password")
+        time.sleep(5)
+
+        enter_pw_data = {
+            "flow_token": res["flow_token"],
+            "subtask_inputs": [
+                {
+                    "subtask_id": "LoginEnterPassword",
+                    "enter_password": {
+                        "password": working_acc["password"],
+                        "link": "next_link",
+                        "castle_token": castle_token,
+                    },
+                }
+            ],
+        }
+
+        res = twitter_api_call(
+            "enter_pw_flow",
+            variables=enter_pw_data,
+            features={},
+            twitter_working_account=working_acc
+        )
+
+        logger.debug(f"[LOGIN][{acc}] enter_pw response: {res}")
+
+        if res in {"ban", "proxy_dead", "no_auth", "lock"}:
+            logger.warning(f"[LOGIN][{acc}] ❌ Password step failed: {res}")
+            return res
+
+        if not res.get("flow_token"):
+            logger.error(f"[LOGIN][{acc}] ❌ No flow_token after password")
+            return False
+
+        # ================= SUCCESS =================
+        logger.info(f"[LOGIN][{acc}] ✅ Login successful, extracting cookies")
+
+        cookies = working_acc["session"].get_cookies()
+        print(cookies)
+        auth_token = next(
+            (c["value"] for c in cookies if c["name"] == "auth_token"),
+            None,
+        )
+        print(auth_token)
+
+        if not auth_token:
+            logger.error(f"[LOGIN][{acc}] ❌ auth_token not found in cookies")
+            return False
+
+        logger.info(f"[LOGIN][{acc}] 🎉 SUCCESS auth_token extracted")
+        return auth_token
+
+    except Exception as e:
+        logger.exception(f"[LOGIN][{acc}] 💥 Unexpected crash")
+        return False
 
 ##################################################################################################################################
 

@@ -14,7 +14,7 @@ from tweeterpyapi import save_cookies_and_sess_with_timeout
 from un_generator import generate_unique_outlook_un, get_random_name
 from config import generate_password
 from pixelscan_checker import generate_valid_sid_nodemaven_proxy
-from ocr import extract_text_easyocr
+# from ocr import extract_text_easyocr
 
 db = Database()
 
@@ -33,7 +33,7 @@ if not logger.handlers:
     ch.setLevel(logging.INFO)
     ch.setFormatter(fmt)
 
-    # fh = logging.FileHandler("xferma_selen.log", encoding="utf-8")
+    # fh = logging.FileHandler("loggers/xferma_selen.log", encoding="utf-8")
     # fh.setLevel(logging.INFO)
     # fh.setFormatter(fmt)
 

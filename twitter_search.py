@@ -1493,7 +1493,7 @@ def flow_login(working_acc):
 
         logger.debug(f"[LOGIN][{acc}] login_flow response: {res}")
 
-        if res in {"ban", "proxy_dead", "no_auth", "lock"}:
+        if res in ["ban", "proxy_dead", "no_auth", "lock"]:
             logger.warning(f"[LOGIN][{acc}] ❌ Early stop: {res}")
             return res
 
@@ -1536,7 +1536,7 @@ def flow_login(working_acc):
 
         logger.debug(f"[LOGIN][{acc}] login_js_flow response: {res}")
 
-        if res in {"ban", "proxy_dead", "no_auth", "lock"}:
+        if res in ["ban", "proxy_dead", "no_auth", "lock"]:
             logger.warning(f"[LOGIN][{acc}] ❌ JS flow failed: {res}")
             return res
 
@@ -1611,7 +1611,7 @@ def flow_login(working_acc):
 
         logger.debug(f"[LOGIN][{acc}] enter_login response: {res}")
 
-        if res in {"ban", "proxy_dead", "no_auth", "lock"}:
+        if res in ["ban", "proxy_dead", "no_auth", "lock"]:
             logger.warning(f"[LOGIN][{acc}] ❌ Username step failed: {res}")
             return res
 
@@ -1646,7 +1646,7 @@ def flow_login(working_acc):
 
         logger.debug(f"[LOGIN][{acc}] enter_pw response: {res}")
 
-        if res in {"ban", "proxy_dead", "no_auth", "lock"}:
+        if res in ["ban", "proxy_dead", "no_auth", "lock"]:
             logger.warning(f"[LOGIN][{acc}] ❌ Password step failed: {res}")
             return res
 

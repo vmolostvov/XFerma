@@ -1,0 +1,38 @@
+[
+    {
+        "name": "guest_id_marketing",
+        "value": "v1%3A176353981018514928"
+    },
+    {
+        "name": "guest_id_ads",
+        "value": "v1%3A176353981018514928"
+    },
+    {
+        "name": "personalization_id",
+        "value": "\"v1_KnKbofgpF/zJWtLND0MoyA==\""
+    },
+    {
+        "name": "guest_id",
+        "value": "v1%3A176353981018514928"
+    },
+    {
+        "name": "__cf_bm",
+        "value": "PRXw3fIlJGGur9OiB4_l3SIdZJKnPKd7YztJ7ceaq3A-1763539817.5288048-1.0.1.1-OwAUreYPg9_f1kVutYLXtWUlGna17eXdmB6I3EBEaiLg_kfw_EAvDVoPhcabd1ltpz7g5pK4pC.Q2_1vLHY3bJxVzmFuVj8v3UmKnAQJI0.TyT1ct8ycw.wPVrVoYV0o"
+    },
+    {
+        "name": "twid",
+        "value": "u%3D1975181076"
+    },
+    {
+        "name": "ct0",
+        "value": "5814d8e7225dae3d42c95521f92ac684de29fe8277591f7fd3fb9cef491d8b5608f0f424c55a0f96f0ac23ee464556a10e2e61b2c7235bdc5baa24989c353cb27c7cde2419b1a72582877f0de7c27d22"
+    },
+    {
+        "name": "gt",
+        "value": "1991056419400167705"
+    },
+    {
+        "name": "auth_token",
+        "value": "4544a4b0c7b13f0aec5720270de362bfff4cd7c3"
+    }
+]

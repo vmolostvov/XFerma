@@ -1,32 +1,32 @@
 import requests, json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading, asyncio
 from multiprocessing.managers import SyncManager
 from alarm_bot import admin_error
-from tweeterpyapi import load_accounts_tweeterpy, initialize_client
+# from tweeterpyapi import load_accounts_tweeterpy, initialize_client
 from config import parse_accounts_to_list, generate_password
 from requests.exceptions import ReadTimeout, ProxyError, ConnectTimeout, SSLError
-from cdp_sniffer import sniff_headers
+# from cdp_sniffer import sniff_headers
 # from pixelscan_checker import proxy_check, make_proxy_str_for_pixelscan
 
-import logging
-
-logger = logging.getLogger("flow_login")
-logger.setLevel(logging.INFO)
-
-if not logger.handlers:
-    fmt = logging.Formatter(
-        "%(asctime)s [%(levelname)s] %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S"
-    )
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
-    ch.setFormatter(fmt)
-
-    fh = logging.FileHandler("loggers/flow_login.log", encoding="utf-8")
-    fh.setLevel(logging.INFO)
-    fh.setFormatter(fmt)
-
-    logger.addHandler(ch)
-    logger.addHandler(fh)
+# import logging
+#
+# logger = logging.getLogger("flow_login")
+# logger.setLevel(logging.INFO)
+#
+# if not logger.handlers:
+#     fmt = logging.Formatter(
+#         "%(asctime)s [%(levelname)s] %(message)s",
+#         datefmt="%Y-%m-%d %H:%M:%S"
+#     )
+#     ch = logging.StreamHandler()
+#     ch.setLevel(logging.INFO)
+#     ch.setFormatter(fmt)
+#
+#     fh = logging.FileHandler("loggers/flow_login.log", encoding="utf-8")
+#     fh.setLevel(logging.INFO)
+#     fh.setFormatter(fmt)
+#
+#     logger.addHandler(ch)
+#     logger.addHandler(fh)
 
 twitter_url = 'twitter.com/'
 

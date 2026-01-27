@@ -1422,259 +1422,181 @@ def get_phone_mail_data(working_acc):
     return False
 
 
-def flow_login(working_acc):
-    acc = working_acc.get("screen_name")
-    proxy = working_acc.get("proxy")
+# def flow_login(working_acc):
+#     login_flow_data = {
+#         "input_flow_data": {
+#             "flow_context": {
+#                 "debug_overrides": {},
+#                 "start_location": {"location": "splash_screen"},
+#             }
+#         },
+#         "subtask_versions": {
+#             "action_list": 2,
+#             "alert_dialog": 1,
+#             "app_download_cta": 1,
+#             "check_logged_in_account": 1,
+#             "choice_selection": 3,
+#             "contacts_live_sync_permission_prompt": 0,
+#             "cta": 7,
+#             "email_verification": 2,
+#             "end_flow": 1,
+#             "enter_date": 1,
+#             "enter_email": 2,
+#             "enter_password": 5,
+#             "enter_phone": 2,
+#             "enter_recaptcha": 1,
+#             "enter_text": 5,
+#             "enter_username": 2,
+#             "generic_urt": 3,
+#             "in_app_notification": 1,
+#             "interest_picker": 3,
+#             "js_instrumentation": 1,
+#             "menu_dialog": 1,
+#             "notifications_permission_prompt": 2,
+#             "open_account": 2,
+#             "open_home_timeline": 1,
+#             "open_link": 1,
+#             "phone_verification": 4,
+#             "privacy_options": 1,
+#             "security_key": 3,
+#             "select_avatar": 4,
+#             "select_banner": 2,
+#             "settings_list": 7,
+#             "show_code": 1,
+#             "sign_up": 2,
+#             "sign_up_review": 4,
+#             "tweet_selection_urt": 1,
+#             "update_users": 1,
+#             "upload_media": 1,
+#             "user_recommendations_list": 4,
+#             "user_recommendations_urt": 1,
+#             "wait_spinner": 3,
+#             "web_modal": 1,
+#         },
+#     }
+#     res = twitter_api_call('login_flow', variables=login_flow_data, features={}, twitter_working_account=working_acc)
+#
+#     print(res)
+#
+#     if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
+#         return res
+#
+#     elif res['flow_token'] and res['status'] == 'success':
+#
+#         login_js_data = {
+#             "flow_token": res['flow_token'],
+#             "subtask_inputs": [
+#                 {
+#                     "subtask_id": "LoginJsInstrumentationSubtask",
+#                     "js_instrumentation": {
+#                         "response": json.dumps(
+#                             {
+#                                 "rf": {
+#                                     "f1124914e5e3470f91a59730862dd33246015b938972172c4cfc1e2b590f97d9": -182,
+#                                     "a47601d00f7d388e1911fb9fde69897f06bbf7c6ab6871e8a95a922aa1138438": -42,
+#                                     "e0e5510b2d08c4872bc27e8754576f6d996af62e51af15c64f133c8689c89071": 182,
+#                                     "a3aacd25d4770567805a6d1b9be7bbe8db0cfd74cb66c61f1324584e6c9332e1": 181,
+#                                 },
+#                                 "s": "fRAFAWgc5BWcGViIG-jmRlt-xURC6SN98wNtTkI-Z_tscC-2V_8Mlb_rDSq2LQTK8QXPraY5dBA8vjlctfbRKBCqnlHtnWOKzL3_FwKg6hu2G9wFLaG-MhUZeBizkdqJRXrxkvaBUl9gQ4IulXPRtW1LYvbMuIhJxTIpFdj2JyXH7Dwy6MTxOEl_XQvJmpWlQ8q2gJq85N9mArw0XMPeTYCm0-ZFw_mgarbdyEBXG7G5180VEje53CBEBfrF6F2reHvtyY2KSmPaGbzqAhqe-jjW5bvgveYhcLC85wemsSIeNDWqwdq9BeiuoRkFbXBlIUUnIWS_qYdzp25noMpklQAAAZvvRksj",
+#                             }
+#                         ),
+#                         "link": "next_link",
+#                     },
+#                 }
+#             ],
+#         }
+#
+#         res = twitter_api_call('login_js_flow', variables=login_js_data, features={}, twitter_working_account=working_acc)
+#
+#         print(res)
+#
+#         if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
+#             return res
+#
+#         elif res['flow_token'] and res['status'] == 'success':
+#
+#             sso_init_data = {"provider": "apple"}
+#             sso_res = twitter_api_call('sso_init', variables=sso_init_data, features={}, twitter_working_account=working_acc)
+#             print(sso_res)
+#
+#             # sniffer_res = asyncio.run(sniff_headers(
+#             #     url="https://x.com/i/flow/login",
+#             #     watch={"castle_token"},
+#             #     search_mode="payload",
+#             #     only_types={"xhr", "fetch"},
+#             #     stop_on_first=True,
+#             # ))
+#             #
+#             # if sniffer_res.get('castle_token'):
+#             #     castle_token = sniffer_res['castle_token']
+#             # else:
+#             #     return
+#             castle_token = "Njs0U4FJyCbxziPL3FoNynqBTl-Fz2nf8EkmTFoB2PVOKkeonV4cZLJQghubtsbaeIRN6PDYXE_GPemo7gzc-hBk7YWYPheGiMKQeT0r9cH0a-bl0bL7LTFNqU-OgNyDkdaBKnc6mSMoYzEs_GWN-hhpxai9KnxKcKyuNfPoUBj8GCFDnHA7uznawaQhyYTt2jJKlVaATOQzvdvQQaPQXYga1keFaaAZcuQxAWhFauULDwesrheAjiwkexsJ2Emgeg9P3_Iv92OMZuqvs44jtILGcl9Vg7BTqV-2wryrbd0drdLBMIXfKCZ2p-Uc8Agtkw1lL1pXpnfxGmyPRXUTWsFYAGaX02HGm5H1zmc0NsGJhW7txdnBxtaN2DLoDnFMHeFLMt5xIxEsCZTXUoD35V9n31ntM8-1idXnnQj5ehdlWPXhiaYwadr9rpCO1NvsJsBsAeNVK8K_WtxCF1_K_jQULrywkCKwInlSLHgauOnXk_atZ08yfE_dK7oPJqUWlJDXnFMR75In21F84w-Wndwla1Ly6lM2_iadcrdMamrziWutd-wOks3u8q-3E_oW4r295Of3KOJPhcXqi2JG68KTxXfAseVW-rEJWGl7YEB_DN-GpXw4n0BObX6M5Wv1CMoyCVqMEBxY6lpbTMFjn7iCZ1OAWIMFF2NpJldp249grgifJm9qJt3C7oXEQx-t9y1PfwqjYqUR9W0XqThYObUTwLROMEDZfyQKov1LPRaW3TyYeUY4OpePpBxH-upATyNLn-XXAz9pV7sET8_tey-haCWAUtVf1A410pc5Q8urEBaHfoEOzVuFgP3BPd2x_AW2ZuxN6js2Hp7Dz7JAzy-EdlfP4MfcrCQaO7m0FRyzou3WGurAkpANsy7BuROAZEFx9Gh62hB37XckoNQZipFlZpKxz2KhJksMKsQgiuM2GVsjtoIxkgY6Laoum7NI2EeyB-wKtwmZsaVyfl0AWczFNW3L_MhLcEro8Bq-ApZpTfwZ-Hr0DAJYyaCpWBW80lDBPaAGqRhh-QtEHZTG9iRaU-0ZIiHyHwSIDcSK42pcJ_JwOQS05WCAlT5UkI7Y6ycJRHX4275p09VncAVxzCoEjejZyEH_C_Tf_6Fay2LUAjTvckGDuaVIwtKrOdhVxHRPK1fevf8bl2WxGgHW3ou8ckP4IEbxoLgE4DVZWZ9SqD0rbQWRHGzP1wngL5X0uIkllnjMMP2XaoZXnshBfhFcNq6dboAmoqlLgI2UF30lERuFqQrxS-57V9ES1ewq_DaKjlm37oA_XcREcK0_hyzD27t5Nj6DB_f6L3pBz-B50a02nN7DkGVz9VkcKQOLWUq6fTGHyC_3PdUBa6St81iIBhNSy2HO10Ev77JvxAOKX7QUF3ZPo1SuMegWmEaGV0xIAgUg1NQm08mXVXbYWsz7JJBpk4tIDZMUu04RciNygdTooFSBd7KAxZONfQEuCZhEs8un6ke78H88SkbotQ1eX2xyc86ANApuUayjnnt_AGdCz63hRcbh4W09Yv00sXWSR34BWD1wBKa1X5PYyMkUkVhOQTyfOD13_TSdY9ubjhhnzzYDiBEypS1NN63NJYYlEGoLSmxLGUTm4DgLqKddsnKjtt5t6LAuvpxFQWMKmXIx8168didC_qIDTg0wLvx26MsVptm5bXWYhg7XRqLUE6Bgo7sL-x8CTx-7zAUbIAQ41q4rKM9WlGVVdUSOqHX9kKrabKNfV1SSkwmwxePBJ-1YS4OEiIPzUA0ZzsTKHVSmZTPxuzcpxsK9MdhBDbYJDd_83TVZ6xUIjLvKd2oCPxNhHsXYD4LYfsx384RKb0LQ6WjqzIMiVQj9re00zuEt1dkBLs5Ump0wppxKbjF0qDkS44ohSf0XbqlXTq4G9WWarX6hgza2hU_RYKQLEeKyd9GrgAOJtF_AfKduAau7t-LfCYP6goJ8uLsyYAlj_cSIpES_9dlgvL86F82b0ZvQdidJsoxJsY3kl8kbskd1Fk-7c3YrIpYqlAnTTwdycF2818ID_mlgPwRwQEilnDJ-bLX5p4BxA6yrfQJwRoibDv2-gU1qeTtxf2n8uSRIhrXuS6F7EIZ4TlGylxxqVWFDMZkux6g2x5PpwIYW5WpxzlLbtS30FCVSDQL8ZkqkUzs-oCGMjhft_u48Ss-O3bhHEfYaidVukwN_4gTndhDZabJNEo4qMGbuEWnHckVwT31uQJ_AULoy_0rmyiwOHlkhruIHbv5PFcVH2dHYa5GCLxE6nPQrLZRsoqeBAIGVUddFHhMT-DHDO_ot36I0mNTEJy4WWyhx3uiRNEynOguKd47WNcLIgTIGGgZ7tqV5ni2Il78rA0rK-WeDuQinQob0QtHauAz0Hkr_NJR5gxbzGRrvokJn5xSVFYjhDaffiPyZD-crYMUi3QlD7LbqTmADIjIVzTPQvnGLZlZzCHf8_T8IgMTb6URDnKWZaFwVUbHA0OC1iA_oFruKxOXhV4m732q0choO05vaM7LP9C-2rayvPgJmTkYh2s5wi6g0mBvLbhwcV68I1g2F592j4pHbUmwnnv8UASPKp3B-EHaM6gSSSUuHnY-Dlo7mBQhvZz9fVjtlLsvvXJbrJhulo8MOuFUZcNSOCWh-MFkNv16QBVk1QjXplgKCTS5KYLN-o-a91viPWEgjqpiMbew1mP3XiEChSyTA1QZtXtvTIGDhe-o6oQOyv49_nIUolKw6Bd0tLRY3N0ZCOHZ4QXJcpSMC-rqltNTm69vB3ZsJqBBtpXjEi_OhEMNSBtQn5ESQECXCEbY1gj4nyNhPPd0jbrMgau67GLo"
+#             time.sleep(10)
+#
+#             flow_token = res['flow_token']
+#
+#             enter_login_data = {
+#                 "flow_token": flow_token,
+#                 "subtask_inputs": [
+#                     {
+#                         "subtask_id": "LoginEnterUserIdentifierSSO",
+#                         "settings_list": {
+#                             "setting_responses": [
+#                                 {
+#                                     "key": "user_identifier",
+#                                     "response_data": {"text_data": {"result": working_acc['screen_name']}},
+#                                 }
+#                             ],
+#                             "link": "next_link",
+#                             "castle_token": castle_token
+#                         },
+#                     }
+#                 ],
+#             }
+#             res = twitter_api_call('enter_login_flow', variables=enter_login_data, features={}, twitter_working_account=working_acc)
+#
+#             print(res)
+#
+#             if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
+#                 return res
+#
+#             elif res['flow_token'] and res['status'] == 'success':
+#
+#                 time.sleep(5)
+#
+#                 enter_pw_data = {
+#                     "flow_token": res['flow_token'],
+#                     "subtask_inputs": [
+#                         {
+#                             "subtask_id": "LoginEnterPassword",
+#                             "enter_password": {
+#                                 "password": working_acc['password'],
+#                                 "link": "next_link",
+#                                 "castle_token": castle_token
+#                             },
+#                         }
+#                     ],
+#                 }
+#
+#                 res = twitter_api_call('enter_pw_flow', variables=enter_pw_data, features={}, twitter_working_account=working_acc)
+#
+#                 print(res)
+#
+#                 if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
+#                     return res
+#
+#                 elif res['flow_token'] and res['status'] == 'success':
+#                     cookies = working_acc['session'].get_cookies()
+#                     print(cookies)
+#                     auth_token = next(c['value'] for c in cookies if c['name'] == 'auth_token')
+#                     print(auth_token)
+#                     return auth_token
+#                 else:
+#                     return False
 
-    logger.info(f"[LOGIN][{acc}] 🚀 Start login flow | proxy={proxy}")
 
-    try:
-        # ================= STEP 1 =================
-        logger.info(f"[LOGIN][{acc}] STEP 1: init login_flow")
-
-        login_flow_data = {
-            "input_flow_data": {
-                "flow_context": {
-                    "debug_overrides": {},
-                    "start_location": {"location": "splash_screen"},
-                }
-            },
-            "subtask_versions": {
-                "action_list": 2,
-                "alert_dialog": 1,
-                "app_download_cta": 1,
-                "check_logged_in_account": 1,
-                "choice_selection": 3,
-                "contacts_live_sync_permission_prompt": 0,
-                "cta": 7,
-                "email_verification": 2,
-                "end_flow": 1,
-                "enter_date": 1,
-                "enter_email": 2,
-                "enter_password": 5,
-                "enter_phone": 2,
-                "enter_recaptcha": 1,
-                "enter_text": 5,
-                "enter_username": 2,
-                "generic_urt": 3,
-                "in_app_notification": 1,
-                "interest_picker": 3,
-                "js_instrumentation": 1,
-                "menu_dialog": 1,
-                "notifications_permission_prompt": 2,
-                "open_account": 2,
-                "open_home_timeline": 1,
-                "open_link": 1,
-                "phone_verification": 4,
-                "privacy_options": 1,
-                "security_key": 3,
-                "select_avatar": 4,
-                "select_banner": 2,
-                "settings_list": 7,
-                "show_code": 1,
-                "sign_up": 2,
-                "sign_up_review": 4,
-                "tweet_selection_urt": 1,
-                "update_users": 1,
-                "upload_media": 1,
-                "user_recommendations_list": 4,
-                "user_recommendations_urt": 1,
-                "wait_spinner": 3,
-                "web_modal": 1,
-            }
-        }
-
-        res = twitter_api_call(
-            "login_flow",
-            variables=login_flow_data,
-            features={},
-            twitter_working_account=working_acc
-        )
-
-        logger.debug(f"[LOGIN][{acc}] login_flow response: {res}")
-
-        if res in ["ban", "proxy_dead", "no_auth", "lock"]:
-            logger.warning(f"[LOGIN][{acc}] ❌ Early stop: {res}")
-            return res
-
-        if not isinstance(res, dict) or not res.get("flow_token"):
-            logger.error(f"[LOGIN][{acc}] ❌ Invalid login_flow response")
-            return False
-
-        # ================= STEP 2 =================
-        logger.info(f"[LOGIN][{acc}] STEP 2: JS instrumentation")
-
-        login_js_data = {
-            "flow_token": res["flow_token"],
-            "subtask_inputs": [
-                {
-                    "subtask_id": "LoginJsInstrumentationSubtask",
-                    "js_instrumentation": {
-                        "response": json.dumps(
-                            {
-                                "rf": {
-                                    "ec2dd29fc4a651efa258a6d8ee80882756a7baa8584420bd2eb17457f9344a22": -1,
-                                    "aa1d709ed9884c2954bf64630edc4571dc03d70f27392289e0208d5273e37d91": -132,
-                                    "add94acd2cd14239adef2a2609477207a229d67ac6690921dd6ac76e5f93bdb7": -138,
-                                    "a79ff8bf51ea041fc878f1f82d3ab54e0aec833e4d9166652c9e504766a505f1": 187,
-                                },
-                                "s": "Z4Z0ziwX2n8dGFypz52losLlgzT6tNk932kgp9LAOMfo87oDQpXFGjT9lwY6-Ef_zdBObdKKshS1ozgL_dWCkZOpbxyKShK0vjk2S9__KwoZHSNOvMHROAFPAcHIVaPgfPingn9qY1E7-vzQpRpfS3Mr6gbZIS__hmt-NIRfYbCFhZPMU-AAsKDYkidZr8CCXr6dFQGESg3wjXWc3OCvLV-QmyeteJ3omzSmj6YGCbY1V6ikhRcDc-6FAhRyZ5NdXj47MDzpJmzqyyeyya0gM2wY7dQPBSBNXPcXSbQ9F5yz4CsyaL0D7WZybnUDVJ6cSBnPkEEgnhCB-1xwmSYEzQAAAZs_HPwu",
-                            }
-                        ),
-                        "link": "next_link",
-                    },
-                }
-            ],
-        }
-
-        res = twitter_api_call(
-            "login_js_flow",
-            variables=login_js_data,
-            features={},
-            twitter_working_account=working_acc
-        )
-
-        logger.debug(f"[LOGIN][{acc}] login_js_flow response: {res}")
-
-        if res in ["ban", "proxy_dead", "no_auth", "lock"]:
-            logger.warning(f"[LOGIN][{acc}] ❌ JS flow failed: {res}")
-            return res
-
-        if not res.get("flow_token"):
-            logger.error(f"[LOGIN][{acc}] ❌ No flow_token after JS flow")
-            return False
-
-        # ================= STEP 3 =================
-        logger.info(f"[LOGIN][{acc}] STEP 3: SSO init")
-
-        sso_res = twitter_api_call(
-            "sso_init",
-            variables={"provider": "apple"},
-            features={},
-            twitter_working_account=working_acc
-        )
-
-        logger.debug(f"[LOGIN][{acc}] sso_init response: {sso_res}")
-
-        # ================= STEP 4 =================
-        logger.info(f"[LOGIN][{acc}] STEP 4: sniff castle_token")
-
-        try:
-            sniffer_res = asyncio.run(
-                sniff_headers(
-                    url="https://x.com/i/flow/login",
-                    watch={"castle_token"},
-                    search_mode="payload",
-                    only_types={"xhr", "fetch"},
-                    stop_on_first=True,
-                )
-            )
-        except Exception as e:
-            logger.exception(f"[LOGIN][{acc}] ❌ Sniffer crashed")
-            return False
-
-        castle_token = sniffer_res.get("castle_token")
-        if not castle_token:
-            logger.error(f"[LOGIN][{acc}] ❌ castle_token not found")
-            return False
-
-        # ================= STEP 5 =================
-        logger.info(f"[LOGIN][{acc}] STEP 5: enter username")
-
-        enter_login_data = {
-            "flow_token": res["flow_token"],
-            "subtask_inputs": [
-                {
-                    "subtask_id": "LoginEnterUserIdentifierSSO",
-                    "settings_list": {
-                        "setting_responses": [
-                            {
-                                "key": "user_identifier",
-                                "response_data": {
-                                    "text_data": {"result": working_acc["screen_name"]}
-                                },
-                            }
-                        ],
-                        "link": "next_link",
-                        "castle_token": castle_token,
-                    },
-                }
-            ],
-        }
-
-        res = twitter_api_call(
-            "enter_login_flow",
-            variables=enter_login_data,
-            features={},
-            twitter_working_account=working_acc
-        )
-
-        logger.debug(f"[LOGIN][{acc}] enter_login response: {res}")
-
-        if res in ["ban", "proxy_dead", "no_auth", "lock"]:
-            logger.warning(f"[LOGIN][{acc}] ❌ Username step failed: {res}")
-            return res
-
-        if not res.get("flow_token"):
-            logger.error(f"[LOGIN][{acc}] ❌ No flow_token after username")
-            return False
-
-        # ================= STEP 6 =================
-        logger.info(f"[LOGIN][{acc}] STEP 6: enter password")
-        time.sleep(5)
-
-        enter_pw_data = {
-            "flow_token": res["flow_token"],
-            "subtask_inputs": [
-                {
-                    "subtask_id": "LoginEnterPassword",
-                    "enter_password": {
-                        "password": working_acc["password"],
-                        "link": "next_link",
-                        "castle_token": castle_token,
-                    },
-                }
-            ],
-        }
-
-        res = twitter_api_call(
-            "enter_pw_flow",
-            variables=enter_pw_data,
-            features={},
-            twitter_working_account=working_acc
-        )
-
-        logger.debug(f"[LOGIN][{acc}] enter_pw response: {res}")
-
-        if res in ["ban", "proxy_dead", "no_auth", "lock"]:
-            logger.warning(f"[LOGIN][{acc}] ❌ Password step failed: {res}")
-            return res
-
-        if not res.get("flow_token"):
-            logger.error(f"[LOGIN][{acc}] ❌ No flow_token after password")
-            return False
-
-        # ================= SUCCESS =================
-        logger.info(f"[LOGIN][{acc}] ✅ Login successful, extracting cookies")
-
-        cookies = working_acc["session"].get_cookies()
-        print(cookies)
-        auth_token = next(
-            (c["value"] for c in cookies if c["name"] == "auth_token"),
-            None,
-        )
-        print(auth_token)
-
-        if not auth_token:
-            logger.error(f"[LOGIN][{acc}] ❌ auth_token not found in cookies")
-            return False
-
-        logger.info(f"[LOGIN][{acc}] 🎉 SUCCESS auth_token extracted")
-        return auth_token
-
-    except Exception as e:
-        logger.exception(f"[LOGIN][{acc}] 💥 Unexpected crash")
-        return False
+# добавь логи в эту функцию и обработку возможных ошибок
 
 ##################################################################################################################################
 
@@ -2250,12 +2172,17 @@ def save_accounts_and_proxies_statistics():
         json.dump(statistics, f, indent=2)
 
 
-if __name__ == "__main__":
-    tw_cl = initialize_client()
-    t_w_a = {
-        'screen_name': 'armyjattsunny',
-        'password': 'kvzQStMLnB',
-        'session': tw_cl,
-        'ua': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
-    }
-    flow_login(t_w_a)
+# if __name__ == "__main__":
+#     prox = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-ba0ce33d7cdc1-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
+#     proxies = {
+#         "http": f"http://{prox}",
+#         "https": f"http://{prox}"
+#     }
+#     tw_cl = initialize_client()
+#     t_w_a = {
+#         'screen_name': 'SunitaY78668883',
+#         'password': 'Ry4Xdnz570',
+#         'session': tw_cl,
+#         'ua': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
+#     }
+#     flow_login(t_w_a)

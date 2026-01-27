@@ -76,7 +76,7 @@ class HeaderSniffer:
         on_match: Optional[Callable[[SniffMatch], None]] = None,
         stop_on_first: bool = False,
         debug: bool = False,
-        debug_payload_limit: int = 1000
+        debug_payload_limit: int = 2000
     ):
         self.watch = {w.lower() for w in watch}
         self.search_mode = search_mode
@@ -240,7 +240,7 @@ class HeaderSniffer:
 async def sniff_headers(
     url: str,
     watch: Union[Set[str], List[str]],
-    duration: int = 30,
+    duration: int = 300,
     proxy: Optional[str] = None,
     search_mode: str = "headers",        # 🔥 headers | payload
     match_url_substr: Optional[str] = None,
@@ -265,9 +265,9 @@ async def sniff_headers(
 
     # --- start chrome ---
     driver = (
-        await cdp_driver.cdp_util.start_async(proxy=proxy, lang='en')
+        await cdp_driver.cdp_util.start_async(proxy=proxy)
         if proxy else
-        await cdp_driver.cdp_util.start_async(lang='en')
+        await cdp_driver.cdp_util.start_async()
     )
 
     tab = await driver.get("about:blank")
@@ -290,8 +290,9 @@ async def sniff_headers(
     # --- navigate ---
     tab = await driver.get(url)
     if 'castle_token' in watch:
+        await asyncio.sleep(1000)
         try:
-            await tab.type("input[name='text']", 'elonmusk', timeout=40)
+            await tab.type("input[name='text']", 'SunitaY78668883', timeout=40)
         except:
             await tab.save_screenshot('ss_test.png')
             # sb.cdp.save_screenshot('ss_test.png')
@@ -300,7 +301,7 @@ async def sniff_headers(
                 'ss_test.png',
                 f"❌ [CDP_SNIFFER] Ошибка ввода логина"
             )
-        next_btn = await tab.find_element_by_text('Next', best_match=True)
+        next_btn = await tab.find_element_by_text('Далее', best_match=True)
         await next_btn.click_async()
     try:
         await tab.send(mycdp.network.enable())
@@ -355,7 +356,7 @@ def debug_print_request(
 
     if payload:
         print("---- PAYLOAD ----")
-        payload = payload[:limit]
+        payload = payload
         print(payload)
 
     print("=" * 80)
@@ -363,10 +364,12 @@ def debug_print_request(
 
 if __name__ == '__main__':
     res = asyncio.run(sniff_headers(
-        url="https://x.com/i/flow/login",
-        proxy='vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
+        url="https://x.com",
+        proxy='vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-ba0ce33d7cdc1-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
         watch={"castle_token"},
         search_mode="payload",
         only_types={"xhr", "fetch"},
-        stop_on_first=True,
+        # stop_on_first=True,
+        debug=True
     ))
+    print(res)

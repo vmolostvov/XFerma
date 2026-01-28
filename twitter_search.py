@@ -1393,8 +1393,6 @@ def change_email(working_acc: dict, new_email_data: dict):
         if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
             return res
 
-        print('kkkkkkksdfmslkjfiodjgoidejhgiuderhgoehfdiughd')
-        time.sleep(1000)
         code = get_code_from_email(new_email_data['email'], new_email_data['proxy'])
         email_verif_data = {"flow_token":flow_token,"subtask_inputs":[{"subtask_id":"EmailAssocEnterEmail","enter_email":{"setting_responses":[{"key":"email_discoverability_setting","response_data":{"boolean_data":{"result":False}}}],"email":new_email,"link":"next_link"}},{"subtask_id":"EmailAssocVerifyEmail","email_verification":{"code":code,"email":new_email,"link":"next_link"}}]}
         res = twitter_api_call('complete_email_verif', variables=email_verif_data, features={}, twitter_working_account=working_acc)

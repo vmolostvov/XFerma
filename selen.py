@@ -824,7 +824,7 @@ def get_code_from_email(email, proxy):
     email_un = email.split('@')[0]
 
     with SB(uc=True, proxy=proxy) as sb:
-        cookies_path = f"/Users/vladmolostvov/Desktop/Projects/X_Booster/email_cookies/{email_un}.session.dat"
+        cookies_path = f"email_cookies/{email_un}.session.dat"
 
         sb.activate_cdp_mode("https://outlook.live.com/mail/0/")
 

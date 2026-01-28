@@ -817,6 +817,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
             continue
 
 def get_code_from_email(email, proxy):
+
     def extract_verification_code(text: str) -> str | None:
         match = re.search(r'\b\d{6}\b', text)
         return match.group() if match else None

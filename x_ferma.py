@@ -237,49 +237,55 @@ class xFerma:
 
         un = twitter_working_account['screen_name']
 
-        logger.info(f"[EMAIL] Выбрана почта: {new_email} для аккаунта @{un}")
+        logger.info(f"[MAIL_VERIF] Выбрана почта: {new_email} для аккаунта @{un}")
 
         for i in range(2):
             try:
                 change_email_res = twitter_search.change_email(twitter_working_account, new_email_data)
             except Exception as e:
-                logger.exception(f"[EMAIL] change_email ошибка: {e}")
+                logger.exception(f"[MAIL_VERIF] change_email ошибка: {e}")
                 return False
 
             if change_email_res == '131':
-                logger.info(f"[EMAIL] Аккаунт {un} неизвестная ошибка!")
+                logger.info(f"[MAIL_VERIF] Аккаунт {un} неизвестная ошибка!")
             elif change_email_res == 'ban':
-                logger.info(f"[EMAIL] Аккаунт {un} вероятно забанен!")
+                logger.info(f"[MAIL_VERIF] Аккаунт {un} вероятно забанен!")
                 try:
                     db.update_is_banned(twitter_working_account["uid"])
                 except Exception as e:
-                    logger.exception(f"[EMAIL] Ошибка при update_is_banned: {e}")
+                    logger.exception(f"[MAIL_VERIF] Ошибка при update_is_banned: {e}")
                 return
             elif change_email_res == 'proxy_dead':
-                logger.info(f"[EMAIL] У аккаунта {un} умер прокси!")
+                logger.info(f"[MAIL_VERIF] У аккаунта {un} умер прокси!")
                 twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
                 if twitter_working_account:
                     continue
             elif change_email_res == 'no_auth':
                 logger.info(
-                    f"[EMAIL] Аккаунт {un} вероятно нуждается в обновлении сессии!")
+                    f"[MAIL_VERIF] Аккаунт {un} вероятно нуждается в обновлении сессии!")
                 try:
                     db.update_regen_session(twitter_working_account["uid"], True)
                 except Exception as e:
-                    logger.exception(f"[EMAIL] Ошибка при update_regen_session: {e}")
+                    logger.exception(f"[MAIL_VERIF] Ошибка при update_regen_session: {e}")
                 return
             elif change_email_res == 'lock':
-                logger.info(f"[EMAIL] Аккаунт {un} вероятно временно заблокирован!")
+                logger.info(f"[MAIL_VERIF] Аккаунт {un} вероятно временно заблокирован!")
                 try:
                     db.update_is_locked(twitter_working_account["uid"])
                 except Exception as e:
-                    logger.exception(f"[EMAIL] Ошибка при update_is_locked: {e}")
+                    logger.exception(f"[MAIL_VERIF] Ошибка при update_is_locked: {e}")
                 return
             elif change_email_res:
-                logger.info(f"[EMAIL] Аккаунт {un} успешно сменили почту!")
-                db.update_x_linked(new_email)
-                db.update_email(un, new_email, new_email_data['pass'])
-                break
+                acc_new_data = twitter_search.get_phone_mail_data(twitter_working_account)
+                if acc_new_data['emails'][0]['email'] == new_email.lower() and acc_new_data['emails'][0]['email_verified']:
+                    logger.info(f"[MAIL_VERIF] @{un} успешно верефицирована новая почта {new_email}")
+                    db.update_x_linked(new_email)
+                    db.update_email(un, new_email, new_email_data['pass'])
+                    if acc_new_data['phone_numbers'][0]['phone_number']:
+                        db.update_phone(un, acc_new_data['phone_numbers'][0]['phone_number'].replace('+', ''))
+                    break
+                else:
+                    logger.warning(f"[MAIL_VERIF] @{un} не удалось привязать новую почту!")
 
     def change_pw_and_save(self, acc):
         res, new_pw = twitter_search.change_password(acc)
@@ -1115,18 +1121,6 @@ class xFerma:
                 logger.exception(f"[REGEN] Ошибка update_proxy для @{screen_name}")
 
         return result['account']
-
-
-    def verify_new_email(self, twitter_working_account, new_email):
-        res = twitter_search.change_email(twitter_working_account, twitter_working_account['pass'], new_email)
-        if res:
-            acc_new_data = twitter_search.get_phone_mail_data(twitter_working_account)
-            if acc_new_data['emails'][0]['email'] == new_email.lower() and acc_new_data['emails'][0]['email_verified']:
-                logger.info(f"[MAIL_VERIF] @{twitter_working_account['screen_name']} успешно верефицирована новая почта {new_email}")
-            else:
-                logger.warning(
-                    f"[MAIL_VERIF] @{twitter_working_account['screen_name']} не удалось привязать новую почту!")
-
 
     def accounts_health_test(self, accs):
         for acc in accs:

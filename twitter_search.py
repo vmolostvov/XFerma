@@ -1,5 +1,8 @@
 import requests, json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading, asyncio
 from multiprocessing.managers import SyncManager
+
+from torch.fx.experimental.migrate_gradual_types.transform_to_z3 import transform_all_constraints_trace_time
+
 from alarm_bot import admin_error
 # from tweeterpyapi import load_accounts_tweeterpy, initialize_client
 from config import parse_accounts_to_list, generate_password
@@ -667,6 +670,9 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
 
     elif 'Error code 141 - Authorization' in trace:
         return 'ban'
+
+    elif 'Error code 398 - Due to new session' in trace:
+        return '48h'
 
 # поиск пользователей по ключевому слову
 def search_people(search_query):
@@ -1405,23 +1411,6 @@ def change_email(working_acc: dict, new_email_data: dict):
 
         else:
             return False
-
-
-def get_phone_mail_data(working_acc):
-
-    res = twitter_api_call('get_mail_phone', variables={}, features={}, twitter_working_account=working_acc)
-
-    if res == '131':
-        return res
-
-    if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
-        return res
-
-    if res:
-        return res
-
-    return False
-
 
 # def flow_login(working_acc):
 #     login_flow_data = {

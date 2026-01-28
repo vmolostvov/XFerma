@@ -227,7 +227,12 @@ class xFerma:
             return False
 
     def change_email_and_save(self, twitter_working_account):
-        new_email_data = db.get_random_mail()
+        # new_email_data = db.get_random_mail()
+        new_email_data = {
+            'email': 'a.ballast280@outlook.com',
+            'pass': '3)q(vbEC7MHZf72CcBgw',
+            'proxy': 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-49ddd6de7aeaa-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
+        }
         new_email = new_email_data[0]['email']
 
         un = twitter_working_account['screen_name']

@@ -4,6 +4,7 @@ from alarm_bot import admin_error
 # from tweeterpyapi import load_accounts_tweeterpy, initialize_client
 from config import parse_accounts_to_list, generate_password
 from requests.exceptions import ReadTimeout, ProxyError, ConnectTimeout, SSLError
+from selen import get_code_from_email
 # from cdp_sniffer import sniff_headers
 # from pixelscan_checker import proxy_check, make_proxy_str_for_pixelscan
 
@@ -1359,7 +1360,7 @@ def get_phone_mail_data(working_acc):
     return False
 
 
-def change_email(working_acc, new_email):
+def change_email(working_acc: dict, new_email_data: dict):
 
     verify_pw = f'password={working_acc["pass"]}'
     res = twitter_api_call('verify_pw', variables=verify_pw, features={}, twitter_working_account=working_acc)
@@ -1383,7 +1384,7 @@ def change_email(working_acc, new_email):
         flow_token = res['flow_token']
 
         begin_data = {
-            'email': new_email,
+            'email': new_email_data['email'],
             'flow_token': flow_token,
             'castle_token': castle_token
         }
@@ -1392,7 +1393,9 @@ def change_email(working_acc, new_email):
         if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
             return res
 
-        code = '032244'
+        print('kkkkkkksdfmslkjfiodjgoidejhgiuderhgoehfdiughd')
+        time.sleep(1000)
+        code = get_code_from_email(new_email_data['email'], new_email_data['proxy'])
         email_verif_data = {"flow_token":flow_token,"subtask_inputs":[{"subtask_id":"EmailAssocEnterEmail","enter_email":{"setting_responses":[{"key":"email_discoverability_setting","response_data":{"boolean_data":{"result":False}}}],"email":new_email,"link":"next_link"}},{"subtask_id":"EmailAssocVerifyEmail","email_verification":{"code":code,"email":new_email,"link":"next_link"}}]}
         res = twitter_api_call('complete_email_verif', variables=email_verif_data, features={}, twitter_working_account=working_acc)
 

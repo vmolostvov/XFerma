@@ -740,7 +740,7 @@ class Database:
             {
                 "email": r["email"],
                 "pass": r["pass"],
-                "proxy": r["proxy_sid"],
+                "proxy": get_proxy_by_sid(r["proxy_sid"]),
             }
             for r in rows
         ]

@@ -815,8 +815,24 @@ def create_new_acc(stats_path: str = STATS_PATH):
             fail("fatal_exception")
             continue
 
+def get_code_from_email(email, proxy):
+
+    email_un = email.split('@')[0]
+
+    with SB(uc=True, proxy=proxy) as sb:
+        cookies_path = f"/Users/vladmolostvov/Desktop/Projects/X_Booster/email_cookies/{email_un}.session.dat"
+
+        sb.activate_cdp_mode("https://outlook.live.com/mail/0/")
+
+        sb.cdp.load_cookies(cookies_path)
+
+        email_el = sb.cdp.select('div[class="S2NDX"]', timeout=30)
+
+        return email_el.text
+
 
 if __name__ == '__main__':
     # sss('evdokiyabilan1984@outlook.com', 'zA6yyPBQnm', 'galkina_0803@outlook.com')
-    login('armyjattsunny', 'kvzQStMLnB', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080')
+    # login('armyjattsunny', 'kvzQStMLnB', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080')
     # create_new_acc()
+    get_code_from_email('a.ballast280@outlook.com', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-49ddd6de7aeaa-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080')

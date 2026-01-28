@@ -1369,11 +1369,9 @@ def get_phone_mail_data(working_acc):
 
 def change_email(working_acc: dict, new_email_data: dict):
 
-    # verify_pw = f'password={working_acc["pass"]}'
-    verify_pw = {
-        'password': working_acc["pass"]
-    }
-    res = twitter_api_call('verify_pw', variables=verify_pw, features={}, twitter_working_account=working_acc)
+    verify_pw = f'password={working_acc["pass"]}'
+    body_str = json.dumps(verify_pw, separators=(",", ":"), ensure_ascii=False)
+    res = twitter_api_call('verify_pw', variables=body_str.encode('utf-8'), features={}, twitter_working_account=working_acc)
 
     if res in ['ban', 'proxy_dead', 'no_auth', 'lock', 'incorrect_pw']:
         return res

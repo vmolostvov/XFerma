@@ -228,7 +228,11 @@ class xFerma:
 
     def change_email_and_save(self, twitter_working_account):
         new_email_data = db.get_random_mail()
-        new_email = new_email_data['email']
+        new_email = new_email_data[0]['email']
+
+        un = twitter_working_account['screen_name']
+
+        logger.info(f"[EMAIL] Выбрана почта: {new_email} для аккаунта @{un}")
 
         for i in range(2):
             try:
@@ -238,38 +242,38 @@ class xFerma:
                 return False
 
             if change_email_res == '131':
-                logger.info(f"[EMAIL] Аккаунт {twitter_working_account['screen_name']} неизвестная ошибка!")
+                logger.info(f"[EMAIL] Аккаунт {un} неизвестная ошибка!")
             elif change_email_res == 'ban':
-                logger.info(f"[EMAIL] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                logger.info(f"[EMAIL] Аккаунт {un} вероятно забанен!")
                 try:
                     db.update_is_banned(twitter_working_account["uid"])
                 except Exception as e:
                     logger.exception(f"[EMAIL] Ошибка при update_is_banned: {e}")
                 return
             elif change_email_res == 'proxy_dead':
-                logger.info(f"[EMAIL] У аккаунта {twitter_working_account['screen_name']} умер прокси!")
+                logger.info(f"[EMAIL] У аккаунта {un} умер прокси!")
                 twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
                 if twitter_working_account:
                     continue
             elif change_email_res == 'no_auth':
                 logger.info(
-                    f"[EMAIL] Аккаунт {twitter_working_account['screen_name']} вероятно нуждается в обновлении сессии!")
+                    f"[EMAIL] Аккаунт {un} вероятно нуждается в обновлении сессии!")
                 try:
                     db.update_regen_session(twitter_working_account["uid"], True)
                 except Exception as e:
                     logger.exception(f"[EMAIL] Ошибка при update_regen_session: {e}")
                 return
             elif change_email_res == 'lock':
-                logger.info(f"[EMAIL] Аккаунт {twitter_working_account['screen_name']} вероятно временно заблокирован!")
+                logger.info(f"[EMAIL] Аккаунт {un} вероятно временно заблокирован!")
                 try:
                     db.update_is_locked(twitter_working_account["uid"])
                 except Exception as e:
                     logger.exception(f"[EMAIL] Ошибка при update_is_locked: {e}")
                 return
             elif change_email_res:
-                logger.info(f"[EMAIL] Аккаунт {twitter_working_account['screen_name']} успешно сменили почту!")
+                logger.info(f"[EMAIL] Аккаунт {un} успешно сменили почту!")
                 db.update_x_linked(new_email)
-                db.update_email(twitter_working_account['screen_name'], new_email, new_email_data['pass'])
+                db.update_email(un, new_email, new_email_data['pass'])
                 break
 
     def change_pw_and_save(self, acc):

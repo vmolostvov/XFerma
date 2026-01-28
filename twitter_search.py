@@ -1,8 +1,6 @@
 import requests, json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading, asyncio
 from multiprocessing.managers import SyncManager
 
-from torch.fx.experimental.migrate_gradual_types.transform_to_z3 import transform_all_constraints_trace_time
-
 from alarm_bot import admin_error
 # from tweeterpyapi import load_accounts_tweeterpy, initialize_client
 from config import parse_accounts_to_list, generate_password

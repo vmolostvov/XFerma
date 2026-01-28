@@ -5,6 +5,7 @@ import telebot
 import logging
 import json
 import os
+import re
 from datetime import datetime, timedelta, timezone
 
 from alarm_bot import admin_error
@@ -816,6 +817,9 @@ def create_new_acc(stats_path: str = STATS_PATH):
             continue
 
 def get_code_from_email(email, proxy):
+    def extract_verification_code(text: str) -> str | None:
+        match = re.search(r'\b\d{6}\b', text)
+        return match.group() if match else None
 
     email_un = email.split('@')[0]
 
@@ -828,11 +832,11 @@ def get_code_from_email(email, proxy):
 
         email_el = sb.cdp.select('div[class="S2NDX"]', timeout=30)
 
-        return email_el.text
+        return extract_verification_code(email_el.text)
 
 
 if __name__ == '__main__':
     # sss('evdokiyabilan1984@outlook.com', 'zA6yyPBQnm', 'galkina_0803@outlook.com')
     # login('armyjattsunny', 'kvzQStMLnB', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080')
     # create_new_acc()
-    get_code_from_email('a.ballast280@outlook.com', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-49ddd6de7aeaa-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080')
+    print(get_code_from_email('a.ballast280@outlook.com', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-49ddd6de7aeaa-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'))

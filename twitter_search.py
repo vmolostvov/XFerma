@@ -599,6 +599,7 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
                     # print('base url', base_url)
                     # print('headers', headers)
                     # print('variables', variables)
+                    print(variables)
                     response = twitter_working_account['session'].request_client.request(base_url, method='POST',
                                                                                          data=params if params else variables,
                                                                                          headers=headers)
@@ -671,6 +672,9 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
 
     elif 'Error code 398 - Due to new session' in trace:
         return '48h'
+
+    elif 'Error code 114 - Incorrect current password' in trace:
+        return 'incorrect_pw'
 
 # поиск пользователей по ключевому слову
 def search_people(search_query):
@@ -1367,9 +1371,10 @@ def get_phone_mail_data(working_acc):
 def change_email(working_acc: dict, new_email_data: dict):
 
     verify_pw = f'password={working_acc["pass"]}'
+    print(verify_pw)
     res = twitter_api_call('verify_pw', variables=verify_pw, features={}, twitter_working_account=working_acc)
 
-    if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
+    if res in ['ban', 'proxy_dead', 'no_auth', 'lock', 'incorrect_pw']:
         return res
 
     time.sleep(3)

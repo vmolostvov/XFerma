@@ -161,6 +161,8 @@ class xFerma:
                     return
                 elif change_profile_res == 'proxy_dead':
                     logger.info(f"[VIEW] У аккаунта {twitter_working_account['screen_name']} умер прокси!")
+                    if _ == 1:
+                        return
                     twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
                     if twitter_working_account:
                         continue
@@ -223,6 +225,78 @@ class xFerma:
         except Exception as e:
             logger.exception(f"[AVA] change_pfp ошибка: {e}")
             return False
+
+    def change_email_and_save(self, twitter_working_account):
+        new_email_data = db.get_random_mail()
+        new_email = new_email_data['email']
+
+        for i in range(2):
+            try:
+                change_email_res = twitter_search.change_email(twitter_working_account, new_email)
+            except Exception as e:
+                logger.exception(f"[EMAIL] change_email ошибка: {e}")
+                return False
+
+            if change_email_res == '131':
+                logger.info(f"[EMAIL] Аккаунт {twitter_working_account['screen_name']} неизвестная ошибка!")
+            elif change_email_res == 'ban':
+                logger.info(f"[EMAIL] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                try:
+                    db.update_is_banned(twitter_working_account["uid"])
+                except Exception as e:
+                    logger.exception(f"[EMAIL] Ошибка при update_is_banned: {e}")
+                return
+            elif change_email_res == 'proxy_dead':
+                logger.info(f"[EMAIL] У аккаунта {twitter_working_account['screen_name']} умер прокси!")
+                twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
+                if twitter_working_account:
+                    continue
+            elif change_email_res == 'no_auth':
+                logger.info(
+                    f"[EMAIL] Аккаунт {twitter_working_account['screen_name']} вероятно нуждается в обновлении сессии!")
+                try:
+                    db.update_regen_session(twitter_working_account["uid"], True)
+                except Exception as e:
+                    logger.exception(f"[EMAIL] Ошибка при update_regen_session: {e}")
+                return
+            elif change_email_res == 'lock':
+                logger.info(f"[EMAIL] Аккаунт {twitter_working_account['screen_name']} вероятно временно заблокирован!")
+                try:
+                    db.update_is_locked(twitter_working_account["uid"])
+                except Exception as e:
+                    logger.exception(f"[EMAIL] Ошибка при update_is_locked: {e}")
+                return
+            elif change_email_res:
+                logger.info(f"[EMAIL] Аккаунт {twitter_working_account['screen_name']} успешно сменили почту!")
+                db.update_x_linked(new_email)
+                db.update_email(twitter_working_account['screen_name'], new_email, new_email_data['pass'])
+                break
+
+    def change_pw_and_save(self, acc):
+        res, new_pw = twitter_search.change_password(acc)
+        if res.get('status') == 'ok':
+            logger.info(f'✅ Пароль аккаунта {acc["screen_name"]} успешно изменен!')
+            db.update_pw(acc['uid'], new_pw)
+
+            auth_token_update = False
+            cookies = acc['session'].get_cookies()
+            for cookie in cookies:
+                if 'auth_token' in cookie.name and cookie.value != acc['auth_token']:
+                    logger.debug(f'New auth token: {cookie.value}')
+                    db.update_auth(acc['uid'], cookie.value)
+                    acc['auth_token'] = cookie.value
+                    auth_token_update = True
+                    break
+
+            if auth_token_update:
+                logger.info(f'✅ Auth-token аккаунта {acc["screen_name"]} успешно изменен!')
+                save_cookies_and_sess_with_timeout(acc)
+
+            else:
+                logger.error(f"❌ Ошибка при попытке обновить auth-token на аккаунте {acc['screen_name']}")
+
+        else:
+            logger.error(f"❌ Ошибка при попытке изменить пароль на аккаунте {acc['screen_name']}")
 
     # ----------------------------
     # FOLLOWING (очередь)
@@ -639,7 +713,7 @@ class xFerma:
                 try:
                     res = self.view(twitter_working_account, tid, uid)
 
-                    if res in ("ban", "no_auth", "lock"):
+                    if res in ("ban", "no_auth", "lock", "proxy_dead"):
                         # При бане/неавторизованности возвращаем статус как раньше
                         logger.warning(
                             f"[VIEW-ALL] @{twitter_working_account.get('screen_name')} -> {res} во время просмотра")
@@ -889,6 +963,8 @@ class xFerma:
                         logger.exception(f"[SETUP] Ошибка при update_is_banned: {e}")
                     return 'ban'
                 elif res == 'proxy_dead':
+                    if i == 1:
+                        return 'proxy_dead'
                     logger.info(f"[VIEW] У аккаунта {twitter_working_account['screen_name']} умер прокси!")
                     twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
                     if twitter_working_account:
@@ -1024,7 +1100,7 @@ class xFerma:
         # ---- 4. Обновление прокси в базе ----
         if new_proxy:
             try:
-                db.update_proxy(uid, sid)
+                db.update_proxy(sid, uid=uid)
                 logger.info(f"[REGEN] @{screen_name} proxy SID обновлён в базе")
             except Exception:
                 logger.exception(f"[REGEN] Ошибка update_proxy для @{screen_name}")
@@ -1345,33 +1421,6 @@ def format_duration(seconds: int) -> str:
 
 if __name__ == '__main__':
 
-    def change_pw_and_save(acc):
-        res, new_pw = twitter_search.change_password(acc)
-        if res.get('status') == 'ok':
-            print(f'✅ Пароль аккаунта {acc["screen_name"]} успешно изменен!')
-            db.update_pw(acc['uid'], new_pw)
-
-            auth_token_update = False
-            cookies = acc['session'].get_cookies()
-            for cookie in cookies:
-                if 'auth_token' in cookie.name and cookie.value != acc['auth_token']:
-                    print(f'New auth token: {cookie.value}')
-                    db.update_auth(acc['uid'], cookie.value)
-                    acc['auth_token'] = cookie.value
-                    auth_token_update = True
-                    break
-
-            if auth_token_update:
-                print(f'✅ Auth-token аккаунта {acc["screen_name"]} успешно изменен!')
-                save_cookies_and_sess_with_timeout(acc)
-
-            else:
-                print(f"❌ Ошибка при попытке обновить auth-token на аккаунте {acc['screen_name']}")
-
-        else:
-            print(f"❌ Ошибка при попытке изменить пароль на аккаунте {acc['screen_name']}")
-
-
     def regen_all_sessions():
         from collections import Counter
 
@@ -1441,8 +1490,9 @@ if __name__ == '__main__':
     print("  3 — Тестовый режим (testing)")
     print("  4 — Смена пароля")
     print("  5 — Смена proxy")
-    print("  6 — Selen-regen")
-    print("  7 — MFerma")
+    print("  6 — Смена email")
+    print("  7 — Selen-regen")
+    print("  8 — MFerma")
     print("  0 — Выход\n")
 
     choice = input("👉 Введите номер режима: ").strip()
@@ -1492,6 +1542,8 @@ if __name__ == '__main__':
         print("  1 — Смена пароля только у одного аккаунта")
         print("  2 — Смена пароля у всех аккаунтов\n")
 
+        ferma = xFerma(mode='test')
+
         pw_choice = input("👉 Введите номер режима смены пароля: ").strip()
 
         if pw_choice == '1':
@@ -1501,14 +1553,14 @@ if __name__ == '__main__':
             else:
                 # accs = load_accounts_cookies(mode='one', acc_un=acc_un)
                 accs = load_accounts_tweeterpy(mode='pw_change', acc_un=acc_un)
-                change_pw_and_save(accs[0])
+                ferma.change_pw_and_save(accs[0])
 
         elif pw_choice == '2':
             confirm = input("⚠ Ты уверен, что хочешь сменить пароли у ВСЕХ аккаунтов? (yes/no): ").strip().lower()
             if confirm == 'yes':
                 accs = load_accounts_tweeterpy(mode='pw_change', how_many_accounts=10)
                 for acc in accs:
-                    change_pw_and_save(acc)
+                    ferma.change_pw_and_save(acc)
             else:
                 print("❌ Операция отменена.")
 
@@ -1526,10 +1578,40 @@ if __name__ == '__main__':
             print('ok')
 
     elif choice == '6':
+        print("\n🔐 Режим смены email\n")
+        print("  1 — Смена email только у одного аккаунта")
+        print("  2 — Смена email у всех аккаунтов\n")
+
+        ferma = xFerma(mode='test')
+
+        pw_choice = input("👉 Введите номер режима смены email: ").strip()
+
+        if pw_choice == '1':
+            acc_un = input("🔹 Введите username аккаунта (без @): ").strip()
+            if not acc_un:
+                print("❌ Вы не ввели username. Завершение работы.")
+            else:
+                # accs = load_accounts_cookies(mode='one', acc_un=acc_un)
+                accs = load_accounts_tweeterpy(mode='email_change', acc_un=acc_un)
+                ferma.change_email_and_save(accs[0])
+
+        elif pw_choice == '2':
+            confirm = input("⚠ Ты уверен, что хочешь сменить email у ВСЕХ аккаунтов? (yes/no): ").strip().lower()
+            if confirm == 'yes':
+                accs = load_accounts_tweeterpy(mode='pw_change', how_many_accounts=3)
+                for acc in accs:
+                    ferma.change_email_and_save(acc)
+            else:
+                print("❌ Операция отменена.")
+
+        else:
+            print("\n❌ Неверный выбор режима смены пароля.")
+
+    elif choice == '7':
         print("\n♻️ Запуск web режима регенерации аккаунтов...\n")
         regen_auth()
 
-    elif choice == '7':
+    elif choice == '8':
         print("\n▶ Запуск MFerma...\n")
         create_new_acc()
 

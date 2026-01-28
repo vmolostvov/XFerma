@@ -417,6 +417,8 @@ def load_accounts_tweeterpy(mode, how_many_accounts=None, load_cookies=False, ac
         twitter_working_accounts = parse_accounts_to_list()
     elif mode == 'pw_change':
         twitter_working_accounts = db.get_working_accounts(pw_change_mode=True, screen_name=acc_un, count=how_many_accounts)
+    elif mode == 'email_change':
+        twitter_working_accounts = db.get_working_accounts(email_change_mode=True, screen_name=acc_un, count=how_many_accounts)
     elif mode == 'test' and acc_un:
         twitter_working_accounts = db.get_working_accounts(screen_name=acc_un)
     else:

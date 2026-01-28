@@ -1359,9 +1359,9 @@ def get_phone_mail_data(working_acc):
     return False
 
 
-def change_email(working_acc, pw, new_email):
+def change_email(working_acc, new_email):
 
-    verify_pw = f'password={pw}'
+    verify_pw = f'password={working_acc["password"]}'
     res = twitter_api_call('verify_pw', variables=verify_pw, features={}, twitter_working_account=working_acc)
 
     if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:

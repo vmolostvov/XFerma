@@ -101,6 +101,7 @@ class Database:
                 RETURNING uid;
             """
             params = (proxy, un)
+
         else:
             if not uid:
                 raise ValueError("uid is required if username is not provided")
@@ -316,7 +317,8 @@ class Database:
             self,
             count: int | None = None,
             screen_name: str | None = None,
-            pw_change_mode: bool = False
+            pw_change_mode: bool = False,
+            email_change_mode: bool = False
     ) -> List[dict]:
         """
         Возвращает аккаунты из X_FERMA.
@@ -352,6 +354,10 @@ class Database:
             # Добавляем фильтр pass_changed IS NOT TRUE, если включён режим смены пароля
             if pw_change_mode:
                 base_sql += " AND pass_changed IS NOT TRUE"
+
+            # Добавляем фильтр email_changed IS NOT TRUE, если включён режим смены email
+            if email_change_mode:
+                base_sql += " AND email_changed IS NOT TRUE"
 
             base_sql += " ORDER BY addition_date DESC"
 
@@ -713,6 +719,38 @@ class Database:
             return True
         except Exception as e:
             return False
+
+    def get_random_mail(self, n=1):
+        """
+        Возвращает N случайных свободных почт (x_linked IS NOT TRUE)
+        """
+        sql = """
+            SELECT email, pass, proxy_sid
+            FROM MAIL_FERMA
+            WHERE x_linked IS NOT TRUE
+            ORDER BY RANDOM()
+            LIMIT %s
+        """
+
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute(sql, (n,))
+            rows = cur.fetchall()
+
+        return [
+            {
+                "email": r["email"],
+                "pass": r["pass"],
+                "proxy": r["proxy_sid"],
+            }
+            for r in rows
+        ]
+
+    def update_x_linked(self, mail: str) -> bool:
+        sql = "UPDATE MAIL_FERMA SET x_linked = True WHERE LOWER(email) = LOWER(%s) RETURNING email;"
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute(sql, (mail,))
+            return cur.fetchone() is not None
+
 
 
 if __name__ == '__main__':

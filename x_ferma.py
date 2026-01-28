@@ -275,6 +275,8 @@ class xFerma:
                 except Exception as e:
                     logger.exception(f"[MAIL_VERIF] Ошибка при update_is_locked: {e}")
                 return
+            elif change_email_res in ['incorrect_pw', '48h']:
+                break
             elif change_email_res:
                 acc_new_data = twitter_search.get_phone_mail_data(twitter_working_account)
                 if acc_new_data['emails'][0]['email'] == new_email.lower() and acc_new_data['emails'][0]['email_verified']:
@@ -1601,7 +1603,7 @@ if __name__ == '__main__':
         elif pw_choice == '2':
             confirm = input("⚠ Ты уверен, что хочешь сменить email у ВСЕХ аккаунтов? (yes/no): ").strip().lower()
             if confirm == 'yes':
-                accs = load_accounts_tweeterpy(mode='email_change', how_many_accounts=3)
+                accs = load_accounts_tweeterpy(mode='email_change', how_many_accounts=10)
                 for acc in accs:
                     ferma.change_email_and_save(acc)
             else:

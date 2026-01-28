@@ -241,7 +241,7 @@ class xFerma:
 
         for i in range(2):
             try:
-                change_email_res = twitter_search.change_email(twitter_working_account, new_email)
+                change_email_res = twitter_search.change_email(twitter_working_account, new_email_data)
             except Exception as e:
                 logger.exception(f"[EMAIL] change_email ошибка: {e}")
                 return False

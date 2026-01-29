@@ -257,9 +257,7 @@ class xFerma:
                 return
             elif change_email_res == 'proxy_dead':
                 logger.info(f"[MAIL_VERIF] У аккаунта {un} умер прокси!")
-                twitter_working_account = self.regenerate_acc_object(twitter_working_account, new_proxy=True)
-                if twitter_working_account:
-                    continue
+                break
             elif change_email_res == 'no_auth':
                 logger.info(
                     f"[MAIL_VERIF] Аккаунт {un} вероятно нуждается в обновлении сессии!")
@@ -694,7 +692,7 @@ class xFerma:
         Просматривает верхнюю (первую) часть timeline — от 50% до 100% твитов.
         Порядок сохраняется.
         Возвращает:
-          - 'ban' / 'no_auth'  -> если self.view вернул один из этих статусов
+          - 'ban' / 'no_auth' / etc -> если self.view вернул один из этих статусов
           - list[tweet_dict]   -> список твитов, которые были УСПЕШНО просмотрены
         """
         try:

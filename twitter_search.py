@@ -1,3 +1,5 @@
+from mimetypes import read_mime_types
+
 import requests, json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading, asyncio
 from multiprocessing.managers import SyncManager
 
@@ -675,6 +677,9 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
     elif 'Error code 114 - Incorrect current password' in trace:
         return 'incorrect_pw'
 
+    elif '_Missing: Tweet record for tweetId' in trace:
+        return 'deleted'
+
 # поиск пользователей по ключевому слову
 def search_people(search_query):
     variables = {
@@ -1142,7 +1147,7 @@ def like_tweet_by_tweet_id(working_acc, tweet_id):
 
     res = twitter_api_call('FavoriteTweet', variables=data, features={}, twitter_working_account=working_acc)
 
-    if res == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock']:
+    if res == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
         return res
 
     if res and res['data']['favorite_tweet']:
@@ -1156,7 +1161,7 @@ def rt_tweet_by_tweet_id(working_acc, tweet_id):
 
     res = twitter_api_call('CreateRetweet', variables=data, features={}, twitter_working_account=working_acc)
 
-    if res == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock']:
+    if res == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
         return res
 
     if res and res['data']['create_retweet']['retweet_results']['result']['rest_id']:
@@ -1170,7 +1175,7 @@ def bm_tweet_by_tweet_id(working_acc, tweet_id):
 
     res = twitter_api_call('CreateBookmark', variables=data, features={}, twitter_working_account=working_acc)
 
-    if res == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock']:
+    if res == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
         return res
 
     if res and res['data']['tweet_bookmark_put']:
@@ -1236,7 +1241,7 @@ def reply_tweet_by_tweet_id(working_acc, reply_text, tweet_id):
     if res and res['data']['create_tweet']['tweet_results']['result']['rest_id']:
         return True
 
-    if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
+    if res in ['ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
         return res
 
     return False
@@ -1257,7 +1262,7 @@ def view_tweet_by_tweet_id(working_acc, tweet_id, author_id, profile_click=False
 
     res = twitter_api_call('View', variables=view_and_impression_data, features={}, twitter_working_account=working_acc)
 
-    if res in ['ban', 'proxy_dead', 'no_auth', 'lock']:
+    if res in ['ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
         return res
 
     if res:

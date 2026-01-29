@@ -1563,7 +1563,7 @@ if __name__ == '__main__':
         elif pw_choice == '2':
             confirm = input("⚠ Ты уверен, что хочешь сменить пароли у ВСЕХ аккаунтов? (yes/no): ").strip().lower()
             if confirm == 'yes':
-                accs = load_accounts_tweeterpy(mode='pw_change', how_many_accounts=10)
+                accs = load_accounts_tweeterpy(mode='pw_change')
                 for acc in accs:
                     ferma.change_pw_and_save(acc)
             else:
@@ -1603,7 +1603,7 @@ if __name__ == '__main__':
         elif pw_choice == '2':
             confirm = input("⚠ Ты уверен, что хочешь сменить email у ВСЕХ аккаунтов? (yes/no): ").strip().lower()
             if confirm == 'yes':
-                accs = load_accounts_tweeterpy(mode='email_change', how_many_accounts=10)
+                accs = load_accounts_tweeterpy(mode='email_change')
                 for acc in accs:
                     ferma.change_email_and_save(acc)
             else:

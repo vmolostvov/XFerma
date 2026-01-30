@@ -1,4 +1,4 @@
-import time, json, random, os, emoji, logging, tempfile
+import time, json, random, os, emoji, logging, tempfile, threading
 import zoneinfo
 import twitter_search
 # from twitter_search import load_accounts_cookies_login
@@ -1424,6 +1424,18 @@ def format_duration(seconds: int) -> str:
 
 if __name__ == '__main__':
 
+    def change_email_safe_loop(acc_, ferma_):
+        # last_activity_time = [time.time()]
+        MAX_ITERATION_TIME = 120
+        while True:
+            thread = threading.Thread(target=ferma_.change_email_and_save, args=(acc_,), daemon=True)
+            thread.start()
+            thread.join(timeout=MAX_ITERATION_TIME)
+
+            if thread.is_alive():
+                print("❌ Итерация зависла — выходим из функции")
+                return
+
     def regen_all_sessions():
         from collections import Counter
 
@@ -1603,7 +1615,7 @@ if __name__ == '__main__':
             if confirm == 'yes':
                 accs = load_accounts_tweeterpy(mode='email_change')
                 for acc in accs:
-                    ferma.change_email_and_save(acc)
+                    change_email_safe_loop(acc, ferma)
             else:
                 print("❌ Операция отменена.")
 

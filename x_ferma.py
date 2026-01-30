@@ -1,8 +1,9 @@
-import time, json, random, os, emoji, logging, tempfile, threading
+import time, json, random, os, emoji, logging, tempfile
 import zoneinfo
 import twitter_search
 # from twitter_search import load_accounts_cookies_login
 # from typing import Tuple, List
+from multiprocessing import Process
 from x_media_uploader import upload_and_update_pfp
 from tweeterpyapi import load_accounts_tweeterpy, get_user_data, initialize_client, save_cookies_and_sess_with_timeout, process_account, load_accounts_cookies
 from config import get_random_mob_proxy, parse_cid
@@ -1425,16 +1426,22 @@ def format_duration(seconds: int) -> str:
 if __name__ == '__main__':
 
     def change_email_safe_loop(acc_, ferma_):
-        # last_activity_time = [time.time()]
         MAX_ITERATION_TIME = 120
-        while True:
-            thread = threading.Thread(target=ferma_.change_email_and_save, args=(acc_,), daemon=True)
-            thread.start()
-            thread.join(timeout=MAX_ITERATION_TIME)
 
-            if thread.is_alive():
-                print("❌ Итерация зависла — выходим из функции")
-                return
+        p = Process(
+            target=ferma_.change_email_and_save,
+            args=(acc_,)
+        )
+        p.start()
+        p.join(timeout=MAX_ITERATION_TIME)
+
+        if p.is_alive():
+            p.terminate()
+            p.join()
+            print(f"[KILLED] change_email_and_save завис для {acc_}")
+            return False
+
+        return True
 
     def regen_all_sessions():
         from collections import Counter

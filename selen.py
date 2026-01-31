@@ -374,6 +374,11 @@ def regen_auth():
                 today = stats.get("today", {})
                 last_24h = stats.get("last_24h", {})
 
+                success_users = last_24h.get('success_users', [])
+                fail_users = last_24h.get('fail_users', [])
+                fail_users = [u for u in fail_users if u not in success_users]
+
+
                 logger.info(
                     "[REGEN] Нет аккаунтов, требующих регенерации.\n"
                     f"  📆 Сегодня (UTC): success={today.get('success', 0)}, "
@@ -382,8 +387,8 @@ def regen_auth():
                     f"distinct_accounts={last_24h.get('distinct_accounts', 0)}\n"
                     f"  ✅ Всего успешных регенов за всё время: {stats.get('total_success', 0)}\n"
                     f"  ❌ Всего неуспешных попыток за всё время: {stats.get('total_fail', 0)}\n"
-                    f"  🟢 Успешные за 24ч: {', '.join(last_24h.get('success_users', [])) or '—'}\n"
-                    f"  🔴 Неуспешные за 24ч: {', '.join(last_24h.get('fail_users', [])) or '—'}\n"
+                    f"  🟢 Успешные за 24ч: {', '.join(success_users) or '—'}\n"
+                    f"  🔴 Неуспешные за 24ч: {', '.join(fail_users) or '—'}\n"
                     f"  🕒 Время сейчас (UTC): {datetime.now(timezone.utc)}"
                 )
 

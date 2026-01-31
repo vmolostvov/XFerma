@@ -295,7 +295,7 @@ class xFerma:
             db.update_pw(acc['uid'], new_pw)
 
             auth_token_update = False
-            cookies = acc['session'].get_cookies()
+            cookies = list(acc['session'].get_cookies())
             print(cookies)
             for cookie in cookies:
                 print(cookie)

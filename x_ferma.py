@@ -294,19 +294,13 @@ class xFerma:
             logger.info(f'✅ Пароль аккаунта {acc["screen_name"]} успешно изменен!')
             db.update_pw(acc['uid'], new_pw)
 
-            auth_token_update = False
-            cookies = list(acc['session'].get_cookies())
-            print(cookies)
-            for cookie in cookies:
-                print(cookie)
-                if 'auth_token' in cookie.name and cookie.value != acc['auth_token']:
-                    logger.debug(f'New auth token: {cookie.value}')
-                    db.update_auth(acc['uid'], cookie.value)
-                    acc['auth_token'] = cookie.value
-                    auth_token_update = True
-                    break
+            cookies = acc['session'].get_cookies()
+            new_auth = cookies.get("auth_token")
+            if new_auth and new_auth != acc['auth_token']:
+                logger.debug(f'New auth token: {new_auth}')
+                db.update_auth(acc['uid'], new_auth)
+                acc['auth_token'] = new_auth
 
-            if auth_token_update:
                 logger.info(f'✅ Auth-token аккаунта {acc["screen_name"]} успешно изменен!')
                 save_cookies_and_sess_with_timeout(acc)
 

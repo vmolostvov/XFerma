@@ -1129,12 +1129,10 @@ class xFerma:
         for acc in accs:
 
             cookies = acc['session'].get_cookies()
-            print(type(cookies))
-            print(type(cookies[0]), cookies[0].name, cookies[0].value)
-            for cookie in cookies:
-                print(cookie)
-                if 'auth_token' in cookie.name and cookie.value != acc['auth_token']:
-                    print(cookie.value)
+            new_auth = cookies.get("auth_token")
+
+            print(new_auth)
+
             # print(twitter_search.change_email(acc, 'X9ZLXXTb5f', 'archivas.ai@outlook.com'))
             # print(twitter_search.get_phone_mail_data(acc))
             # self.view(acc,2003894829424824683, 44196397)

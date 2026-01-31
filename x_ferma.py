@@ -1128,7 +1128,8 @@ class xFerma:
     def accounts_health_test(self, accs):
         for acc in accs:
 
-            cookies = list(acc['session'].get_cookies())
+            cookies = acc['session'].get_cookies()
+            print(type(cookies[0]), cookies[0])
             print(cookies)
             for cookie in cookies:
                 print(cookie)

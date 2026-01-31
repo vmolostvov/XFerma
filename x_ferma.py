@@ -1129,8 +1129,8 @@ class xFerma:
         for acc in accs:
 
             cookies = acc['session'].get_cookies()
-            print(type(cookies[0]), cookies[0])
-            print(cookies)
+            print(type(cookies))
+            print(type(cookies[0]), cookies[0].name, cookies[0].value)
             for cookie in cookies:
                 print(cookie)
                 if 'auth_token' in cookie.name and cookie.value != acc['auth_token']:

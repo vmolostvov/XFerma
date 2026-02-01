@@ -7,6 +7,7 @@ from config import parse_accounts_to_list, get_random_mob_proxy, nodemaven_proxy
 from requests.exceptions import ConnectionError, MissingSchema, SSLError, Timeout, ReadTimeout, ProxyError
 
 from database import Database
+from pixelscan_checker import get_proxy_by_sid, generate_valid_sid_nodemaven_proxy
 
 from concurrent.futures import ThreadPoolExecutor
 from math import ceil
@@ -19,17 +20,21 @@ def initialize_client(proxy=None, screen_name=None, max_attempts=3):
     for i in range(max_attempts):
         try:
             return TweeterPy(proxies=proxy)
-        except (OSError, ProxyError, ConnectionError, MissingSchema, ReadTimeout) as e:
+        except (OSError, ProxyError, ConnectionError, MissingSchema, ReadTimeout, AttributeError) as e:
             logger.warning(f"[INIT] @{screen_name} init fail by specific exc (attempt {i+1}/{max_attempts}) proxy={proxy} err={e}")
             time.sleep(3)
-            proxy = get_random_mob_proxy()
+            sid = generate_valid_sid_nodemaven_proxy()
+            new_proxy_value = get_proxy_by_sid(sid)
+            proxy = new_proxy_value
         except Exception as e:
             trace = traceback.format_exc()
             if 'raise Exception("invalid response")' in trace:
                 logger.warning(f"[INIT] @{screen_name} init fail by general exc (attempt {i + 1}/{max_attempts}) proxy={proxy} err={e}")
                 time.sleep(3)
                 if 'SSLError' not in trace:
-                    proxy = get_random_mob_proxy()
+                    sid = generate_valid_sid_nodemaven_proxy()
+                    new_proxy_value = get_proxy_by_sid(sid)
+                    proxy = new_proxy_value
 
     return None
 

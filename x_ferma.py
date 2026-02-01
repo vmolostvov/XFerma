@@ -302,6 +302,7 @@ class xFerma:
                 acc['auth_token'] = new_auth
 
                 logger.info(f'✅ Auth-token аккаунта {acc["screen_name"]} успешно изменен!')
+                acc.pop('session')
                 save_cookies_and_sess_with_timeout(outdated_session=acc)
 
             else:

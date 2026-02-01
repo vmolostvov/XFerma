@@ -290,7 +290,7 @@ class xFerma:
 
     def change_pw_and_save(self, acc):
         res, new_pw = twitter_search.change_password(acc)
-        if res.get('status') == 'ok':
+        if isinstance(res, dict) and res.get('status') == 'ok':
             logger.info(f'✅ Пароль аккаунта {acc["screen_name"]} успешно изменен!')
             db.update_pw(acc['uid'], new_pw)
 

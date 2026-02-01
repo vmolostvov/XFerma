@@ -1,4 +1,4 @@
-from mimetypes import read_mime_types
+from curl_cffi.requests.exceptions import ProxyError as ProxyError1
 
 import requests, json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading, asyncio
 from multiprocessing.managers import SyncManager
@@ -615,7 +615,7 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
                 if 'Authorization: Denied by access control' in str(response):
                     print(response)
 
-        except (ReadTimeout, ProxyError, ConnectTimeout, OSError, SSLError, ConnectionError):
+        except (ReadTimeout, ProxyError, ConnectTimeout, OSError, SSLError, ConnectionError, ProxyError1):
             trace = traceback.format_exc()
             print(trace)
             time.sleep(5)

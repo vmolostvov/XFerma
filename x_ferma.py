@@ -296,6 +296,8 @@ class xFerma:
 
             cookies = acc['session'].get_cookies()
             new_auth = cookies.get("auth_token")
+            print(f'new_auth: {new_auth}')
+            time.sleep(10)
             if new_auth and new_auth != acc['auth_token']:
                 logger.debug(f'New auth token: {new_auth}')
                 db.update_auth(acc['uid'], new_auth)

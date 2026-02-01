@@ -759,11 +759,10 @@ class xFerma:
     # TWITTER ACTIONS
     # ----------------------------
     def follow(self, src: dict, dst_uid: dict = None, dst_screen_name: str = None):
-        print(f'src: {src}')
-        print(dst_screen_name)
+        dst_screen_name = dst_screen_name or dst_uid['screen_name']
         try:
             for i in range(2):
-                logger.info(f"[FOLLOW] Аккаунт {src['screen_name']} выполняет подписку на {dst_uid['screen_name'] or dst_screen_name} !")
+                logger.info(f"[FOLLOW] Аккаунт {src['screen_name']} выполняет подписку на {dst_screen_name} !")
                 if dst_uid:
                     res = twitter_search.user_friendship(src, "follow", user_id=dst_uid["uid"])
                     if not res:

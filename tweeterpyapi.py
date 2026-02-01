@@ -118,12 +118,13 @@ def _dump_cookie_full(c):
         "discard": getattr(c, "discard", None),
     }
 
-def _extract_state_from_client(tw_cl) -> dict:
-    s = tw_cl.request_client.session
-    headers = dict(getattr(s, "headers", {}) or {})
-    proxies = dict(getattr(s, "proxies", {}) or {})
+def _extract_state_from_client(tw_cl=None, save_cookies_mode=False, cj=None) -> dict:
+    if not save_cookies_mode:
+        s = tw_cl.request_client.session
+        headers = dict(getattr(s, "headers", {}) or {})
+        proxies = dict(getattr(s, "proxies", {}) or {})
+        cj = getattr(s, "cookies", None)
 
-    cj = getattr(s, "cookies", None)
     cookies_full = []
     if cj is not None:
         try:
@@ -145,12 +146,14 @@ def _extract_state_from_client(tw_cl) -> dict:
                 cookies_full = [{"name": k, "value": v, "domain": ".x.com", "path": "/", "secure": True, "expires": None, "rest": {}} for k, v in d.items()]
             except Exception:
                 pass
-
-    return {
-        "headers": headers,
-        "proxies": proxies,
-        "cookies_full": cookies_full,
-    }
+    if not save_cookies_mode:
+        return {
+            "headers": headers,
+            "proxies": proxies,
+            "cookies_full": cookies_full,
+        }
+    else:
+        return {'cookies_full': cookies_full}
 
 def save_session(tw_cl, session_name: str):
     os.makedirs(SESS_DIR, exist_ok=True)
@@ -159,26 +162,8 @@ def save_session(tw_cl, session_name: str):
         pickle.dump(state, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 def save_cookies(screen_name: str, cookie_jar):
-    os.makedirs("x_accs_cookies", exist_ok=True)
-
-    cookies_list = []
-
-    # cookie_jar iterable of cookie objects (requests, curl_cffi часто так же)
-    for c in cookie_jar:
-        item = {
-            "name": getattr(c, "name", None),
-            "value": getattr(c, "value", None),
-            "domain": getattr(c, "domain", None),
-            "path": getattr(c, "path", "/"),
-            "secure": bool(getattr(c, "secure", False)),
-            "expires": getattr(c, "expires", None),
-        }
-        # иногда httpOnly лежит в rest/._rest
-        rest = getattr(c, "rest", None) or getattr(c, "_rest", None) or {}
-        if isinstance(rest, dict):
-            item["httpOnly"] = bool(rest.get("HttpOnly") or rest.get("httponly") or rest.get("httpOnly"))
-            item["sameSite"] = rest.get("SameSite") or rest.get("samesite")
-        cookies_list.append(item)
+    res = _extract_state_from_client(save_cookies_mode=True, cj=cookie_jar)
+    cookies_list = res['cookies_full']
 
     if not cookies_list:
         raise TypeError(f"cookie_jar is not iterable of cookie objects: {type(cookie_jar)}")

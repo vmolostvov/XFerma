@@ -759,6 +759,8 @@ class xFerma:
     # TWITTER ACTIONS
     # ----------------------------
     def follow(self, src: dict, dst_uid: dict = None, dst_screen_name: str = None):
+        print(f'src: {src}')
+        print(dst_screen_name)
         try:
             for i in range(2):
                 logger.info(f"[FOLLOW] Аккаунт {src['screen_name']} выполняет подписку на {dst_uid['screen_name'] or dst_screen_name} !")

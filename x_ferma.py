@@ -758,7 +758,7 @@ class xFerma:
     # ----------------------------
     # TWITTER ACTIONS
     # ----------------------------
-    def follow(self, src, dst_uid=None, dst_screen_name=None):
+    def follow(self, src: dict, dst_uid: dict = None, dst_screen_name: str = None):
         try:
             for i in range(2):
                 logger.info(f"[FOLLOW] Аккаунт {src['screen_name']} выполняет подписку на {dst_uid['screen_name'] or dst_screen_name} !")
@@ -1122,10 +1122,7 @@ class xFerma:
     def accounts_health_test(self, accs):
         for acc in accs:
 
-            cookies = acc['session'].get_cookies()
-            new_auth = cookies.get("auth_token")
-
-            print(new_auth)
+            print(self.follow(acc, dst_screen_name='DeFi_Hanzo'))
 
             # print(twitter_search.change_email(acc, 'X9ZLXXTb5f', 'archivas.ai@outlook.com'))
             # print(twitter_search.get_phone_mail_data(acc))

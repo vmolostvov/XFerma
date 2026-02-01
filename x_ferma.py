@@ -1123,7 +1123,7 @@ class xFerma:
     def accounts_health_test(self, accs):
         for acc in accs:
 
-            print(self.follow(acc, dst_screen_name='DeFi_Hanzo'))
+            print(self.follow(acc, dst_uid={'uid': 1993290948995170306, 'screen_name': 'cctvidiotic'}))
 
             # print(twitter_search.change_email(acc, 'X9ZLXXTb5f', 'archivas.ai@outlook.com'))
             # print(twitter_search.get_phone_mail_data(acc))

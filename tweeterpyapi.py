@@ -243,10 +243,13 @@ def worker_generate_and_save(acc):
     tw_cl = initialize_client(proxy=proxy)
     tw_cl.generate_session(auth_token=acc['auth_token'])
     save_session(tw_cl, acc["screen_name"])
+    print('OKOKOKOKOKOKOKOKOOKOKOKL')
     # tw_cl.save_session(path='x_accs_pkl_sessions', session_name=acc["screen_name"])
     cookies = tw_cl.get_cookies()
+    print('KEKEKEKKKKKEKKEKEKEK')
     if cookies:
         save_cookies(acc["screen_name"], cookies)
+        print('SEEESDSFDSDSDSDSDSDD')
         return {"status": "ok"}
     return {"status": "login_failed"}
 

@@ -248,13 +248,10 @@ def worker_generate_and_save(acc):
     tw_cl = initialize_client(proxy=proxy)
     tw_cl.generate_session(auth_token=acc['auth_token'])
     save_session(tw_cl, acc["screen_name"])
-    print('OKOKOKOKOKOKOKOKOOKOKOKL')
     # tw_cl.save_session(path='x_accs_pkl_sessions', session_name=acc["screen_name"])
     cookies = tw_cl.get_cookies()
-    print('KEKEKEKKKKKEKKEKEKEK')
     if cookies:
         save_cookies(acc["screen_name"], cookies)
-        print('SEEESDSFDSDSDSDSDSDD')
         return {"status": "ok"}
     return {"status": "login_failed"}
 
@@ -271,6 +268,8 @@ def save_cookies_and_sess_with_timeout(outdated_session=None, max_retries=3, tim
     last_status = None
 
     for acc in accounts:
+        if 'session' in acc:
+            acc.pop('session') # remove session obj to be pickable
         for attempt in range(1, max_retries + 1):
             try:
                 res = run_in_subprocess(worker_generate_and_save, args=(acc,), timeout=timeout_sec)

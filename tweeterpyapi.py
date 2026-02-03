@@ -28,7 +28,7 @@ def initialize_client(proxy=None, screen_name=None, max_attempts=3):
             sid = generate_valid_sid_nodemaven_proxy()
             new_proxy_value = get_proxy_by_sid(sid)
             proxy = new_proxy_value
-        except AttributeError as e:
+        except RuntimeError as e:
             trace = traceback.format_exc()
             if 'CONNECT tunnel failed' in trace:
                 sid = generate_valid_sid_nodemaven_proxy()

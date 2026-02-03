@@ -8,6 +8,7 @@ DB_PORT_SERVER = 5432
 DB_PORT_LOCAL = 5433
 DB_USERNAME = 'postgres'
 DB_PASSWORD = os.getenv("DB_PASSWORD")
+print(DB_PASSWORD)
 DB_BASE_NAME = 'postgres'
 
 # nodemaven mob proxy

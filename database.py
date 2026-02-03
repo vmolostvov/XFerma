@@ -1,6 +1,6 @@
 from typing import Iterable, Sequence, Tuple, Dict, List, Optional, Set
 from datetime import datetime, timedelta, timezone
-import psycopg, platform, logging, json
+import psycopg, platform, logging, json, os
 from psycopg.rows import dict_row
 from config import *
 from pixelscan_checker import get_proxy_by_sid
@@ -14,20 +14,19 @@ MAX_ATTEMPTS = 10
 BASE_DELAY_MINUTES = 5
 MAX_DELAY_HOURS = 24
 
+
+#TODO: on the server side need to add var export APP_ENV=server
+#TODO: on the local side need to add var export APP_ENV=local
+def is_server():
+    return os.getenv("APP_ENV") == "server"
+
+
 def get_host():
-    system = platform.system().lower()
-    if system == "linux":
-        return DB_HOST_SERVER
-    elif system == "darwin":
-        return DB_HOST_LOCAL
+    return DB_HOST_SERVER if is_server() else DB_HOST_LOCAL
 
 
 def get_port():
-    system = platform.system().lower()
-    if system == "linux":
-        return DB_PORT_SERVER
-    elif system == "darwin":
-        return DB_PORT_LOCAL
+    return DB_PORT_SERVER if is_server() else DB_PORT_LOCAL
 
 
 class Database:
@@ -788,43 +787,4 @@ class Database:
 
 
 if __name__ == '__main__':
-    from typing import List, Dict
-
-    db = Database()
-
-
-    def parse_accounts_file(path: str) -> List[Dict]:
-        accounts = []
-
-        with open(path, "r", encoding="utf-8") as f:
-            for line_num, line in enumerate(f, start=1):
-                line = line.strip()
-                if not line:
-                    continue
-
-                parts = line.split(":")
-
-                if len(parts) != 5:
-                    print(f"[WARN] Строка {line_num}: ожидалось 5 полей, получено {len(parts)} → пропущена")
-                    continue
-
-                username, password, phone, auth_token, cookie = parts
-
-                accounts.append({
-                    "username": username,
-                    "password": password,
-                    "phone": phone,
-                    "auth_token": auth_token,
-                    "cookie": cookie,
-                })
-
-        return accounts
-
-
-    accs = parse_accounts_file(
-        '/Users/vladmolostvov/Documents/6134718_202511063058de966bd699552e9b06f3edc92c3a3a3583601282984c190cc0ce471208.txt')
-    print(accs)
-    for _, acc in enumerate(accs):
-        print(f'updating {acc["username"]} | {_}')
-        # db.update_email(acc['username'], acc['email'], acc['email_pass'])
-        db.update_phone(acc['username'], acc['phone'])
+    print(get_host())

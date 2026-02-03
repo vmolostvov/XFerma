@@ -1,6 +1,4 @@
-import random, re, string
-
-import requests
+import random, re, string, os
 
 # database
 
@@ -9,7 +7,7 @@ DB_HOST_LOCAL = 'localhost'
 DB_PORT_SERVER = 5432
 DB_PORT_LOCAL = 5433
 DB_USERNAME = 'postgres'
-DB_PASSWORD = 'Opg123opg'
+DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_BASE_NAME = 'postgres'
 
 # nodemaven mob proxy

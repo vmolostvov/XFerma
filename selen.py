@@ -203,12 +203,12 @@ def login(username, password, proxy):
                 sb.write("input[name='password']", password, timeout=20)
                 logger.info("[LOGIN] Ввел пароль")
                 sb.sleep(3)
-                sb.cdp.save_screenshot('ss_test.png')
-                web_audit_vip_user_message_with_photo(
-                    '680688412',
-                    'ss_test.png',
-                    f"❌ [TEST] Контрольный скрин после ввода пароля для @{username}"
-                )
+                # sb.cdp.save_screenshot('ss_test.png')
+                # web_audit_vip_user_message_with_photo(
+                #     '680688412',
+                #     'ss_test.png',
+                #     f"❌ [TEST] Контрольный скрин после ввода пароля для @{username}"
+                # )
             except Exception:
                 logger.exception(f"❌ [LOGIN] Не удалось ввести пароль для @{username}")
                 sb.cdp.save_screenshot('ss_test.png')
@@ -225,12 +225,12 @@ def login(username, password, proxy):
                 login_btn.click()
                 logger.info("[LOGIN] Клик по кнопке Log in")
                 sb.sleep(1)
-                sb.cdp.save_screenshot('ss_test.png')
-                web_audit_vip_user_message_with_photo(
-                    '680688412',
-                    'ss_test.png',
-                    f"❌ [TEST] Контрольный скрин после клика на логин для @{username}"
-                )
+                # sb.cdp.save_screenshot('ss_test.png')
+                # web_audit_vip_user_message_with_photo(
+                #     '680688412',
+                #     'ss_test.png',
+                #     f"❌ [TEST] Контрольный скрин после клика на логин для @{username}"
+                # )
             except Exception:
                 logger.exception(f"❌ [LOGIN] Ошибка клика по кнопке Log in для @{username}")
                 return None
@@ -843,6 +843,6 @@ def get_code_from_email(email, proxy):
 
 if __name__ == '__main__':
     # sss('evdokiyabilan1984@outlook.com', 'zA6yyPBQnm', 'galkina_0803@outlook.com')
-    login('armyjattsunny', 'OYsz*RWN*pzYZZHOJ!EO', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080')
+    login('armyjattsunny', 'kvzQStMLnB', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-acbeddd763fd2-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080')
     # create_new_acc()
     # print(get_code_from_email('a.ballast280@outlook.com', 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-49ddd6de7aeaa-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'))

@@ -787,4 +787,4 @@ class Database:
 
 
 if __name__ == '__main__':
-    print(get_host())
+    print(get_port())

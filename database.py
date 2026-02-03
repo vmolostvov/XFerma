@@ -10,6 +10,10 @@ MOS_TZ = ZoneInfo("Europe/Moscow")
 
 logger = logging.getLogger("xFerma")
 
+MAX_ATTEMPTS = 10
+BASE_DELAY_MINUTES = 5
+MAX_DELAY_HOURS = 24
+
 def get_host():
     system = platform.system().lower()
     if system == "linux":
@@ -190,17 +194,26 @@ class Database:
             return cur.fetchone() is not None
 
     def increment_rs_attempts(self, uid: str):
+
+        def _calc_backoff_delay(attempt: int) -> timedelta:
+            """
+            Экспоненциальный backoff с cap в 24 часа
+            """
+            minutes = BASE_DELAY_MINUTES * (2 ** (attempt - 1))
+            max_minutes = MAX_DELAY_HOURS * 60
+            return timedelta(minutes=min(minutes, max_minutes))
+
         """
-        Увеличивает rs_attempts на +1.
-        Если новое значение == 3 → автоматически баним аккаунт.
+        +1 попытка восстановления с растущим таймаутом.
 
         Возвращает:
-            "ok" — обычное увеличение
-            "limit_reached" — достигнут лимит (3), аккаунт забанен
-            "not_found" — uid нет в базе
+            "ok" — попытка засчитана, выставлен таймаут
+            "limit_reached" — достигнут лимит, аккаунт забанен
+            "not_found" — uid нет
         """
 
-        # 1) Увеличиваем счётчик и получаем новое значение
+        now = datetime.utcnow()
+
         sql_inc = """
             UPDATE X_FERMA
             SET rs_attempts = COALESCE(rs_attempts, 0) + 1
@@ -215,10 +228,10 @@ class Database:
             if not row:
                 return "not_found"
 
-            new_value = row["rs_attempts"]
+            attempts = row["rs_attempts"]
 
-            # 2) Если достигнут предел (3)
-            if new_value >= 3:
+            # 🚫 Лимит превышен → бан
+            if attempts >= MAX_ATTEMPTS:
                 sql_ban = """
                     UPDATE X_FERMA
                     SET is_banned = TRUE,
@@ -227,6 +240,17 @@ class Database:
                 """
                 cur.execute(sql_ban, (uid,))
                 return "limit_reached"
+
+            # ⏱️ Считаем таймаут
+            delay = _calc_backoff_delay(attempts)
+            next_try = now + delay
+
+            sql_timeout = """
+                UPDATE X_FERMA
+                SET rs_next_try = %s
+                WHERE uid = %s
+            """
+            cur.execute(sql_timeout, (next_try, uid))
 
             return "ok"
 
@@ -268,16 +292,23 @@ class Database:
 
     def get_regen_sess_accounts(self) -> List[dict]:
         """
-        Возвращает неактивные аккаунты из X_FERMA.
+        Возвращает аккаунты, готовые к regen_sess
+        (учтены таймауты и баны)
         """
-        base_sql = """
+
+        sql = """
             SELECT *
             FROM X_FERMA
             WHERE regen_sess IS TRUE
+              AND is_banned IS NOT TRUE
+              AND (
+                    rs_next_try IS NULL
+                    OR rs_next_try <= NOW()
+              )
         """
 
         with self._conn() as conn, conn.cursor() as cur:
-            cur.execute(base_sql)
+            cur.execute(sql)
             rows = cur.fetchall()
 
         return [
@@ -287,6 +318,8 @@ class Database:
                 "pass": r["pass"],
                 "ua": r.get("ua"),
                 "proxy": get_proxy_by_sid(r.get("proxy")),
+                "rs_attempts": r.get("rs_attempts"),
+                "rs_next_try": r.get("rs_next_try"),
             }
             for r in rows
         ]
@@ -328,6 +361,7 @@ class Database:
 
         Если screen_name НЕ указан → применяется обычная логика выборки рабочих аккаунтов.
           Если pw_change_mode=True → добавляется фильтр pass_changed IS NOT TRUE.
+          Если email_change_mode=True → добавляется фильтр email_changed IS NOT TRUE.
         """
 
         # --- 1. Режим выборки по одному username ---

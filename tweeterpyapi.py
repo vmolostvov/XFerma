@@ -4,7 +4,9 @@ import multiprocessing as mp
 from tweeterpy import TweeterPy
 
 from config import parse_accounts_to_list, get_random_mob_proxy, nodemaven_proxy_rotating
-from requests.exceptions import ConnectionError, MissingSchema, SSLError, Timeout, ReadTimeout, ProxyError
+# from requests.exceptions import ConnectionError, MissingSchema, ReadTimeout
+
+from curl_cffi.requests.exceptions import ProxyError
 
 from database import Database
 from pixelscan_checker import get_proxy_by_sid, generate_valid_sid_nodemaven_proxy
@@ -20,7 +22,7 @@ def initialize_client(proxy=None, screen_name=None, max_attempts=3):
     for i in range(max_attempts):
         try:
             return TweeterPy(proxies=proxy)
-        except (OSError, ProxyError, ConnectionError, MissingSchema, ReadTimeout, AttributeError) as e:
+        except (OSError, ProxyError, ConnectionError) as e:
             logger.warning(f"[INIT] @{screen_name} init fail by specific exc (attempt {i+1}/{max_attempts}) proxy={proxy} err={e}")
             time.sleep(3)
             sid = generate_valid_sid_nodemaven_proxy()

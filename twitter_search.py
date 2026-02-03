@@ -8,6 +8,7 @@ from alarm_bot import admin_error
 from config import parse_accounts_to_list, generate_password
 from requests.exceptions import ReadTimeout, ProxyError, ConnectTimeout, SSLError
 from selen import get_code_from_email
+from database import Database
 # from cdp_sniffer import sniff_headers
 # from pixelscan_checker import proxy_check, make_proxy_str_for_pixelscan
 
@@ -187,7 +188,6 @@ def load_cookies_for_twitter_account_from_file(twitter_cookies_filename):
 # login to twitter by tweepy_authlib
 def load_cookies_for_twitter_account(account_number, load_cookies_from_file_if_exists=True):
     twitter_working_account = twitter_working_accounts[account_number]
-    print(twitter_working_account)
     twitter_cookies_filename = f"x_accs_cookies/{twitter_working_account['screen_name']}.json"
 
     if (load_cookies_from_file_if_exists) and (os.path.exists(twitter_cookies_filename)):
@@ -224,14 +224,14 @@ def disable_safe_search_for_twitter_account(account_number):
 def load_accounts_cookies_login(disable_safe_search=False):
     global manager, requests_count, lock, twitter_working_accounts
 
+    db = Database()
+
     manager = SyncManager()
     manager.start()
     requests_count = manager.Value(int, 0)
     lock = manager.Lock()
 
-    # if use_accounts_set == "accounts2":
-    #     twitter_working_accounts = twitter_working_accounts2
-    twitter_working_accounts = parse_accounts_to_list()
+    twitter_working_accounts = db.get_working_accounts(count=100)
     twitter_working_accounts = [dict(working_account, requests=manager.Value(int, 0), requests_successful=manager.Value(int, 0), requests_errors=manager.Value(int, 0)) for working_account in twitter_working_accounts]
     random.shuffle(twitter_working_accounts)
 

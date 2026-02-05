@@ -1920,7 +1920,16 @@ def account_notifications(twitter_working_account, action, settings={}):
 
     response = twitter_api_v1_1_call(twitter_working_account, "post", url, payload=payload)
     print(response.text)
-    return response.json()
+    try:
+        if 'errors' in response.json():
+            error_code = response.json()['errors'][0]['code']
+            if error_code == 64:
+                return 'ban'
+            elif error_code == 32:
+                return 'no_auth'
+        return response.json()
+    except AttributeError:
+        return None
 
 
 def account_check_notifications_all(twitter_working_account, cursor=""):

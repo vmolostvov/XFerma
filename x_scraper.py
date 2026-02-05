@@ -417,11 +417,47 @@ if __name__ == '__main__':
                     if screen_name.lower() not in following_notifications:
                         print(f"[{datetime.datetime.now()}] У аккаунта {twitter_working_account['screen_name']} нет подписки на пользователя {screen_name}")
                         js = twitter_search.user_friendship(twitter_working_account, "follow", screen_name=screen_name)
-                        js = twitter_search.user_friendship(twitter_working_account, "notify", screen_name=screen_name)    
+                        if js == 'ban':
+                            print(f"[SCRAPER] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                            try:
+                                db.update_is_banned(twitter_working_account["uid"])
+                            except Exception as e:
+                                print(f"[SCRAPER] Ошибка при update_is_banned: {e}")
+                        elif js == 'no_auth':
+                            print(f"[SCRAPER] Аккаунт {twitter_working_account['screen_name']} вероятно нуждается в обновлении сессии!")
+                            try:
+                                db.update_regen_session(twitter_working_account["uid"], True)
+                            except Exception as e:
+                                print(f"[SCRAPER] Ошибка при update_regen_session: {e}")
+                        js = twitter_search.user_friendship(twitter_working_account, "notify", screen_name=screen_name)
+                        if js == 'ban':
+                            print(f"[SCRAPER] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                            try:
+                                db.update_is_banned(twitter_working_account["uid"])
+                            except Exception as e:
+                                print(f"[SCRAPER] Ошибка при update_is_banned: {e}")
+                        elif js == 'no_auth':
+                            print(f"[SCRAPER] Аккаунт {twitter_working_account['screen_name']} вероятно нуждается в обновлении сессии!")
+                            try:
+                                db.update_regen_session(twitter_working_account["uid"], True)
+                            except Exception as e:
+                                print(f"[SCRAPER] Ошибка при update_regen_session: {e}")
                         time.sleep(random.uniform(10, 20))
                     elif not following_notifications[screen_name.lower()]:
                         print(f"[{datetime.datetime.now()}] У аккаунта {twitter_working_account['screen_name']} есть подписка на пользователя {screen_name}, но нет подписки на уведомления об его/её новых твитах")
                         js = twitter_search.user_friendship(twitter_working_account, "notify", screen_name=screen_name)
+                        if js == 'ban':
+                            print(f"[SCRAPER] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+                            try:
+                                db.update_is_banned(twitter_working_account["uid"])
+                            except Exception as e:
+                                print(f"[SCRAPER] Ошибка при update_is_banned: {e}")
+                        elif js == 'no_auth':
+                            print(f"[SCRAPER] Аккаунт {twitter_working_account['screen_name']} вероятно нуждается в обновлении сессии!")
+                            try:
+                                db.update_regen_session(twitter_working_account["uid"], True)
+                            except Exception as e:
+                                print(f"[SCRAPER] Ошибка при update_regen_session: {e}")
                         time.sleep(random.uniform(10, 20))
                     else:
                         print(f"[{datetime.datetime.now()}] У аккаунта {twitter_working_account['screen_name']} есть подписка на пользователя {screen_name}, есть подписка на уведомления об его/её новых твитах")

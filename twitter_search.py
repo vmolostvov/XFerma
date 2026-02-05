@@ -2174,7 +2174,7 @@ def get_info_about_tweet_anon(twitter_working_account, tweet_id):
         print("ошибка при получении твита: ", tweet_id)
 
 
-def save_accounts_and_proxies_statistics():
+def save_accounts_and_proxies_statistics(twitter_working_accounts):
     statistics = {
         'total_requests': requests_count.value,
         'accounts': [{

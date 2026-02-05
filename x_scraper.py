@@ -165,7 +165,7 @@ def check_notifications_loop(scraper_accounts, screen_names, use_first_n_account
             print(f"[{request_datetime}] [твиты через уведомления] account={twitter_working_account['screen_name']}, delta_between_requests={delta_between_requests_ms} ms, avg_requests_per_second={avg_requests_per_second}")
 
         # сохранение статистики работы аккаунтов и прокси
-        twitter_search.save_accounts_and_proxies_statistics()
+        twitter_search.save_accounts_and_proxies_statistics(scraper_accounts)
     
 ##################################################################################################################################
     

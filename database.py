@@ -345,6 +345,28 @@ class Database:
 
         return None
 
+    def get_rs_attempts_by_uid(self, uid: str) -> str | None:
+        """
+        Возвращает rs_attempts по uid.
+        Если запись не найдена — возвращает None.
+        """
+        sql = """
+            SELECT rs_attempts
+            FROM X_FERMA
+            WHERE uid = %s
+            LIMIT 1
+        """
+
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute(sql, (uid,))
+            row = cur.fetchone()
+
+        if row:
+            # row — это dict благодаря row_factory=dict_row
+            return row.get("rs_attempts")
+
+        return None
+
     def get_working_accounts(
             self,
             count: int | None = None,

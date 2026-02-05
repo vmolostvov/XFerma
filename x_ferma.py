@@ -9,7 +9,7 @@ from tweeterpyapi import load_accounts_tweeterpy, get_user_data, initialize_clie
 from config import get_random_mob_proxy, parse_cid
 from pixelscan_checker import get_proxy_by_sid, generate_valid_sid_nodemaven_proxy
 # from concurrent.futures import ThreadPoolExecutor, as_completed
-from database import Database
+from database import Database, MAX_ATTEMPTS
 from datetime import datetime
 from alarm_bot import admin_error
 from typing import Callable, Optional
@@ -1077,8 +1077,12 @@ class xFerma:
                 twitter_working_account['auth_token'] = new_auth
                 # save_cookies_and_sess_with_timeout(outdated_session=twitter_working_account)
             else:
-                logger.info(f"[REGEN] Auth-token в базе не обновлен для аккаунта {screen_name}! Возможно сбой в работе Selen-regen скрипта!")
-                admin_error(f"[REGEN] Auth-token в базе не обновлен для аккаунта {screen_name}! Возможно сбой в работе Selen-regen скрипта!")
+                acc_rs_attempts = db.get_rs_attempts_by_uid(uid)
+                if acc_rs_attempts >= MAX_ATTEMPTS:
+                    logger.info(f"[REGEN] Auth-token в базе не обновлен для аккаунта {screen_name}! Возможно сбой в работе Selen-regen скрипта!")
+                    admin_error(f"[REGEN] Auth-token в базе не обновлен для аккаунта {screen_name}! Возможно сбой в работе Selen-regen скрипта!")
+                else:
+                    logger.info(f"[REGEN] Аккаунт @{screen_name} все еще в процессе регенерации!")
                 return
 
         # ---- 1. Выдать новый прокси ----

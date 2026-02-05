@@ -5,10 +5,9 @@ from multiprocessing.managers import SyncManager
 
 from alarm_bot import admin_error
 # from tweeterpyapi import load_accounts_tweeterpy, initialize_client
-from config import parse_accounts_to_list, generate_password
+from config import generate_password
 from requests.exceptions import ReadTimeout, ProxyError, ConnectTimeout, SSLError
 from selen import get_code_from_email
-from database import Database
 # from cdp_sniffer import sniff_headers
 # from pixelscan_checker import proxy_check, make_proxy_str_for_pixelscan
 
@@ -115,26 +114,26 @@ dextools_root = 'dextools.io/app/en/ether/pair-explorer/'
 
 ##################################################################################################################################
 
-def get_next_acc():
-    global acc_index
-    with acc_lock:
-        acc = twitter_working_accounts[acc_index]
-        acc_index = (acc_index + 1) % len(twitter_working_accounts)  # Переход к следующему x account
-    return acc
-
-def get_next_acc2(get_next=False, get_current=False):
-    global acc_index, acc_usage_count
-    with acc_lock:
-        acc = twitter_working_accounts[acc_index]
-        if get_current:
-            return  acc
-        acc_usage_count += 1
-
-        if acc_usage_count >= 10 or get_next:
-            acc_usage_count = 0
-            acc_index = (acc_index + 1) % len(twitter_working_accounts)
-
-    return acc
+# def get_next_acc():
+#     global acc_index
+#     with acc_lock:
+#         acc = twitter_working_accounts[acc_index]
+#         acc_index = (acc_index + 1) % len(twitter_working_accounts)  # Переход к следующему x account
+#     return acc
+#
+# def get_next_acc2(get_next=False, get_current=False):
+#     global acc_index, acc_usage_count
+#     with acc_lock:
+#         acc = twitter_working_accounts[acc_index]
+#         if get_current:
+#             return  acc
+#         acc_usage_count += 1
+#
+#         if acc_usage_count >= 10 or get_next:
+#             acc_usage_count = 0
+#             acc_index = (acc_index + 1) % len(twitter_working_accounts)
+#
+#     return acc
 
 
 def get_proxies_for_twitter_account(twitter_working_account):
@@ -186,16 +185,14 @@ def load_cookies_for_twitter_account_from_file(twitter_cookies_filename):
     return cookies_dict
 
 # login to twitter by tweepy_authlib
-def load_cookies_for_twitter_account(account_number, load_cookies_from_file_if_exists=True):
-    twitter_working_account = twitter_working_accounts[account_number]
+def load_cookies_for_twitter_account(twitter_working_account, load_cookies_from_file_if_exists=True):
     twitter_cookies_filename = f"x_accs_cookies/{twitter_working_account['screen_name']}.json"
 
     if (load_cookies_from_file_if_exists) and (os.path.exists(twitter_cookies_filename)):
         twitter_working_account["cookies_dict"] = load_cookies_for_twitter_account_from_file(twitter_cookies_filename)
 
-def disable_safe_search_for_twitter_account(account_number):
+def disable_safe_search_for_twitter_account(twitter_working_account):
     # print(f"Отключение безопасного поиска для аккаунта: {account_number}")
-    twitter_working_account = twitter_working_accounts[account_number]
     twitter_cookies_dict = twitter_working_account["cookies_dict"]
 
     headers = get_headers_for_twitter_account(twitter_cookies_dict)
@@ -235,16 +232,16 @@ def load_accounts_cookies_login(scraper_accs, disable_safe_search=False):
 
     # загрузка cookies для аккаунтов
     accounts_count = len(twitter_working_accounts)
-    accounts_numbers = list(range(0, accounts_count))
-    for account_number in accounts_numbers:
-        load_cookies_for_twitter_account(account_number)
+    # accounts_numbers = list(range(0, accounts_count))
+    for twitter_working_account in twitter_working_accounts:
+        load_cookies_for_twitter_account(twitter_working_account)
 
-    # отключение безопасного поиска для аккаунтов
-    if disable_safe_search:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=accounts_count) as executor:
-            executor.map(disable_safe_search_for_twitter_account, accounts_numbers)
+        # отключение безопасного поиска для аккаунтов
+        if disable_safe_search:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=accounts_count) as executor:
+                executor.map(disable_safe_search_for_twitter_account, twitter_working_account)
 
-    return twitter_working_accounts
+        return twitter_working_accounts
 
 
 ##################################################################################################################################
@@ -560,10 +557,10 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
     # request
     for i in range(4):
 
-        if api_endpoint != 'Following' and not use_current_acc and not twitter_working_account:
-            twitter_working_account = get_next_acc2()
-        elif use_current_acc:
-            twitter_working_account = get_next_acc2(get_current=True)
+        # if api_endpoint != 'Following' and not use_current_acc and not twitter_working_account:
+        #     twitter_working_account = get_next_acc2()
+        # elif use_current_acc:
+        #     twitter_working_account = get_next_acc2(get_current=True)
 
         # for i in range(15):
         try:

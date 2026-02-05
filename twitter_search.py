@@ -1846,6 +1846,7 @@ def user_friendship(twitter_working_account, action, user_id="", screen_name="")
             params["device"] = (action == "notify")  # True => подписка на уведомления, False => отписка от уведомлений
 
     response = twitter_api_v1_1_call(twitter_working_account, method, url, params=params)
+    print(response.text)
     if response == 'proxy_dead':
         return 'proxy_dead'
 

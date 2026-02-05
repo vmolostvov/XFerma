@@ -392,8 +392,8 @@ if __name__ == '__main__':
         
     if (check_tweets or check_profiles) and len(list(set(screen_names2 + screen_names3 + screen_names4))) > 0:
         # способ #2 [февраль 2024]        
-        for twitter_working_account in scraper_accs[:use_first_n_accounts2]:
-            twitter_working_account["user_id"] = twitter_search.get_user_id_by_user_screen_name(twitter_working_account["screen_name"], twitter_working_account)
+        # for twitter_working_account in scraper_accs[:use_first_n_accounts2]:
+        #     twitter_working_account["user_id"] = twitter_search.get_user_id_by_user_screen_name(twitter_working_account["screen_name"], twitter_working_account)
 
         if check_tweets and len(list(set(screen_names2 + screen_names3))) > 0:            
             for twitter_working_account in scraper_accs[:use_first_n_accounts2]:
@@ -407,7 +407,7 @@ if __name__ == '__main__':
                     print(f"[{datetime.datetime.now()}] Уведомления о новых твитах для аккаунта {twitter_working_account['screen_name']}: TweetsSetting={js['push_settings']['TweetsSetting']}")
                 
                 # (2) проверка, подписан ли данный аккаунт на все аккаунты, в которых нужно отслеживать новые твиты
-                user_following_users = twitter_search.get_user_following(twitter_working_account, twitter_working_account["user_id"])
+                user_following_users = twitter_search.get_user_following(twitter_working_account, twitter_working_account["uid"])
                 following_notifications = {user['screen_name'].lower(): user['notifications'] for user in user_following_users}
                 
                 # рандомизируем подписки на пользователей

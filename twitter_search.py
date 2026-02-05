@@ -175,6 +175,7 @@ def get_headers_for_twitter_account(twitter_cookies_dict, referer='https://x.com
         'x-twitter-client-language': 'en'
     }
     headers.pop('x-client-transaction-id', None)
+    headers.pop("accept-encoding", None)
     # headers.pop('x-client-uuid', None)
     return headers
 

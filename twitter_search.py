@@ -575,6 +575,8 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
                 if (response.status_code == 429) or (response.text.strip("\n") == "Rate limit exceeded"):
                     raise RateLimitExceededError("Rate limit exceeded")
 
+                print(response.text)
+
                 js = response.json()  # json.decoder.JSONDecodeError
                 if "errors" in js:
                     # "ct0" --> {"errors":[{"code":353,"message":"This request requires a matching csrf cookie and header."}]}

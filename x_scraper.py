@@ -3,16 +3,15 @@ import twitter_search
 import concurrent.futures
 from threading import Event, Thread
 from multiprocessing.managers import BaseManager, SyncManager
-from config import token_and_key_words, ROOT_SERVER
 
 ##################################################################################################################################
         
 def save_last_tweet():
-    with open(ROOT_SERVER + "last_tweet.txt", "w", encoding="utf8") as f:
+    with open("last_tweet.txt", "w", encoding="utf8") as f:
         json.dump(last_tweet.copy(), f)
         
 def save_last_profile():
-    with open(ROOT_SERVER + "last_profile.txt", "w", encoding="utf8") as f:
+    with open("last_profile.txt", "w", encoding="utf8") as f:
         json.dump(last_profile.copy(), f)
                 
 ##################################################################################################################################

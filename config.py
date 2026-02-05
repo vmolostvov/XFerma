@@ -1,43 +1,49 @@
 import random, re, string, os
+import time
+
+from dotenv import load_dotenv
+
+# загружаем переменные из .env
+load_dotenv()
 
 # database
 
-DB_HOST_SERVER = 'localhost'
-DB_HOST_LOCAL = 'localhost'
-DB_PORT_SERVER = 5432
-DB_PORT_LOCAL = 5433
-DB_USERNAME = 'administrator'
+DB_HOST_SERVER = os.getenv("DB_HOST_SERVER")
+DB_HOST_LOCAL = os.getenv("DB_HOST_LOCAL")
+DB_PORT_SERVER = os.getenv("DB_PORT_SERVER")
+DB_PORT_LOCAL = os.getenv("DB_PORT_LOCAL")
+DB_USERNAME = os.getenv("DB_USERNAME")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_BASE_NAME = 'postgres'
+DB_BASE_NAME = os.getenv("DB_BASE_NAME")
 
 # nodemaven mob proxy
 
-nodemaven_mob_proxy_data = [
-    'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-7e0aa42c8bf74-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
-    'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-7e0aa42c8bf74-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
-    'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-f50f436a6d254-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
-    'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-2089aa239acf4-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
-    'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-7f147d809be54-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
-    'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-e15b6e1ee97c4-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
-    'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-7370b9d3403f4-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
-    'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-3f9fa76581f04-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
-    'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-6c8d9de51d764-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
-    'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-1672614f767b4-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
-    'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-540010aa5aac4-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
-]
 
-nodemaven_api_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzYyNTI0ODU3LCJpYXQiOjE3NjI1MjMwNTcsImp0aSI6IjNkNmE4NWEwMmYyOTQ0MTZhYmNiODE4ZjRmMGU1NTc3IiwidXNlcl9pZCI6IjAyN2Y5MGU0LTc3NTYtNDU2OS04NmEzLTU4MDczZmM3YTAxMSJ9.i9TDxfHW9smd_fBYqz-XpbWVMVpqHlnux-na2Zdld4o'
-
-nodemaven_proxy_rotating = {'http': 'https://vmolostvov96_gmail_com-country-any-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080', 'https': 'http://vmolostvov96_gmail_com-country-any-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080/'}
+nodemaven_api_key = os.getenv("NODEMAVEN_API_KEY")
 
 # proxy config mobile ipv4 us
 nodemaven_proxy_server = 'gate.nodemaven.com'
 nodemaven_proxy_port = '8080'
 nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-{}-filter-medium'
-# nodemaven_proxy_login = 'https://vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-fa81984873c14-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080'
 # nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-64bc6e4fc5d64-filter-medium'
 # nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-ad4ea5b59c246-filter-medium'
-nodemaven_proxy_pw = 'e3ibl6cpq4'
+nodemaven_proxy_pw = os.getenv("NODEMAVEN_PW")
+
+nodemaven_proxy_rotating = {'http': f'https://vmolostvov96_gmail_com-country-any-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080', 'https': f'http://vmolostvov96_gmail_com-country-any-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080/'}
+
+nodemaven_mob_proxy_data = [
+    f'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-7e0aa42c8bf74-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080',
+    f'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-7e0aa42c8bf74-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080',
+    f'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-f50f436a6d254-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080',
+    f'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-2089aa239acf4-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080',
+    f'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-7f147d809be54-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080',
+    f'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-e15b6e1ee97c4-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080',
+    f'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-7370b9d3403f4-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080',
+    f'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-3f9fa76581f04-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080',
+    f'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-6c8d9de51d764-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080',
+    f'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-1672614f767b4-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080',
+    f'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-540010aa5aac4-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080'
+]
 
 
 def generate_password(length=20):

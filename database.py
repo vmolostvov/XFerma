@@ -211,7 +211,7 @@ class Database:
             "not_found" — uid нет
         """
 
-        now = datetime.utcnow()
+        now = datetime.now()
 
         sql_inc = """
             UPDATE X_FERMA

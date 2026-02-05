@@ -323,6 +323,76 @@ class Database:
             for r in rows
         ]
 
+    def get_scraper_accounts(self) -> List[dict]:
+        """
+        Возвращает ровно 10 аккаунтов для скрапера.
+        Если активных is_scraper < 10 — добирает случайные
+        из аккаунтов с addition_date = 2025-11-19.
+        """
+
+        TARGET = 10
+
+        sql_scraper = """
+            SELECT *
+            FROM X_FERMA
+            WHERE is_scraper = TRUE
+              AND is_banned IS NOT TRUE
+        """
+
+        sql_fallback = """
+            SELECT *
+            FROM X_FERMA
+            WHERE is_scraper IS NOT TRUE
+              AND is_banned IS NOT TRUE
+              AND addition_date >= TIMESTAMP %s
+              AND addition_date <  TIMESTAMP %s
+            ORDER BY RANDOM()
+            LIMIT %s
+        """
+
+        with self._conn() as conn, conn.cursor() as cur:
+            # 1) Берём текущие scraper-акки
+            cur.execute(sql_scraper)
+            scraper_rows = cur.fetchall()
+
+            missing = TARGET - len(scraper_rows)
+            fallback_rows = []
+
+            if missing > 0:
+                cur.execute(
+                    sql_fallback,
+                    (
+                        "2025-11-19 00:00:00",
+                        "2025-11-20 00:00:00",
+                        missing,
+                    ),
+                )
+                fallback_rows = cur.fetchall()
+
+                # 2) Закрепляем как scraper
+                if fallback_rows:
+                    cur.execute(
+                        """
+                        UPDATE X_FERMA
+                        SET is_scraper = TRUE
+                        WHERE uid = ANY(%s)
+                        """,
+                        ([r["uid"] for r in fallback_rows],)
+                    )
+
+            rows = scraper_rows + fallback_rows
+
+        return [
+            {
+                "uid": r["uid"],
+                "screen_name": r["username"],
+                "pass": r["pass"],
+                "ua": r.get("ua"),
+                "proxy": get_proxy_by_sid(r.get("proxy")),
+            }
+            for r in rows[:TARGET]
+        ]
+
     def get_auth_by_uid(self, uid: str) -> str | None:
         """
         Возвращает auth_token по uid.

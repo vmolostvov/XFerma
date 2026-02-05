@@ -221,17 +221,15 @@ def disable_safe_search_for_twitter_account(account_number):
             loaded_successfully = True
             return response
 
-def load_accounts_cookies_login(disable_safe_search=False):
-    global manager, requests_count, lock, twitter_working_accounts
-
-    db = Database()
+def load_accounts_cookies_login(scraper_accs, disable_safe_search=False):
+    global manager, requests_count, lock
 
     manager = SyncManager()
     manager.start()
     requests_count = manager.Value(int, 0)
     lock = manager.Lock()
 
-    twitter_working_accounts = db.get_working_accounts(count=100)
+    twitter_working_accounts = scraper_accs
     twitter_working_accounts = [dict(working_account, requests=manager.Value(int, 0), requests_successful=manager.Value(int, 0), requests_errors=manager.Value(int, 0)) for working_account in twitter_working_accounts]
     random.shuffle(twitter_working_accounts)
 
@@ -245,6 +243,8 @@ def load_accounts_cookies_login(disable_safe_search=False):
     if disable_safe_search:
         with concurrent.futures.ThreadPoolExecutor(max_workers=accounts_count) as executor:
             executor.map(disable_safe_search_for_twitter_account, accounts_numbers)
+
+    return twitter_working_accounts
 
 
 ##################################################################################################################################
@@ -1717,9 +1717,9 @@ def get_user_following(twitter_working_account, user_id):
 def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, payload={}):
     global session
 
-    if not twitter_working_account:
-        account_number = 0
-        twitter_working_account = twitter_working_accounts[account_number]
+    # if not twitter_working_account:
+    #     account_number = 0
+    #     twitter_working_account = twitter_working_accounts[account_number]
 
     update_ua = False
     if 'cookies_dict' not in twitter_working_account:

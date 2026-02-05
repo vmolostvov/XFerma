@@ -3,6 +3,7 @@ import twitter_search
 import concurrent.futures
 from threading import Event, Thread
 from multiprocessing.managers import BaseManager, SyncManager
+from database import Database
 
 ##################################################################################################################################
         
@@ -95,7 +96,7 @@ def check_user_recent_tweets(users_ids):
     
 ##################################################################################################################################
 
-def check_notifications_loop(screen_names, use_first_n_accounts):
+def check_notifications_loop(scraper_accounts, screen_names, use_first_n_accounts):
     global last_tweet
 
     cursors = {}
@@ -109,7 +110,7 @@ def check_notifications_loop(screen_names, use_first_n_accounts):
         requests_count += 1
         request_datetime = datetime.datetime.now()
         requests_datetimes.append(request_datetime)
-        twitter_working_account = twitter_search.twitter_working_accounts[(requests_count-1) % min(len(twitter_search.twitter_working_accounts), use_first_n_accounts)]
+        twitter_working_account = scraper_accounts[(requests_count-1) % min(len(scraper_accounts), use_first_n_accounts)]
         
         # getting notifications for recent tweets
         # print(f"[{request_datetime}] account={twitter_working_account['screen_name']}, cursor={cursor}")
@@ -144,44 +145,9 @@ def check_notifications_loop(screen_names, use_first_n_accounts):
                                 # выводим и сохраняем информацию об обнаруженном твите
                                 # только если он был опубликован после запуска скрипта
 
-                                Thread(target=alarm_bot.new_tweet_signal, args=(f'{screen_name}: {last_tweet[screen_name]["text"]}\n\nДата создания: {created_at}\nВремя распознавания: {discovered_at}',)).start()
-
-                                if screen_name.lower() in infl_list:
-                                    for word in last_tweet[screen_name]["text"]:
-                                        for token_name, ca in token_and_key_words.items():
-                                            if word == token_name:
-                                                # result_ok, result_text = send_command_banana(command="buy_order",
-                                                #                                              token_address=ca,
-                                                #                                              token_value=0.3)
-                                                alarm_bot.admin_signal_th(
-                                                    f'{screen_name} JUST TWEETED ABOUT {token_name} !!!')
-                                                break
-
-                                eth_ca = None
-                                sol_ca = None
-
-                                re_search_eth_ca = re.search("0x[A-Za-z0-9]{40}", last_tweet[screen_name]["text"])
-
-                                if re_search_eth_ca:
-                                    eth_ca = re_search_eth_ca.group()
-
-                                else:
-                                    re_search_sol_ca = re.search("[A-Za-z0-9]{32,44}", last_tweet[screen_name]["text"])
-                                    if re_search_sol_ca:
-                                        sol_ca = re_search_sol_ca.group()
-
-                                # if eth_ca:
-                                #     if 'hahaha' not in eth_ca.lower():
-                                #         if check_base_ca('TokenAddress', eth_ca.lower()):
-                                #             insert_to_base_ca('TokenAddress', eth_ca.lower())
-                                #             alarm_bot.admin_signal_th(
-                                #                 f'DETECTED CA <code>{eth_ca}</code> IN {screen_name} NEW TWEET !!!')
-                                # elif sol_ca:
-                                #     if 'hahaha' not in sol_ca:
-                                #         if check_base_ca('TokenAddress', sol_ca.lower()):
-                                #             insert_to_base_ca('TokenAddress', sol_ca.lower())
-                                #             alarm_bot.admin_signal_th(
-                                #                 f'DETECTED CA <code>{sol_ca}</code> IN {screen_name} NEW TWEET !!!')
+                                print(f'Detected New Tweet!')
+                                print(f'{screen_name}: {last_tweet[screen_name]["text"]}\n\nДата создания: {created_at}\nВремя распознавания: {discovered_at}')
+                                # Thread(target=alarm_bot.new_tweet_signal, args=(f'{screen_name}: {last_tweet[screen_name]["text"]}\n\nДата создания: {created_at}\nВремя распознавания: {discovered_at}',)).start()
 
                                 delta_between_requests_ms = (requests_datetimes[-1] - requests_datetimes[-2]) / datetime.timedelta(milliseconds=1) if len(requests_datetimes) > 1 else '?'
                                 delay_discover_ms = round((discovered_at - created_at).total_seconds() * 1000)
@@ -382,7 +348,7 @@ if __name__ == '__main__':
     unsubscribe_from_other_accounts = False
     
     # количество используемых рабочих аккаунтов из списка twitter_working_accounts2 
-    use_first_n_accounts2 = 1
+    use_first_n_accounts2 = 10000
 
     # периодичность проверок новых твитов в секундах
     interval_tweets2 = 5
@@ -407,8 +373,11 @@ if __name__ == '__main__':
     
     ##################################################################################################################################
     
-    # загрузка аккаунтов из набора аккаунтов twitter_working_accounts2
-    twitter_search.load_accounts_cookies_login()
+    # загрузка аккаунтов из БД
+    db = Database()
+
+    scraper_accs = db.get_scraper_accounts()
+    scraper_accs = twitter_search.load_accounts_cookies_login(scraper_accs)
         
     if check_tweets and len(screen_names1) > 0:
         # способ #1 [декабрь 2023]
@@ -423,11 +392,11 @@ if __name__ == '__main__':
         
     if (check_tweets or check_profiles) and len(list(set(screen_names2 + screen_names3 + screen_names4))) > 0:
         # способ #2 [февраль 2024]        
-        for twitter_working_account in twitter_search.twitter_working_accounts[:use_first_n_accounts2]:
+        for twitter_working_account in scraper_accs[:use_first_n_accounts2]:
             twitter_working_account["user_id"] = twitter_search.get_user_id_by_user_screen_name(twitter_working_account["screen_name"], twitter_working_account)
 
         if check_tweets and len(list(set(screen_names2 + screen_names3))) > 0:            
-            for twitter_working_account in twitter_search.twitter_working_accounts[:use_first_n_accounts2]:
+            for twitter_working_account in scraper_accs[:use_first_n_accounts2]:
                 # (1) проверка, включены ли уведомления о новых твитах в данном аккаунте
                 js = twitter_search.account_notifications(twitter_working_account, "check")
                 print(f"[{datetime.datetime.now()}] === Аккаунт {twitter_working_account['screen_name']} ===")
@@ -475,7 +444,7 @@ if __name__ == '__main__':
             if len(screen_names2) > 0:
                 # постоянная проверка уведомлений о новых твитах через разные аккаунты
                 print(f"{datetime.datetime.now()} Usernames для отслеживания новых твитов через уведомления (notifications): {screen_names2}")
-                thread2 = Thread(target=check_notifications_loop, args=(screen_names2,use_first_n_accounts2,))
+                thread2 = Thread(target=check_notifications_loop, args=(scraper_accs,screen_names2,use_first_n_accounts2,))
                 
             if len(screen_names3) > 0:
                 # постоянная проверка ленты с новыми твитами через разные аккаунты
@@ -498,7 +467,7 @@ if __name__ == '__main__':
         save_last_tweet()
             
         # инициализируем json-файл для хранения профилей нескольких пользователей
-        save_last_profile()        
+        # save_last_profile()
     
         stopped = Event()
         

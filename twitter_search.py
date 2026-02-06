@@ -42,7 +42,7 @@ session = requests.Session(
 )
 
 REQUESTS = 0
-MAX_REQUESTS = 500
+MAX_REQUESTS = 100
 
 # random.shuffle(twitter_working_accounts)
 

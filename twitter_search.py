@@ -37,11 +37,11 @@ twitter_url = 'twitter.com/'
 
 ##################################################################################################################################
 
-session = tls_client.Session(
-    client_identifier="chrome_120",
-    random_tls_extension_order=True
-)
-session.timeout_seconds = 10
+# session = tls_client.Session(
+#     client_identifier="chrome_120",
+#     random_tls_extension_order=True
+# )
+# session.timeout_seconds = 10
 
 # random.shuffle(twitter_working_accounts)
 
@@ -202,7 +202,7 @@ def disable_safe_search_for_twitter_account(twitter_working_account):
     twitter_cookies_dict = twitter_working_account["cookies_dict"]
 
     headers = get_headers_for_twitter_account(twitter_cookies_dict)
-    proxies = get_proxies_for_twitter_account(twitter_working_account)
+    # proxies = get_proxies_for_twitter_account(twitter_working_account)
     user_id = get_user_id_by_user_screen_name(twitter_working_account["screen_name"], twitter_working_account)
     # user_id = urllib.parse.unquote(twitter_working_account["cookies_dict"]["twid"]).replace("u=", "") # "u%3D1668664483282137098" --> "u=1668664483282137098" --> "1668664483282137098"
 
@@ -212,13 +212,13 @@ def disable_safe_search_for_twitter_account(twitter_working_account):
         "optInBlocking": False
     }
 
-    session.proxies.update(proxies)
+    # session.proxies.update(proxies)
 
     attempts = 0
     loaded_successfully = False
     while not loaded_successfully:
         try:
-            response = session.post(url, json=payload, headers=headers, proxies=proxies)
+            response = twitter_working_account['session'].post(url, json=payload, headers=headers)
         except Exception as error:
             attempts += 1
             time.sleep(attempts * random.uniform(1, 3))
@@ -244,12 +244,21 @@ def load_accounts_cookies_login(scraper_accs, disable_safe_search=False):
     for twitter_working_account in twitter_working_accounts:
         load_cookies_for_twitter_account(twitter_working_account)
 
+        s = tls_client.Session(
+            client_identifier="chrome_120",
+            random_tls_extension_order=True
+        )
+        s.timeout_seconds = 10
+        s.proxies.update(get_proxies_for_twitter_account(twitter_working_account))
+
+        twitter_working_account['session'] = s
+
         # отключение безопасного поиска для аккаунтов
         if disable_safe_search:
             with concurrent.futures.ThreadPoolExecutor(max_workers=accounts_count) as executor:
                 executor.map(disable_safe_search_for_twitter_account, twitter_working_account)
 
-        return twitter_working_accounts
+    return twitter_working_accounts
 
 
 ##################################################################################################################################
@@ -488,7 +497,6 @@ class RateLimitExceededError(Exception):
         super().__init__("Rate limit exceeded")
 
 def twitter_api_call(api_endpoint, variables, features, twitter_working_account=None, use_current_acc=False, toggles=False):
-    global session
 
     # time.sleep(random.uniform(0.1, 0.2))
     referer = 'https://x.com/'
@@ -576,11 +584,9 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
             if api_endpoint in ['Following']:
                 twitter_cookies_dict = twitter_working_account["cookies_dict"]
                 headers = get_headers_for_twitter_account(twitter_cookies_dict, referer)
-                proxies = get_proxies_for_twitter_account(twitter_working_account)
+                # proxies = get_proxies_for_twitter_account(twitter_working_account)
 
-                session.proxies.update(proxies)
-
-                response = session.get(base_url, params=params, headers=headers)
+                response = twitter_working_account['session'].get(base_url, params=params, headers=headers)
 
                 if (response.status_code == 429) or (response.text.strip("\n") == "Rate limit exceeded"):
                     raise RateLimitExceededError("Rate limit exceeded")
@@ -1726,7 +1732,6 @@ def get_user_following(twitter_working_account, user_id):
 
 
 def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, payload={}):
-    global session
 
     # if not twitter_working_account:
     #     account_number = 0
@@ -1740,27 +1745,25 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
 
     twitter_cookies_dict = twitter_working_account["cookies_dict"]
     headers = get_headers_for_twitter_account(twitter_cookies_dict)
-    proxies = get_proxies_for_twitter_account(twitter_working_account)
+    # proxies = get_proxies_for_twitter_account(twitter_working_account)
 
     if update_ua:
         headers['user-agent'] = twitter_working_account['ua']
-
-    session.proxies.update(proxies)
 
     attempts = 0
     loaded_successfully = False
     while not loaded_successfully:
         try:
             if method == "post":
-                response = session.post(url, params=params, json=payload, headers=headers)
+                response = twitter_working_account['session'].post(url, params=params, json=payload, headers=headers)
             elif method == "get":
-                response = session.get(url, params=params, headers=headers)
+                response = twitter_working_account['session'].get(url, params=params, headers=headers)
                 print('request sent')
 
             elif method == "upload_file":
                 # print(twitter_working_account)
                 # twitter_working_account['session'].request_client.request(url, method="POST", files=params)
-                response = session.post(url, files=params, headers=headers)
+                response = twitter_working_account['session'].post(url, files=params, headers=headers)
 
             if (response.status_code == 429) or (response.text.strip("\n") == "Rate limit exceeded"):
                 # лимит 180 запросов за 15 минут
@@ -1862,7 +1865,6 @@ def user_friendship(twitter_working_account, action, user_id="", screen_name="")
             params["device"] = (action == "notify")  # True => подписка на уведомления, False => отписка от уведомлений
 
     response = twitter_api_v1_1_call(twitter_working_account, method, url, params=params)
-    print(response.text)
     if response == 'proxy_dead':
         return 'proxy_dead'
 

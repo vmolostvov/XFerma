@@ -1931,7 +1931,6 @@ def account_notifications(twitter_working_account, action, settings={}):
         raise ValueError("unknown action")
 
     response = twitter_api_v1_1_call(twitter_working_account, "post", url, payload=payload)
-    print(response.text)
     try:
         if 'errors' in response.json():
             error_code = response.json()['errors'][0]['code']

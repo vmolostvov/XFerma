@@ -212,11 +212,13 @@ def disable_safe_search_for_twitter_account(twitter_working_account):
         "optInBlocking": False
     }
 
+    session.proxies.update(proxies)
+
     attempts = 0
     loaded_successfully = False
     while not loaded_successfully:
         try:
-            response = session.post(url, json=payload, headers=headers, proxies=proxies, timeout=(3, 20))
+            response = session.post(url, json=payload, headers=headers, proxies=proxies)
         except Exception as error:
             attempts += 1
             time.sleep(attempts * random.uniform(1, 3))
@@ -1743,20 +1745,21 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
     if update_ua:
         headers['user-agent'] = twitter_working_account['ua']
 
+    session.proxies.update(proxies)
+
     attempts = 0
     loaded_successfully = False
     while not loaded_successfully:
         try:
             if method == "post":
-                response = session.post(url, params=params, json=payload, headers=headers, proxies=proxies,
-                                        timeout=10)
+                response = session.post(url, params=params, json=payload, headers=headers)
             elif method == "get":
-                response = session.get(url, params=params, headers=headers, proxies=proxies, timeout=10)
+                response = session.get(url, params=params, headers=headers)
 
             elif method == "upload_file":
                 # print(twitter_working_account)
                 # twitter_working_account['session'].request_client.request(url, method="POST", files=params)
-                response = session.post(url, files=params, headers=headers, proxies=proxies, timeout=10)
+                response = session.post(url, files=params, headers=headers)
 
             if (response.status_code == 429) or (response.text.strip("\n") == "Rate limit exceeded"):
                 # лимит 180 запросов за 15 минут

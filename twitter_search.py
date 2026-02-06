@@ -41,6 +41,7 @@ session = tls_client.Session(
     client_identifier="chrome_120",
     random_tls_extension_order=True
 )
+session.timeout_seconds = 10
 
 # random.shuffle(twitter_working_accounts)
 
@@ -577,7 +578,7 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
 
                 session.proxies.update(proxies)
 
-                response = session.get(base_url, params=params, headers=headers, proxies=proxies, timeout=10)
+                response = session.get(base_url, params=params, headers=headers)
 
                 if (response.status_code == 429) or (response.text.strip("\n") == "Rate limit exceeded"):
                     raise RateLimitExceededError("Rate limit exceeded")

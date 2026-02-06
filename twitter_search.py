@@ -488,7 +488,7 @@ class RateLimitExceededError(Exception):
         super().__init__("Rate limit exceeded")
 
 def twitter_api_call(api_endpoint, variables, features, twitter_working_account=None, use_current_acc=False, toggles=False):
-    global session, REQUESTS
+    global session
 
     # time.sleep(random.uniform(0.1, 0.2))
     referer = 'https://x.com/'
@@ -1726,7 +1726,7 @@ def get_user_following(twitter_working_account, user_id):
 
 
 def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, payload={}):
-    global session, REQUESTS
+    global session
 
     # if not twitter_working_account:
     #     account_number = 0

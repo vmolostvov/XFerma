@@ -1,6 +1,6 @@
 from curl_cffi.requests.exceptions import ProxyError as ProxyError1
 
-import json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading, asyncio
+import json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading, tls_client
 from multiprocessing.managers import SyncManager
 
 from alarm_bot import admin_error
@@ -8,7 +8,7 @@ from alarm_bot import admin_error
 from config import generate_password
 from requests.exceptions import ReadTimeout, ProxyError, ConnectTimeout, SSLError
 from selen import get_code_from_email
-from curl_cffi import requests
+# from curl_cffi import requests
 # from cdp_sniffer import sniff_headers
 # from pixelscan_checker import proxy_check, make_proxy_str_for_pixelscan
 
@@ -37,8 +37,9 @@ twitter_url = 'twitter.com/'
 
 ##################################################################################################################################
 
-session = requests.Session(
-    impersonate="chrome120"  # важно для X / Twitter
+session = tls_client.Session(
+    client_identifier="chrome_120",
+    random_tls_extension_order=True
 )
 
 REQUESTS = 0
@@ -217,7 +218,7 @@ def disable_safe_search_for_twitter_account(twitter_working_account):
     loaded_successfully = False
     while not loaded_successfully:
         try:
-            response = requests.post(url, json=payload, headers=headers, proxies=proxies, timeout=(3, 20))
+            response = session.post(url, json=payload, headers=headers, proxies=proxies, timeout=(3, 20))
         except Exception as error:
             attempts += 1
             time.sleep(attempts * random.uniform(1, 3))

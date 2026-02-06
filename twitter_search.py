@@ -41,6 +41,9 @@ session = requests.Session(
     impersonate="chrome120"  # важно для X / Twitter
 )
 
+REQUESTS = 0
+MAX_REQUESTS = 500
+
 # random.shuffle(twitter_working_accounts)
 
 
@@ -484,7 +487,7 @@ class RateLimitExceededError(Exception):
         super().__init__("Rate limit exceeded")
 
 def twitter_api_call(api_endpoint, variables, features, twitter_working_account=None, use_current_acc=False, toggles=False):
-    global session
+    global session, REQUESTS
 
     # time.sleep(random.uniform(0.1, 0.2))
     referer = 'https://x.com/'
@@ -652,6 +655,13 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
 
         else:
             return response
+
+    REQUESTS += 1
+
+    if REQUESTS >= MAX_REQUESTS:
+        session.close()
+        session = requests.Session(impersonate="chrome120")
+        REQUESTS = 0
 
     if 'Error code 131 - Internal error' in trace:
         return '131'
@@ -1721,7 +1731,7 @@ def get_user_following(twitter_working_account, user_id):
 
 
 def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, payload={}):
-    global session
+    global session, REQUESTS
 
     # if not twitter_working_account:
     #     account_number = 0
@@ -1774,6 +1784,13 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
                 raise RateLimitExceededError("Rate limit exceeded")
 
             js = response.json()
+
+            REQUESTS += 1
+
+            if REQUESTS >= MAX_REQUESTS:
+                session.close()
+                session = requests.Session(impersonate="chrome120")
+                REQUESTS = 0
 
         except (ConnectTimeout, ReadTimeout, ProxyError, SSLError, ConnectionError, OSError) as e:
             print(e)

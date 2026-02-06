@@ -1755,6 +1755,7 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
                 response = session.post(url, params=params, json=payload, headers=headers)
             elif method == "get":
                 response = session.get(url, params=params, headers=headers)
+                print('request sent')
 
             elif method == "upload_file":
                 # print(twitter_working_account)

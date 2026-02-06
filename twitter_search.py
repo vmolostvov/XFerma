@@ -161,6 +161,7 @@ def get_headers_for_twitter_account(twitter_cookies_dict, referer='https://x.com
         'authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA',
         'cache-control': 'no-cache',
         'content-type': 'application/json',
+        'connection': 'close',
         'cookie': '; '.join(f'{key}={value}' for key, value in twitter_cookies_dict.items()),
         'pragma': 'no-cache',
         'referer': referer,
@@ -1791,12 +1792,9 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
             if attempts >=3:
                 print(f'Error while sending request to X api! Acc name: {twitter_working_account["screen_name"]}')
                 time.sleep(1.5)
-                # proxy_analyze = proxy_check(make_proxy_str_for_pixelscan(twitter_working_account['proxy']),
-                #                             triple_check=True)
-                # if proxy_analyze['ok']:
-                #     continue
-                # else:
-                #     return 'proxy_dead'
+
+                if '503 Service Unavailable' in str(e):
+                    return 'proxy_dead'
 
         except Exception as error:
             print(error)
@@ -1865,8 +1863,9 @@ def user_friendship(twitter_working_account, action, user_id="", screen_name="")
             params["device"] = (action == "notify")  # True => подписка на уведомления, False => отписка от уведомлений
 
     response = twitter_api_v1_1_call(twitter_working_account, method, url, params=params)
-    if response == 'proxy_dead':
-        return 'proxy_dead'
+
+    if response == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
+        return
 
     try:
         if 'errors' in response.json():
@@ -1931,6 +1930,10 @@ def account_notifications(twitter_working_account, action, settings={}):
         raise ValueError("unknown action")
 
     response = twitter_api_v1_1_call(twitter_working_account, "post", url, payload=payload)
+
+    if response == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
+        return
+
     try:
         if 'errors' in response.json():
             error_code = response.json()['errors'][0]['code']
@@ -2038,6 +2041,10 @@ def account_check_notifications_device_follow(twitter_working_account, cursor=""
         "ext": "mediaStats,highlightedLabel,voiceInfo,birdwatchPivot,superFollowMetadata,unmentionInfo,editControl"
     }
     response = twitter_api_v1_1_call(twitter_working_account, "get", url, params=params)
+
+    if response == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
+        return
+
     js = response.json()
 
     # with open("notifications_device_follow_03.json", "r", encoding="utf8") as f:

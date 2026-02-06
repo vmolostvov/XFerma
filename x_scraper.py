@@ -116,7 +116,7 @@ def check_notifications_loop(scraper_accounts, screen_names, use_first_n_account
         # print(f"[{request_datetime}] account={twitter_working_account['screen_name']}, cursor={cursor}")
         results = twitter_search.account_check_notifications_device_follow(twitter_working_account, cursor=cursors.get(twitter_working_account["screen_name"], ""))
                 
-        if len(results["tweets"]) > 0:
+        if results and len(results["tweets"]) > 0:
             cursors[twitter_working_account["screen_name"]] = results["cursors"].get("top", "")
             tweets_users_ids_str = [tweet["user_id_str"] for tweet in results["tweets"]]
             tweets_by_user = {user_id_str: [tweet for tweet in results["tweets"] if tweet["user_id_str"] == user_id_str] for user_id_str in tweets_users_ids_str}

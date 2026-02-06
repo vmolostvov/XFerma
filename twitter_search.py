@@ -42,9 +42,6 @@ session = tls_client.Session(
     random_tls_extension_order=True
 )
 
-REQUESTS = 0
-MAX_REQUESTS = 10
-
 # random.shuffle(twitter_working_accounts)
 
 
@@ -578,12 +575,13 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
                 headers = get_headers_for_twitter_account(twitter_cookies_dict, referer)
                 proxies = get_proxies_for_twitter_account(twitter_working_account)
 
+                session.proxies.update(proxies)
+
                 response = session.get(base_url, params=params, headers=headers, proxies=proxies, timeout=10)
 
                 if (response.status_code == 429) or (response.text.strip("\n") == "Rate limit exceeded"):
                     raise RateLimitExceededError("Rate limit exceeded")
 
-                print(response.text)
 
                 js = response.json()  # json.decoder.JSONDecodeError
                 if "errors" in js:
@@ -656,13 +654,6 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
 
         else:
             return response
-
-    REQUESTS += 1
-
-    if REQUESTS >= MAX_REQUESTS:
-        session.close()
-        session = requests.Session(impersonate="chrome120")
-        REQUESTS = 0
 
     if 'Error code 131 - Internal error' in trace:
         return '131'
@@ -1785,13 +1776,6 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
                 raise RateLimitExceededError("Rate limit exceeded")
 
             js = response.json()
-
-            REQUESTS += 1
-
-            if REQUESTS >= MAX_REQUESTS:
-                session.close()
-                session = requests.Session(impersonate="chrome120")
-                REQUESTS = 0
 
         except (ConnectTimeout, ReadTimeout, ProxyError, SSLError, ConnectionError, OSError) as e:
             print(e)

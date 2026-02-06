@@ -344,8 +344,8 @@ class Database:
             FROM X_FERMA
             WHERE is_scraper IS NOT TRUE
               AND is_banned IS NOT TRUE
-              AND addition_date >= TIMESTAMP %s
-              AND addition_date <  TIMESTAMP %s
+              AND addition_date >= %s
+              AND addition_date < %s
             ORDER BY RANDOM()
             LIMIT %s
         """

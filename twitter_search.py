@@ -1,6 +1,7 @@
 from curl_cffi.requests.exceptions import ProxyError as ProxyError1
+from curl_cffi import requests
 
-import json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading, tls_client
+import json, os, datetime, time, random, urllib.parse, concurrent.futures, traceback, pytz, threading
 from multiprocessing.managers import SyncManager
 
 from alarm_bot import admin_error
@@ -245,12 +246,11 @@ def load_accounts_cookies_login(scraper_accs, disable_safe_search=False):
     for twitter_working_account in twitter_working_accounts:
         load_cookies_for_twitter_account(twitter_working_account)
 
-        s = tls_client.Session(
-            client_identifier="chrome_120",
-            random_tls_extension_order=True
+        s = requests.Session(
+            impersonate="chrome120",
+            timeout=(3, 10),
+            proxies=get_proxies_for_twitter_account(twitter_working_account)
         )
-        s.timeout_seconds = 10
-        s.proxies.update(get_proxies_for_twitter_account(twitter_working_account))
 
         twitter_working_account['session'] = s
 

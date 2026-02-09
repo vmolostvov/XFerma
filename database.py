@@ -253,6 +253,20 @@ class Database:
 
             return "ok"
 
+    def is_regen_sess_required(self, uid: int) -> bool:
+        sql = """
+            SELECT regen_sess
+            FROM X_FERMA
+            WHERE uid = %s
+            LIMIT 1
+        """
+
+        with self._conn() as conn, conn.cursor() as cur:
+            cur.execute(sql, (uid,))
+            row = cur.fetchone()
+
+        return bool(row and row["regen_sess"])
+
     def delete_banned_by_uid(self, uid: str):
         sql = "DELETE FROM X_FERMA WHERE uid = %s;"
         with self._conn() as conn, conn.cursor() as cur:
@@ -323,14 +337,14 @@ class Database:
             for r in rows
         ]
 
-    def get_scraper_accounts(self) -> List[dict]:
+    def get_scraper_accounts(self, target=10) -> List[dict]:
         """
-        Возвращает ровно 10 аккаунтов для скрапера.
-        Если активных is_scraper < 10 — добирает случайные
+        Возвращает ровно N аккаунтов для скрапера.
+        Если активных is_scraper < N — добирает случайные
         из аккаунтов с addition_date = 2025-11-19.
         """
 
-        TARGET = 10
+        TARGET = target
 
         sql_scraper = """
             SELECT *

@@ -1627,7 +1627,8 @@ if __name__ == '__main__':
             if confirm == 'yes':
                 accs = load_accounts_tweeterpy(mode='email_change')
                 for acc in accs:
-                    change_email_safe_loop(acc, ferma)
+                    # change_email_safe_loop(acc, ferma)
+                    ferma.change_email_and_save(acc)
             else:
                 print("❌ Операция отменена.")
 

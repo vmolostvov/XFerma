@@ -262,6 +262,22 @@ def load_accounts_cookies_login(scraper_accs, disable_safe_search=False):
     return twitter_working_accounts
 
 
+def reload_acc_cook_and_sess(scraper_acc):
+    # загрузка cookies для аккаунтов
+    load_cookies_for_twitter_account(scraper_acc)
+
+    s = requests.Session(
+        impersonate="chrome120",
+        timeout=(3, 10),
+        proxies=get_proxies_for_twitter_account(scraper_acc)
+    )
+
+    scraper_acc['session'] = s
+
+
+    return scraper_acc
+
+
 ##################################################################################################################################
 
 def contains_ci(needle, haystack):
@@ -1759,7 +1775,6 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
                 response = twitter_working_account['session'].post(url, params=params, json=payload, headers=headers)
             elif method == "get":
                 response = twitter_working_account['session'].get(url, params=params, headers=headers)
-                print('request sent')
 
             elif method == "upload_file":
                 # print(twitter_working_account)
@@ -1795,6 +1810,9 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
 
                 if '503 Service Unavailable' in str(e):
                     return 'proxy_dead'
+
+                elif 'Operation timed out' in str(e):
+                    return 'timeout'
 
         except Exception as error:
             print(error)
@@ -2042,8 +2060,8 @@ def account_check_notifications_device_follow(twitter_working_account, cursor=""
     }
     response = twitter_api_v1_1_call(twitter_working_account, "get", url, params=params)
 
-    if response == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
-        return
+    if response == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted', 'timeout']:
+        return response
 
     js = response.json()
 

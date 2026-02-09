@@ -4,6 +4,7 @@ import concurrent.futures
 from threading import Event, Thread
 from multiprocessing.managers import BaseManager, SyncManager
 from database import Database
+from alarm_bot import admin_error
 
 ##################################################################################################################################
         
@@ -110,12 +111,53 @@ def check_notifications_loop(scraper_accounts, screen_names, use_first_n_account
         requests_count += 1
         request_datetime = datetime.datetime.now()
         requests_datetimes.append(request_datetime)
+
+        if len(scraper_accounts) < scraper_accs_q:
+
+
         twitter_working_account = scraper_accounts[(requests_count-1) % min(len(scraper_accounts), use_first_n_accounts)]
+
+        if twitter_working_account.get('regen_sess'):
+            print(f"[SCRAPER] Аккаунту ({twitter_working_account['screen_name']}) требуется регенерация!")
+            if db.is_regen_sess_required(twitter_working_account["uid"]):
+                print(f"[SCRAPER] Selen-regen еще не регенерировал аккаунт ({twitter_working_account['screen_name']}), пропускаем!")
+                continue
+            twitter_working_account = twitter_search.reload_acc_cook_and_sess(twitter_working_account)
+            twitter_working_account['regen_sess'] = False
         
         # getting notifications for recent tweets
         # print(f"[{request_datetime}] account={twitter_working_account['screen_name']}, cursor={cursor}")
         results = twitter_search.account_check_notifications_device_follow(twitter_working_account, cursor=cursors.get(twitter_working_account["screen_name"], ""))
-                
+
+        if results == 'ban':
+            print(f"[SCRAPER] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+            admin_error(f"[SCRAPER] Аккаунт {twitter_working_account['screen_name']} вероятно забанен!")
+            scraper_accounts.remove(twitter_working_account)
+            try:
+                db.update_is_banned(twitter_working_account["uid"])
+            except Exception as e:
+                print(f"[SCRAPER] Ошибка при update_is_banned: {e}")
+            continue
+        elif results == 'proxy_dead':
+            continue
+        elif results == 'no_auth':
+            print(f"[SCRAPER] Аккаунт {twitter_working_account['screen_name']} вероятно нуждается в обновлении сессии!")
+            twitter_working_account["regen_sess"] = True
+            try:
+                db.update_regen_session(twitter_working_account["uid"], True)
+            except Exception as e:
+                print(f"[SETUP] Ошибка при update_regen_session: {e}")
+            continue
+        elif results == 'lock':
+            print(f"[SCRAPER] Аккаунт {twitter_working_account['screen_name']} вероятно временно заблокирован!")
+            # admin_error(f"[SCRAPER] Аккаунт {x_working_acc['screen_name']} вероятно нуждается в обновлении сессии!")
+            scraper_accounts.remove(twitter_working_account)
+            try:
+                db.update_is_locked(twitter_working_account["uid"])
+            except Exception as e:
+                print(f"[SCRAPER] Ошибка при update_is_locked: {e}")
+            continue
+
         if results and len(results["tweets"]) > 0:
             cursors[twitter_working_account["screen_name"]] = results["cursors"].get("top", "")
             tweets_users_ids_str = [tweet["user_id_str"] for tweet in results["tweets"]]
@@ -350,6 +392,9 @@ if __name__ == '__main__':
     # количество используемых рабочих аккаунтов из списка twitter_working_accounts2 
     use_first_n_accounts2 = 10000
 
+    # количество используемых рабочих аккаунтов под скрапер через уведомления
+    scraper_accs_q = 10
+
     # периодичность проверок новых твитов в секундах
     interval_tweets2 = 5
     
@@ -376,7 +421,7 @@ if __name__ == '__main__':
     # загрузка аккаунтов из БД
     db = Database()
 
-    scraper_accs = db.get_scraper_accounts()
+    scraper_accs = db.get_scraper_accounts(target=scraper_accs_q)
     scraper_accs = twitter_search.load_accounts_cookies_login(scraper_accs)
         
     if check_tweets and len(screen_names1) > 0:

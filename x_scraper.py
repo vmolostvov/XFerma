@@ -113,7 +113,18 @@ def check_notifications_loop(scraper_accounts, screen_names, use_first_n_account
         requests_datetimes.append(request_datetime)
 
         if len(scraper_accounts) < scraper_accs_q:
+            active_scrapers = [acc["screen_name"] for acc in scraper_accounts]
+            missing = scraper_accs_q - len(scraper_accounts)
+            new_scraper_accs = db.get_scraper_accounts(needed=missing, active_usernames=active_scrapers)
+            scraper_accounts += new_scraper_accs
 
+            if len(new_scraper_accs) < missing:
+                print(
+                    f"⚠️ Не удалось добрать все scraper-аккаунты "
+                    f"({len(new_scraper_accs)}/{missing})"
+                )
+                admin_error(f"⚠️ Не удалось добрать все scraper-аккаунты "
+                    f"({len(new_scraper_accs)}/{missing})")
 
         twitter_working_account = scraper_accounts[(requests_count-1) % min(len(scraper_accounts), use_first_n_accounts)]
 
@@ -189,6 +200,7 @@ def check_notifications_loop(scraper_accounts, screen_names, use_first_n_account
 
                                 print(f'Detected New Tweet!')
                                 print(f'{screen_name}: {last_tweet[screen_name]["text"]}\n\nДата создания: {created_at}\nВремя распознавания: {discovered_at}')
+                                admin_error(f'Detected New Tweet!\n\n{screen_name}: {last_tweet[screen_name]["text"]}\n\nДата создания: {created_at}\nВремя распознавания: {discovered_at}')
                                 # Thread(target=alarm_bot.new_tweet_signal, args=(f'{screen_name}: {last_tweet[screen_name]["text"]}\n\nДата создания: {created_at}\nВремя распознавания: {discovered_at}',)).start()
 
                                 delta_between_requests_ms = (requests_datetimes[-1] - requests_datetimes[-2]) / datetime.timedelta(milliseconds=1) if len(requests_datetimes) > 1 else '?'
@@ -421,7 +433,7 @@ if __name__ == '__main__':
     # загрузка аккаунтов из БД
     db = Database()
 
-    scraper_accs = db.get_scraper_accounts(target=scraper_accs_q)
+    scraper_accs = db.get_scraper_accounts(needed=scraper_accs_q)
     scraper_accs = twitter_search.load_accounts_cookies_login(scraper_accs)
         
     if check_tweets and len(screen_names1) > 0:

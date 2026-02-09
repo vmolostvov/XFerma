@@ -337,20 +337,23 @@ class Database:
             for r in rows
         ]
 
-    def get_scraper_accounts(self, target=10) -> List[dict]:
+    def get_scraper_accounts(
+            self,
+            needed: int,
+            active_usernames: list[str] = [],
+    ) -> list[dict]:
         """
-        Возвращает ровно N аккаунтов для скрапера.
-        Если активных is_scraper < N — добирает случайные
-        из аккаунтов с addition_date = 2025-11-19.
+        Добирает needed аккаунтов для скрапера,
+        исключая уже работающие active_usernames.
         """
 
-        TARGET = target
-
-        sql_scraper = """
+        sql_existing = """
             SELECT *
             FROM X_FERMA
             WHERE is_scraper = TRUE
               AND is_banned IS NOT TRUE
+              AND username <> ALL(%s)
+            LIMIT %s
         """
 
         sql_fallback = """
@@ -358,24 +361,28 @@ class Database:
             FROM X_FERMA
             WHERE is_scraper IS NOT TRUE
               AND is_banned IS NOT TRUE
+              AND username <> ALL(%s)
               AND addition_date >= %s
               AND addition_date < %s
+            FOR UPDATE SKIP LOCKED
             ORDER BY RANDOM()
             LIMIT %s
         """
 
         with self._conn() as conn, conn.cursor() as cur:
-            # 1) Берём текущие scraper-акки
-            cur.execute(sql_scraper)
-            scraper_rows = cur.fetchall()
+            # 1) Пробуем взять из уже назначенных scraper
+            cur.execute(sql_existing, (active_usernames, needed))
+            existing_rows = cur.fetchall()
 
-            missing = TARGET - len(scraper_rows)
+            missing = needed - len(existing_rows)
             fallback_rows = []
 
+            # 2) Добираем новыми, если не хватило
             if missing > 0:
                 cur.execute(
                     sql_fallback,
                     (
+                        active_usernames,
                         "2025-11-19 00:00:00",
                         "2025-11-20 00:00:00",
                         missing,
@@ -383,7 +390,6 @@ class Database:
                 )
                 fallback_rows = cur.fetchall()
 
-                # 2) Закрепляем как scraper
                 if fallback_rows:
                     cur.execute(
                         """
@@ -391,10 +397,10 @@ class Database:
                         SET is_scraper = TRUE
                         WHERE uid = ANY(%s)
                         """,
-                        ([r["uid"] for r in fallback_rows],)
+                        ([r["uid"] for r in fallback_rows],),
                     )
 
-            rows = scraper_rows + fallback_rows
+            rows = existing_rows + fallback_rows
 
         return [
             {
@@ -404,7 +410,7 @@ class Database:
                 "ua": r.get("ua"),
                 "proxy": get_proxy_by_sid(r.get("proxy")),
             }
-            for r in rows[:TARGET]
+            for r in rows
         ]
 
     def get_auth_by_uid(self, uid: str) -> str | None:

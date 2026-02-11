@@ -248,7 +248,7 @@ def load_accounts_cookies_login(scraper_accs, disable_safe_search=False):
 
         s = requests.Session(
             impersonate="chrome120",
-            timeout=(3, 10),
+            timeout=(3, 8),
             proxies=get_proxies_for_twitter_account(twitter_working_account)
         )
 
@@ -1178,7 +1178,7 @@ def like_tweet_by_tweet_id(working_acc, tweet_id):
 
     res = twitter_api_call('FavoriteTweet', variables=data, features={}, twitter_working_account=working_acc)
 
-    if res == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
+    if res in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
         return res
 
     if res and res['data']['favorite_tweet']:
@@ -1192,7 +1192,7 @@ def rt_tweet_by_tweet_id(working_acc, tweet_id):
 
     res = twitter_api_call('CreateRetweet', variables=data, features={}, twitter_working_account=working_acc)
 
-    if res == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
+    if res in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
         return res
 
     if res and res['data']['create_retweet']['retweet_results']['result']['rest_id']:
@@ -1206,7 +1206,7 @@ def bm_tweet_by_tweet_id(working_acc, tweet_id):
 
     res = twitter_api_call('CreateBookmark', variables=data, features={}, twitter_working_account=working_acc)
 
-    if res == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
+    if res in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
         return res
 
     if res and res['data']['tweet_bookmark_put']:
@@ -1731,7 +1731,7 @@ def get_user_following(twitter_working_account, user_id):
         response = twitter_api_call('Following', variables, features, twitter_working_account)
         js = response.json()
 
-        if js == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
+        if js in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
             return js
 
         instructions = js["data"]["user"]["result"]["timeline"]["timeline"]["instructions"]
@@ -1882,7 +1882,7 @@ def user_friendship(twitter_working_account, action, user_id="", screen_name="")
 
     response = twitter_api_v1_1_call(twitter_working_account, method, url, params=params)
 
-    if response == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
+    if response in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
         return
 
     try:
@@ -1949,7 +1949,7 @@ def account_notifications(twitter_working_account, action, settings={}):
 
     response = twitter_api_v1_1_call(twitter_working_account, "post", url, payload=payload)
 
-    if response == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
+    if response in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
         return
 
     try:
@@ -2060,7 +2060,7 @@ def account_check_notifications_device_follow(twitter_working_account, cursor=""
     }
     response = twitter_api_v1_1_call(twitter_working_account, "get", url, params=params)
 
-    if response == ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted', 'timeout']:
+    if response in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted', 'timeout']:
         return response
 
     js = response.json()

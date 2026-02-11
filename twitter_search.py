@@ -1729,10 +1729,11 @@ def get_user_following(twitter_working_account, user_id):
     while load_next_page:
         # print(f"page = {page}")
         response = twitter_api_call('Following', variables, features, twitter_working_account)
-        js = response.json()
 
         if js in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
             return js
+
+        js = response.json()
 
         instructions = js["data"]["user"]["result"]["timeline"]["timeline"]["instructions"]
         users_current_page = parse_users_instructions(instructions)

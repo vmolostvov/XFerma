@@ -151,6 +151,8 @@ def check_notifications_loop(scraper_accounts, screen_names, use_first_n_account
             continue
         elif results == 'proxy_dead':
             continue
+        elif results == 'timeout':
+            continue
         elif results == 'no_auth':
             print(f"[SCRAPER] Аккаунт {twitter_working_account['screen_name']} вероятно нуждается в обновлении сессии!")
             twitter_working_account["regen_sess"] = True

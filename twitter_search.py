@@ -1730,8 +1730,8 @@ def get_user_following(twitter_working_account, user_id):
         # print(f"page = {page}")
         response = twitter_api_call('Following', variables, features, twitter_working_account)
 
-        if js in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
-            return js
+        if response in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
+            return response
 
         js = response.json()
 

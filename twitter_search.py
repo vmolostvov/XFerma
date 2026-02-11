@@ -1812,7 +1812,7 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
                 if '503 Service Unavailable' in str(e):
                     return 'proxy_dead'
 
-                elif 'Operation timed out' in str(e):
+                elif 'Operation timed out' in str(e) or 'Connection timed out' in str(e):
                     return 'timeout'
 
         except Exception as error:

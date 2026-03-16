@@ -151,7 +151,7 @@ def login(username, password, proxy):
     logger.info(f"🔐 [LOGIN] Начинаю логин для @{username} | Proxy: {proxy}")
 
     try:
-        with SB(uc=True, proxy=proxy, locale_code='en') as sb:
+        with SB(uc=True, proxy=proxy, locale_code='en', chromium_arg="headless=new,user-data-dir=/Users/administrator/.xferma-chrome-profile,password-store=basic") as sb:
         # with SB(xvfb=True) as sb:
             logger.debug("[LOGIN] Browser session инициализирована")
 

@@ -6,6 +6,7 @@ import logging
 import json
 import os
 import re
+import shutil
 from datetime import datetime, timedelta, timezone
 
 from alarm_bot import admin_error
@@ -150,8 +151,13 @@ def record_regen_result(screen_name: str, uid: str, result: str, reason: str | N
 def login(username, password, proxy):
     logger.info(f"🔐 [LOGIN] Начинаю логин для @{username} | Proxy: {proxy}")
 
+    profile_dir = "/tmp/chrome-ssh-profile"
+
+    if os.path.exists(profile_dir):
+        shutil.rmtree(profile_dir, ignore_errors=True)
+
     try:
-        with SB(uc=True, proxy=proxy, locale_code='en', chromium_arg="headless=new,user-data-dir=/Users/administrator/.xferma-chrome-profile,password-store=basic") as sb:
+        with SB(uc=True, proxy=proxy, locale_code='en', chromium_arg=f"headless=new,user-data-dir={profile_dir},password-store=basic") as sb:
         # with SB(xvfb=True) as sb:
             logger.debug("[LOGIN] Browser session инициализирована")
 
@@ -281,6 +287,9 @@ def login(username, password, proxy):
         logger.exception(f"🔥 [LOGIN] Фатальная ошибка login() для @{username}")
         admin_error(trace)
         return None
+
+    finally:
+        shutil.rmtree(profile_dir, ignore_errors=True)
 
 
 def web_audit_vip_user_message_with_photo(user, path_to_photo, text):

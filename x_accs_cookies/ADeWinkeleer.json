@@ -1,112 +1,83 @@
 [
   {
-    "name": null,
-    "value": null,
-    "domain": null,
+    "name": "guest_id_marketing",
+    "value": "v1%3A177073492727965167",
+    "domain": ".x.com",
     "path": "/",
-    "secure": false,
+    "secure": true,
     "expires": null,
-    "httpOnly": false,
-    "sameSite": null
+    "rest": {}
   },
   {
-    "name": null,
-    "value": null,
-    "domain": null,
+    "name": "guest_id_ads",
+    "value": "v1%3A177073492727965167",
+    "domain": ".x.com",
     "path": "/",
-    "secure": false,
+    "secure": true,
     "expires": null,
-    "httpOnly": false,
-    "sameSite": null
+    "rest": {}
   },
   {
-    "name": null,
-    "value": null,
-    "domain": null,
+    "name": "personalization_id",
+    "value": "v1_AY2rCFCBok+mprqpD9hY1Q==",
+    "domain": ".x.com",
     "path": "/",
-    "secure": false,
+    "secure": true,
     "expires": null,
-    "httpOnly": false,
-    "sameSite": null
+    "rest": {}
   },
   {
-    "name": null,
-    "value": null,
-    "domain": null,
+    "name": "guest_id",
+    "value": "v1%3A177073492727965167",
+    "domain": ".x.com",
     "path": "/",
-    "secure": false,
+    "secure": true,
     "expires": null,
-    "httpOnly": false,
-    "sameSite": null
+    "rest": {}
   },
   {
-    "name": null,
-    "value": null,
-    "domain": null,
+    "name": "__cf_bm",
+    "value": "reT2C9N1Crzf4Pr5cCLs6icvqL6t4RZpErUdQ6bLU88-1770734929.5299761-1.0.1.1-Td_Ld6.lmlCT7fi4tafJ6K0DFpx1zQeVu.Li8z6..dcXmraFGWg4JDwpBK0q4Ug3miTaFkDcLbzm.AdydDMWvUvolsFP0Dv5rIo86yF5VS0Si18Q9JgVeF5Wr0gi3a8Y",
+    "domain": ".x.com",
     "path": "/",
-    "secure": false,
+    "secure": true,
     "expires": null,
-    "httpOnly": false,
-    "sameSite": null
+    "rest": {}
   },
   {
-    "name": null,
-    "value": null,
-    "domain": null,
+    "name": "twid",
+    "value": "u%3D1323579624",
+    "domain": ".x.com",
     "path": "/",
-    "secure": false,
+    "secure": true,
     "expires": null,
-    "httpOnly": false,
-    "sameSite": null
+    "rest": {}
   },
   {
-    "name": null,
-    "value": null,
-    "domain": null,
+    "name": "ct0",
+    "value": "4b690fdbd5fe3ebe70f7d17ee8988ab29a764664a4c454acf0bd3c69620dbdda328f9ab817eb2bb6c1c8efa7d35b4480d7432cfd56d393aced6007e1694fe9b027683348415b644781ad5e74604a537e",
+    "domain": ".x.com",
     "path": "/",
-    "secure": false,
+    "secure": true,
     "expires": null,
-    "httpOnly": false,
-    "sameSite": null
+    "rest": {}
   },
   {
-    "name": null,
-    "value": null,
-    "domain": null,
+    "name": "gt",
+    "value": "2021234906886463965",
+    "domain": ".x.com",
     "path": "/",
-    "secure": false,
+    "secure": true,
     "expires": null,
-    "httpOnly": false,
-    "sameSite": null
+    "rest": {}
   },
   {
-    "name": null,
-    "value": null,
-    "domain": null,
+    "name": "auth_token",
+    "value": "c0d65fc5510c017488f0e877562e124abb4b0cb0",
+    "domain": ".x.com",
     "path": "/",
-    "secure": false,
+    "secure": true,
     "expires": null,
-    "httpOnly": false,
-    "sameSite": null
-  },
-  {
-    "name": null,
-    "value": null,
-    "domain": null,
-    "path": "/",
-    "secure": false,
-    "expires": null,
-    "httpOnly": false,
-    "sameSite": null
-  },
-  {
-    "name": null,
-    "value": null,
-    "domain": null,
-    "path": "/",
-    "secure": false,
-    "expires": null,
-    "httpOnly": false,
-    "sameSite": null
+    "rest": {}
   }
 ]

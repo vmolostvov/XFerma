@@ -26,7 +26,7 @@ nodemaven_proxy_server = 'gate.nodemaven.com'
 nodemaven_proxy_port = '8080'
 nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-{}-filter-medium'
 # nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-64bc6e4fc5d64-filter-medium'
-# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-ad4ea5b59c246-filter-medium'
+# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-a2f4d7ace4cae-filter-medium'
 nodemaven_proxy_pw = os.getenv("NODEMAVEN_PW")
 
 nodemaven_proxy_rotating = {'http': f'https://vmolostvov96_gmail_com-country-any-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080', 'https': f'http://vmolostvov96_gmail_com-country-any-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080/'}

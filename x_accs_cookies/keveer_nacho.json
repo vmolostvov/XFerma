@@ -1,43 +1,7 @@
 [
   {
-    "name": "auth_token",
-    "value": "d720d06166b79e24317544696c954129c9976c23",
-    "domain": ".x.com",
-    "path": "/",
-    "secure": true,
-    "expires": null,
-    "rest": {}
-  },
-  {
-    "name": "gt",
-    "value": "2017902685752860946",
-    "domain": ".x.com",
-    "path": "/",
-    "secure": true,
-    "expires": null,
-    "rest": {}
-  },
-  {
-    "name": "__cf_bm",
-    "value": "CovvAUzYS7YKojoFjtNuIJcIc5IWSGk4QwzSOm312JI-1769940466.136058-1.0.1.1-GWa425SY_hZdpKKU2RWHCZszDmcGUTl.mX6bE74QXpKrnGZs94rLika5Lcl91AsDt74_krQra7Bryp3vpBbujAzn9Z7JuOwelp.GZ0GJmKXGJLwQGT6UJ4GxC_LYxwg5",
-    "domain": ".x.com",
-    "path": "/",
-    "secure": true,
-    "expires": null,
-    "rest": {}
-  },
-  {
-    "name": "ct0",
-    "value": "29765c204c78deb7d7f245e18275a35b1e65e2598c5c3ae10d4c4372fc58b5b203a76a2bf9080cb4fe54e0f98a08bc7a08c398e17b6d7b07e2f14fbbc417752ebeb6f261e23cbea7b7e4913470c05a41",
-    "domain": ".x.com",
-    "path": "/",
-    "secure": true,
-    "expires": null,
-    "rest": {}
-  },
-  {
-    "name": "guest_id",
-    "value": "v1%3A176994046262623926",
+    "name": "guest_id_marketing",
+    "value": "v1%3A177264288996411267",
     "domain": ".x.com",
     "path": "/",
     "secure": true,
@@ -46,16 +10,7 @@
   },
   {
     "name": "guest_id_ads",
-    "value": "v1%3A176994046262623926",
-    "domain": ".x.com",
-    "path": "/",
-    "secure": true,
-    "expires": null,
-    "rest": {}
-  },
-  {
-    "name": "guest_id_marketing",
-    "value": "v1%3A176994046262623926",
+    "value": "v1%3A177264288996411267",
     "domain": ".x.com",
     "path": "/",
     "secure": true,
@@ -64,7 +19,25 @@
   },
   {
     "name": "personalization_id",
-    "value": "v1_LZLuKPYUdlczKRpDjSFMxg==",
+    "value": "v1_bG6X9x4sNLoCnohhkw9Ujg==",
+    "domain": ".x.com",
+    "path": "/",
+    "secure": true,
+    "expires": null,
+    "rest": {}
+  },
+  {
+    "name": "guest_id",
+    "value": "v1%3A177264288996411267",
+    "domain": ".x.com",
+    "path": "/",
+    "secure": true,
+    "expires": null,
+    "rest": {}
+  },
+  {
+    "name": "__cf_bm",
+    "value": "uVR1s21Sb74j7BPGKU.CSFSy8avc5VLXOa_W2ZQ8jMM-1772642889.9407485-1.0.1.1-IFUSW9a4iQqSEUW7QzPsjXFtBxc.nMwMnDMvxa.vfmdFztY9LTgkzgFGTrDXrbKUrofLt3sEQ7fpvMcFZ1dbZNeB1SdyyawYVGq04LRvrlIGoLHB9_oEcta5H9rsu.kE",
     "domain": ".x.com",
     "path": "/",
     "secure": true,
@@ -74,6 +47,33 @@
   {
     "name": "twid",
     "value": "u%3D979791594084847619",
+    "domain": ".x.com",
+    "path": "/",
+    "secure": true,
+    "expires": null,
+    "rest": {}
+  },
+  {
+    "name": "ct0",
+    "value": "6211fbab916f60628f381ffd132a8b342b3120c4617dcf47e62cf8a9786af999293a6c09742daa8bcfb5eed53da0d64e871825b6ded836ef29182b1b8740b2e09d7b3389f252dd7841fc29493b07e6db",
+    "domain": ".x.com",
+    "path": "/",
+    "secure": true,
+    "expires": null,
+    "rest": {}
+  },
+  {
+    "name": "gt",
+    "value": "2029237482462576963",
+    "domain": ".x.com",
+    "path": "/",
+    "secure": true,
+    "expires": null,
+    "rest": {}
+  },
+  {
+    "name": "auth_token",
+    "value": "a35fa10dfc6932ce8ebbd368c1933bc38635dfbb",
     "domain": ".x.com",
     "path": "/",
     "secure": true,

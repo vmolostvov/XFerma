@@ -30,10 +30,9 @@ def get_port():
 
 
 class Database:
-    def __init__(self, dsn=f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@{get_host()}:{get_port()}/{DB_BASE_NAME}"):
-        """
-        dsn пример: "postgresql://user:pass@host:5432/dbname"
-        """
+    def __init__(self, dsn=None):
+        if dsn is None:
+            dsn = f"postgresql://{DB_USERNAME}:{DB_PASSWORD}@{get_host()}:{get_port()}/{DB_BASE_NAME}"
         self.dsn = dsn
 
     def _conn(self):
@@ -899,4 +898,5 @@ class Database:
 
 
 if __name__ == '__main__':
-    print(get_port())
+    db = Database()
+    print(db.get_scraper_accounts(needed=1))

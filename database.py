@@ -144,8 +144,14 @@ class Database:
             cur.execute(sql, (auth_token, uid))
             return cur.fetchone() is not None
 
-    def update_is_banned(self, uid: str) -> bool:
-        sql = "UPDATE X_FERMA SET is_banned = TRUE WHERE uid = %s RETURNING uid;"
+    def update_is_banned(self, uid: str, read_only: bool = False) -> bool:
+        sql = "UPDATE X_FERMA SET is_banned = TRUE"
+
+        if read_only:
+            sql += ", read_only = TRUE"
+
+        sql += " WHERE uid = %s RETURNING uid;"
+
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute(sql, (uid,))
             return cur.fetchone() is not None
@@ -156,8 +162,14 @@ class Database:
             cur.execute(sql, (uid,))
             return cur.fetchone() is not None
 
-    def update_is_banned_by_sn(self, screen_name: str) -> bool:
-        sql = "UPDATE X_FERMA SET is_banned = TRUE WHERE username = %s RETURNING username;"
+    def update_is_banned_by_sn(self, screen_name: str, read_only: bool = False) -> bool:
+        sql = "UPDATE X_FERMA SET is_banned = TRUE"
+
+        if read_only:
+            sql += ", read_only = TRUE"
+
+        sql += " WHERE LOWER(username) = LOWER(%s) RETURNING username;"
+
         with self._conn() as conn, conn.cursor() as cur:
             cur.execute(sql, (screen_name,))
             return cur.fetchone() is not None
@@ -278,12 +290,13 @@ class Database:
 
     def get_banned_accounts(self) -> List[dict]:
         """
-        Возвращает забаненые аккаунты из X_FERMA.
+        Возвращает забаненые аккаунты из X_FERMA (которые невозможно восстановить & read-only также не доступен).
         """
         base_sql = """
             SELECT *
             FROM X_FERMA
             WHERE is_banned IS TRUE
+            AND read_only IS NOT TRUE
         """
 
         with self._conn() as conn, conn.cursor() as cur:

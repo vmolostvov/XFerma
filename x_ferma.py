@@ -698,14 +698,20 @@ class xFerma:
                 logger.info(f"[VIEW-ALL] Пустой timeline для @{twitter_working_account.get('screen_name')}")
                 return []
 
-            total = len(timeline)
+            filtered_timeline = [
+                tweet_data
+                for tweet_data in timeline
+                if tweet_data['user']['blue_verified'] and not tweet_data['tweet']['entities_urls']
+            ]
+
+            total = len(filtered_timeline)
 
             # 1) Выбираем процент просмотра (50%–100%)
             percent = random.uniform(0.50, 1.00)
             to_view = max(1, int(total * percent))
 
             # 2) Берём первые N твитов (без shuffle!)
-            timeline_slice = timeline[:to_view]
+            timeline_slice = filtered_timeline[:to_view]
 
             logger.info(
                 f"[VIEW-ALL] Просмотрим первые {to_view}/{total} твитов "
@@ -1136,9 +1142,9 @@ class xFerma:
             time.sleep(1)
             self.like(acc, 2004307581599469917)
             time.sleep(2)
-            self.get_timeline(acc)
+            timeline = self.get_timeline(acc)
             time.sleep(2)
-            self.like(acc, 2004296606020190305)
+            self.like(acc, 2034890497022673091)
             time.sleep(2)
             self.like(acc, 2004401789567742030)
             time.sleep(2)

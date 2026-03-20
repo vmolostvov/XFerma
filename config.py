@@ -25,7 +25,7 @@ nodemaven_api_key = os.getenv("NODEMAVEN_API_KEY")
 nodemaven_proxy_server = 'gate.nodemaven.com'
 nodemaven_proxy_port = '8080'
 nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-{}-filter-medium'
-# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-64bc6e4fc5d64-filter-medium'
+# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-ef1acc02baa1f-filter-medium'
 # nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-a2f4d7ace4cae-filter-medium'
 nodemaven_proxy_pw = os.getenv("NODEMAVEN_PW")
 

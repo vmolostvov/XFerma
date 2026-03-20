@@ -256,10 +256,24 @@ def login(username, password, proxy):
                 # небольшой "санити чек": клик по Home
                 sb.cdp.click('a[href="/home"]', timeout=30)
 
+                # check for suspension
+                read_only_ban = False
+                try:
+                    sb.cdp.click('a[href*="suspension"]', timeout=5)
+                    logger.info(f"❌ [LOGIN] Аккаунт @{username} забанен!")
+                    read_only_ban = True
+                    try:
+                        db.update_is_banned_by_sn(screen_name=username, read_only=True)
+                    except Exception as e:
+                        logger.exception(f"[LOGIN] Ошибка при update_is_banned_by_sn: {e}")
+                except:
+                    logger.info(f"✅ [LOGIN] Аккаунт @{username} не забанен!")
+
                 cookies = sb.get_cookies()
                 auth_token = next(c['value'] for c in cookies if c['name'] == 'auth_token')
 
-                logger.info(f"✅ [LOGIN] УСПЕХ! @{username} успешно вошёл")
+                if not read_only_ban:
+                    logger.info(f"✅ [LOGIN] УСПЕХ! @{username} успешно вошёл")
                 return auth_token
 
             except StopIteration:

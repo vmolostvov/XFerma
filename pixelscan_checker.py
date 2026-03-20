@@ -161,11 +161,13 @@ def get_proxy_by_sid(sid):
 
 def generate_valid_sid_nodemaven_proxy(length=13):
     hex_chars = string.hexdigits.lower()
-    while True:
+    for i in range(5):
         sid = ''.join(random.choice(hex_chars) for _ in range(length))
         proxy_analyze = proxy_check(make_proxy_str_for_pixelscan(get_proxy_by_sid(sid)))
         if proxy_analyze['ok'] and proxy_analyze['proxy_quality'] == 'high':
             return sid
+        else:
+            time.sleep(5)
 
 def make_proxy_str_for_pixelscan(proxy):
     return f"http://{proxy}"

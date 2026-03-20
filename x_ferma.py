@@ -1094,9 +1094,10 @@ class xFerma:
         # ---- 1. Выдать новый прокси ----
         if new_proxy:
             sid = generate_valid_sid_nodemaven_proxy()
-            new_proxy_value = get_proxy_by_sid(sid)
-            twitter_working_account["proxy"] = new_proxy_value
-            logger.info(f"[REGEN] @{screen_name} → новый прокси SID={sid}")
+            if sid:
+                new_proxy_value = get_proxy_by_sid(sid)
+                twitter_working_account["proxy"] = new_proxy_value
+                logger.info(f"[REGEN] @{screen_name} → новый прокси SID={sid}")
 
         # ---- 2. Обновляем сессию аккаунта ----
         result = process_account(twitter_working_account)
@@ -1122,7 +1123,7 @@ class xFerma:
             self.x_accounts_data.append(updated_acc)
 
         # ---- 4. Обновление прокси в базе ----
-        if new_proxy:
+        if new_proxy and sid:
             try:
                 db.update_proxy(sid, uid=uid)
                 logger.info(f"[REGEN] @{screen_name} proxy SID обновлён в базе")

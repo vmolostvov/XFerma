@@ -46,6 +46,19 @@ nodemaven_mob_proxy_data = [
 ]
 
 
+proxies_ipv4_proxy6 = [
+    'oNhjpd:Kj4LV2@186.179.60.69:9106',
+    '7XdCRS:EM4TJB@186.179.60.101:9958',
+    "oNhjpd:Kj4LV2@186.179.62.54:9230",
+    "oNhjpd:Kj4LV2@186.179.63.57:9697",
+    "oNhjpd:Kj4LV2@186.179.62.186:9169",
+    "oNhjpd:Kj4LV2@186.179.63.172:9940",
+    "oNhjpd:Kj4LV2@186.179.62.102:9056",
+    "oNhjpd:Kj4LV2@186.179.62.60:9675",
+    "oNhjpd:Kj4LV2@186.179.63.74:9644",
+    "mvRBrR:PUTh0e@186.179.63.44:9644"
+]
+
 def generate_password(length=20):
     # Define allowed characters (letters, digits, and specific symbols)
     chars = string.ascii_letters + string.digits + "!@$%^&*()_-+"
@@ -62,6 +75,9 @@ def get_random_mob_proxy():
         "https": f"http://{proxy}"
     }
     return proxies
+
+def get_random_proxy6():
+    return random.choices(population=proxies_ipv4_proxy6)[0]
 
 # some help func
 

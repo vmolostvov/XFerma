@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
-import telebot
+import telebot, os
 import time
 import traceback
 from threading import Thread
+from telebot import apihelper
+from config import get_random_proxy6
+from dotenv import load_dotenv
 
+# загружаем переменные из .env
+load_dotenv()
 
-bot = telebot.TeleBot('1722063746:AAGKg6kL5ynWfu4Gp55Jsj1EkMzmj7lWvu4')
-announce_bot = telebot.TeleBot('6166495322:AAEAKpgemGy5a7TpXJ38qUJqTw4lVcy5N1s')
+LOGS_ERRORS_BOT = os.getenv("TG_LOGS_AND_ERRORS_BOT_TOKEN")
+NOTIFY_BOT = os.getenv("TG_NOTIFICATIONS_BOT_TOKEN")
 
 
 chat_ids = {
@@ -24,8 +29,15 @@ chat_ids = {
 }
 
 
+def get_bot_with_proxy(bot_name):
+    apihelper.proxy = {
+        'https': f'http://{get_random_proxy6()}'
+    }
+
+    return telebot.TeleBot(bot_name)
 
 def admin_signal(exception_text, times=20):
+    bot = get_bot_with_proxy(NOTIFY_BOT)
     while True:
         try:
             for i in range(times):
@@ -37,13 +49,14 @@ def admin_signal(exception_text, times=20):
 
 
 def admin_error(exception_text):
+    bot = get_bot_with_proxy(LOGS_ERRORS_BOT)
     for i in range(3):
         try:
             if len(exception_text) > 4095:
                 for x in range(0, len(exception_text), 4095):
-                    announce_bot.send_message(chat_ids['chat_id'], text=exception_text[x:x + 4095])
+                    bot.send_message(chat_ids['chat_id'], text=exception_text[x:x + 4095])
             else:
-                announce_bot.send_message(chat_ids['chat_id'], exception_text)
+                bot.send_message(chat_ids['chat_id'], exception_text)
             return
         except:
             print(traceback.format_exc())

@@ -1,14 +1,13 @@
 import random
 import time
 import traceback
-import telebot
 import logging
 import json
 import os
 import re
 from datetime import datetime, timedelta, timezone
 
-from alarm_bot import admin_error
+from alarm_bot import admin_error, send_ss_tg
 from database import Database
 from seleniumbase import SB
 from tweeterpyapi import save_cookies_and_sess_with_timeout
@@ -171,7 +170,7 @@ def login(username, password, proxy):
             except Exception:
                 logger.exception(f"❌ [LOGIN] Не удалось ввести username для @{username}")
                 sb.cdp.save_screenshot('ss_test.png')
-                web_audit_vip_user_message_with_photo(
+                send_ss_tg(
                     '680688412',
                     'ss_test.png',
                     f"❌ [TEST] Ошибка проверки входа для @{username}"
@@ -185,12 +184,12 @@ def login(username, password, proxy):
                 next_btn = sb.cdp.find_element("Next", best_match=True)
                 next_btn.click()
                 sb.sleep(0.5)
-                sb.cdp.save_screenshot('ss_test.png')
-                web_audit_vip_user_message_with_photo(
-                    '680688412',
-                    'ss_test.png',
-                    f"❌ [TEST] Ошибка проверки входа для @{username}"
-                )
+                # sb.cdp.save_screenshot('ss_test.png')
+                # send_ss_tg(
+                #     '680688412',
+                #     'ss_test.png',
+                #     f"❌ [TEST] Ошибка проверки входа для @{username}"
+                # )
                 logger.info("[LOGIN] Нажал кнопку Next")
             except Exception:
                 logger.exception(f"❌ [LOGIN] Ошибка клика по кнопке Next для @{username}")
@@ -203,16 +202,16 @@ def login(username, password, proxy):
                 sb.write("input[name='password']", password, timeout=20)
                 logger.info("[LOGIN] Ввел пароль")
                 sb.sleep(3)
-                sb.cdp.save_screenshot('ss_test.png')
-                web_audit_vip_user_message_with_photo(
-                    '680688412',
-                    'ss_test.png',
-                    f"❌ [TEST] Контрольный скрин после ввода пароля для @{username}"
-                )
+                # sb.cdp.save_screenshot('ss_test.png')
+                # web_audit_vip_user_message_with_photo(
+                #     '680688412',
+                #     'ss_test.png',
+                #     f"❌ [TEST] Контрольный скрин после ввода пароля для @{username}"
+                # )
             except Exception:
                 logger.exception(f"❌ [LOGIN] Не удалось ввести пароль для @{username}")
                 sb.cdp.save_screenshot('ss_test.png')
-                web_audit_vip_user_message_with_photo(
+                send_ss_tg(
                     '680688412',
                     'ss_test.png',
                     f"❌ [TEST] Ошибка проверки входа для @{username}"
@@ -225,12 +224,12 @@ def login(username, password, proxy):
                 login_btn.click()
                 logger.info("[LOGIN] Клик по кнопке Log in")
                 sb.sleep(1)
-                sb.cdp.save_screenshot('ss_test.png')
-                web_audit_vip_user_message_with_photo(
-                    '680688412',
-                    'ss_test.png',
-                    f"❌ [TEST] Контрольный скрин после клика на логин для @{username}"
-                )
+                # sb.cdp.save_screenshot('ss_test.png')
+                # send_ss_tg(
+                #     '680688412',
+                #     'ss_test.png',
+                #     f"❌ [TEST] Контрольный скрин после клика на логин для @{username}"
+                # )
             except Exception:
                 logger.exception(f"❌ [LOGIN] Ошибка клика по кнопке Log in для @{username}")
                 return None
@@ -244,12 +243,12 @@ def login(username, password, proxy):
                 except Exception:
                     pass
 
-                sb.cdp.save_screenshot('ss_test.png')
-                web_audit_vip_user_message_with_photo(
-                    '680688412',
-                    'ss_test.png',
-                    f"❌ [TEST] Контрольный скрин для @{username}"
-                )
+                # sb.cdp.save_screenshot('ss_test.png')
+                # send_ss_tg(
+                #     '680688412',
+                #     'ss_test.png',
+                #     f"❌ [TEST] Контрольный скрин для @{username}"
+                # )
 
                 sb.get("https://x.com/home")
 
@@ -283,7 +282,7 @@ def login(username, password, proxy):
             except Exception:
                 logger.exception(f"❌ [LOGIN] Ошибка проверки входа для @{username}")
                 sb.cdp.save_screenshot('ss_test.png')
-                web_audit_vip_user_message_with_photo(
+                send_ss_tg(
                     '680688412',
                     'ss_test.png',
                     f"❌ [LOGIN] Ошибка проверки входа для @{username}"
@@ -295,18 +294,6 @@ def login(username, password, proxy):
         logger.exception(f"🔥 [LOGIN] Фатальная ошибка login() для @{username}")
         admin_error(trace)
         return None
-
-
-def web_audit_vip_user_message_with_photo(user, path_to_photo, text):
-    WebAuditBot = telebot.TeleBot('6408330846:AAFZLrHOqaTYveAlbeO8CzNdth_fTrbRGac')
-    for i in range(3):
-        try:
-            with open(path_to_photo, 'rb') as photo:
-                WebAuditBot.send_photo(user, photo=photo, caption=text, parse_mode='html')
-            break
-        except Exception:
-            if 'PHOTO_INVALID_DIMENSIONS' in traceback.format_exc():
-                time.sleep(15)
 
 
 # =========================
@@ -640,7 +627,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                     logger.exception("❌ [MAIL] Не удалось заполнить email")
                     fail("email_step_failed")
                     sb.cdp.save_screenshot('ss_test.png')
-                    web_audit_vip_user_message_with_photo(
+                    send_ss_tg(
                         '680688412',
                         'ss_test.png',
                         f"❌ [MAIL] Ошибка шага email"
@@ -658,7 +645,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                     logger.exception("❌ [MAIL] Не удалось заполнить пароль")
                     fail("password_step_failed")
                     sb.cdp.save_screenshot('ss_test.png')
-                    web_audit_vip_user_message_with_photo(
+                    send_ss_tg(
                         '680688412',
                         'ss_test.png',
                         f"❌ [MAIL] Ошибка шага пароля"
@@ -702,7 +689,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                     logger.exception("❌ [MAIL] Ошибка шага даты рождения")
                     fail("birth_step_failed")
                     sb.cdp.save_screenshot('ss_test.png')
-                    web_audit_vip_user_message_with_photo(
+                    send_ss_tg(
                         '680688412',
                         'ss_test.png',
                         f"❌ [MAIL] Ошибка шага даты рождения"
@@ -722,7 +709,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                     logger.exception("❌ [MAIL] Ошибка шага имени")
                     fail("name_step_failed")
                     sb.cdp.save_screenshot('ss_test.png')
-                    web_audit_vip_user_message_with_photo(
+                    send_ss_tg(
                         '680688412',
                         'ss_test.png',
                         f"❌ [MAIL] Ошибка шага имени"
@@ -757,7 +744,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                     logger.exception("❌ [MAIL] Ошибка challenge части")
                     fail("challenge_step_failed")
                     sb.cdp.save_screenshot('ss_test.png')
-                    web_audit_vip_user_message_with_photo(
+                    send_ss_tg(
                         '680688412',
                         'ss_test.png',
                         f"❌ [MAIL] Ошибка challenge части"
@@ -784,7 +771,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                             except Exception:
                                 pass
                             sb.cdp.save_screenshot('ss_test.png')
-                            web_audit_vip_user_message_with_photo(
+                            send_ss_tg(
                                 '680688412',
                                 'ss_test.png',
                                 f"❌ [MAIL] chrome-error test"
@@ -796,7 +783,7 @@ def create_new_acc(stats_path: str = STATS_PATH):
                     logger.exception("❌ [MAIL] Финальная проверка провалилась")
                     fail("final_check_failed")
                     sb.cdp.save_screenshot('ss_test.png')
-                    web_audit_vip_user_message_with_photo(
+                    send_ss_tg(
                         '680688412',
                         'ss_test.png',
                         f"❌ [MAIL] Ошибка финальной проверки"

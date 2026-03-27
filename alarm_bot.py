@@ -12,6 +12,7 @@ load_dotenv()
 
 LOGS_ERRORS_BOT = os.getenv("TG_LOGS_AND_ERRORS_BOT_TOKEN")
 NOTIFY_BOT = os.getenv("TG_NOTIFICATIONS_BOT_TOKEN")
+SCREEN_BOT = os.getenv("TG_SCREEN_BOT_TOKEN")
 
 
 chat_ids = {
@@ -65,3 +66,15 @@ def admin_error(exception_text):
 def admin_signal_th(text):
     t = Thread(target=admin_signal, args=(text,))
     t.start()
+
+
+def send_ss_tg(user, path_to_photo, text):
+    bot = get_bot_with_proxy(SCREEN_BOT)
+    for i in range(3):
+        try:
+            with open(path_to_photo, 'rb') as photo:
+                bot.send_photo(user, photo=photo, caption=text, parse_mode='html')
+            break
+        except Exception:
+            if 'PHOTO_INVALID_DIMENSIONS' in traceback.format_exc():
+                time.sleep(15)

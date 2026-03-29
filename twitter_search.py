@@ -1815,9 +1815,7 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
     if update_ua:
         headers['user-agent'] = twitter_working_account['ua']
 
-    attempts = 0
-    loaded_successfully = False
-    while not loaded_successfully:
+    for i in range(10):
         try:
             if method == "post":
                 response = twitter_working_account['session'].post(url, params=params, json=payload, headers=headers)
@@ -1851,8 +1849,7 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
 
         except (ConnectTimeout, ReadTimeout, ProxyError, SSLError, ConnectionError, OSError) as e:
             print(e)
-            attempts += 1
-            if attempts >=3:
+            if i >=3:
                 print(f'Error while sending request to X api! Acc name: {twitter_working_account["screen_name"]}')
                 time.sleep(1.5)
 
@@ -1864,13 +1861,11 @@ def twitter_api_v1_1_call(twitter_working_account, method, url, params={}, paylo
 
         except Exception as error:
             print(error)
-            attempts += 1
             if isinstance(error, RateLimitExceededError):
-                time.sleep(attempts * random.uniform(30, 60))
+                time.sleep(i * random.uniform(30, 60))
             else:
-                time.sleep(attempts * random.uniform(0, 1))
+                time.sleep(i * random.uniform(0, 1))
         else:
-            loaded_successfully = True
             return response
 
 def user_friendship(twitter_working_account, action, user_id="", screen_name=""):
@@ -1930,7 +1925,7 @@ def user_friendship(twitter_working_account, action, user_id="", screen_name="")
 
     response = twitter_api_v1_1_call(twitter_working_account, method, url, params=params)
 
-    if response in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
+    if response and response in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
         return
 
     try:
@@ -1997,7 +1992,7 @@ def account_notifications(twitter_working_account, action, settings={}):
 
     response = twitter_api_v1_1_call(twitter_working_account, "post", url, payload=payload)
 
-    if response in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
+    if response and response in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted']:
         return
 
     try:
@@ -2108,7 +2103,7 @@ def account_check_notifications_device_follow(twitter_working_account, cursor=""
     }
     response = twitter_api_v1_1_call(twitter_working_account, "get", url, params=params)
 
-    if response in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted', 'timeout']:
+    if response and response in ['139', 'ban', 'proxy_dead', 'no_auth', 'lock', 'deleted', 'timeout']:
         return response
 
     js = response.json()

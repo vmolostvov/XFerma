@@ -556,6 +556,11 @@ def parse_tweets_instructions(instructions):
 
 ##################################################################################################################################
 
+RT_QUERY_ID = 'mbRO74GrOvSfRcJnlMapnQ'
+LIKE_QUERY_ID = 'lI07N6Otwv1PhnEgXILM7A'
+BM_QUERY_ID = 'aoDbu3RHznuiSkQ9aNM67Q'
+REPLY_QUERY_ID = 'lvs5-tN_lLNg_PhdRSURMg'
+
 class RateLimitExceededError(Exception):
     def __init__(self, message):
         super().__init__("Rate limit exceeded")
@@ -582,11 +587,11 @@ def twitter_api_call(api_endpoint, variables, features, twitter_working_account=
     elif api_endpoint == "Following":
         base_url = "https://x.com/i/api/graphql/FG7gWUco2ITV3KDa4_XUHQ/Following"
     elif api_endpoint == "FavoriteTweet":
-        base_url = "https://x.com/i/api/graphql/lI07N6Otwv1PhnEgXILM7A/FavoriteTweet"
+        base_url = f"https://x.com/i/api/graphql/{LIKE_QUERY_ID}/FavoriteTweet"
     elif api_endpoint == "CreateRetweet":
-        base_url = "https://x.com/i/api/graphql/ojPdsZsimiJrUGLR1sjUtA/CreateRetweet"
+        base_url = f"https://x.com/i/api/graphql/{RT_QUERY_ID}/CreateRetweet"
     elif api_endpoint == "CreateBookmark":
-        base_url = "https://x.com/i/api/graphql/aoDbu3RHznuiSkQ9aNM67Q/CreateBookmark"
+        base_url = f"https://x.com/i/api/graphql/{BM_QUERY_ID}/CreateBookmark"
     elif api_endpoint == 'View':
         base_url = "https://x.com/i/api/1.1/graphql/user_flow.json"
         referer = 'https://x.com/vladik_sol/status/1935709990523691058'
@@ -1221,7 +1226,7 @@ def get_community_members(com_id, dump=False, output_file="members.json"):
 
 def like_tweet_by_tweet_id(working_acc, tweet_id):
 
-    data = {"variables": {"tweet_id": tweet_id}}
+    data = {"variables": {"tweet_id": tweet_id}, "queryId": LIKE_QUERY_ID}
 
     res = twitter_api_call('FavoriteTweet', variables=data, features={}, twitter_working_account=working_acc)
 
@@ -1235,7 +1240,7 @@ def like_tweet_by_tweet_id(working_acc, tweet_id):
 
 def rt_tweet_by_tweet_id(working_acc, tweet_id):
 
-    data = {"variables": {"tweet_id": tweet_id, "dark_request": False}}
+    data = {"variables": {"tweet_id": tweet_id, "dark_request": False}, "queryId": RT_QUERY_ID}
 
     res = twitter_api_call('CreateRetweet', variables=data, features={}, twitter_working_account=working_acc)
 
@@ -1249,7 +1254,7 @@ def rt_tweet_by_tweet_id(working_acc, tweet_id):
 
 def bm_tweet_by_tweet_id(working_acc, tweet_id):
 
-    data = {"variables":{"tweet_id":tweet_id}}
+    data = {"variables":{"tweet_id":tweet_id}, "queryId": BM_QUERY_ID}
 
     res = twitter_api_call('CreateBookmark', variables=data, features={}, twitter_working_account=working_acc)
 

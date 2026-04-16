@@ -10,7 +10,7 @@ headers = {
     "Cookie": "_ga_ZH1CYL80NM=GS2.1.s1762500194$o1$g1$t1762500411$j60$l0$h0; _ga=GA1.1.322639361.1762500194",
     "Host": "936665286.extension.pixelscan.net",
     "Priority": "u=4",
-    "proxy-authorization": "",
+    # "proxy-authorization": "",
     "Sec-Fetch-Dest": "empty",
     "Sec-Fetch-Mode": "cors",
     "Sec-Fetch-Site": "same-origin",
@@ -68,13 +68,6 @@ def build_proxy_dict(proxy_info):
     p = proxy_info["proxy_url"]
     return {"http": p, "https": p}
 
-def make_proxy_auth_header(username, password):
-    if username is None or password is None:
-        return None
-    pair = f"{username}:{password}".encode()
-    b64 = base64.b64encode(pair).decode()
-    return f"Basic {b64}"
-
 def proxy_check(proxy_string: str, timeout: float = 15.0, triple_check: bool = False):
     """
     Проверяет прокси через PixelScan.
@@ -85,17 +78,49 @@ def proxy_check(proxy_string: str, timeout: float = 15.0, triple_check: bool = F
     def _single_check():
         info = parse_proxy_string(proxy_string)
         proxies = build_proxy_dict(info)
-        auth_header = make_proxy_auth_header(info["username"], info["password"])
-        headers["Proxy-Authorization"] = auth_header
+
+        local_headers = headers.copy()
+        local_headers.pop("proxy-authorization", None)
+        local_headers.pop("Proxy-Authorization", None)
+        local_headers["Connection"] = "close"
 
         print("== Proxy info ==")
         print(f" proxy_url: {info['proxy_url']}")
         print(f" username: {info['username']!r}")
         print(f" password: {'***' if info['password'] else None}\n")
 
+        resp = None
         try:
             print(f"-> GET {pixelscan_url} via proxy (timeout {timeout}s)")
-            resp = requests.get(pixelscan_url, headers=headers, proxies=proxies, timeout=timeout)
+            resp = requests.get(
+                pixelscan_url,
+                headers=local_headers,
+                proxies=proxies,
+                timeout=timeout,
+            )
+
+            print("== Result ==")
+            print("status_code:", resp.status_code)
+            print("elapsed:", resp.elapsed)
+
+            try:
+                analyze = resp.json()
+            except Exception:
+                return {"ok": False, "error": "invalid_json"}
+
+            print("proxy_ip:", analyze.get("ip"))
+            print("proxy_score:", analyze.get("score"))
+            print("proxy_quality:", analyze.get("quality"))
+
+            return {
+                "ok": True,
+                "status_code": resp.status_code,
+                "elapsed": resp.elapsed.total_seconds(),
+                "proxy_ip": analyze.get("ip"),
+                "proxy_score": analyze.get("score"),
+                "proxy_quality": analyze.get("quality"),
+            }
+
         except requests.exceptions.ProxyError as e:
             print("ProxyError:", e)
             return {"ok": False, "error": "proxy_error", "exception": str(e)}
@@ -108,28 +133,9 @@ def proxy_check(proxy_string: str, timeout: float = 15.0, triple_check: bool = F
         except Exception as e:
             print("Other error:", e)
             return {"ok": False, "error": "other", "exception": str(e)}
-
-        print("== Result ==")
-        print("status_code:", resp.status_code)
-        print("elapsed:", resp.elapsed)
-
-        try:
-            analyze = resp.json()
-        except Exception:
-            return {"ok": False, "error": "invalid_json"}
-
-        print("proxy_ip:", analyze.get('ip'))
-        print("proxy_score:", analyze.get('score'))
-        print("proxy_quality:", analyze.get('quality'))
-
-        return {
-            "ok": True,
-            "status_code": resp.status_code,
-            "elapsed": resp.elapsed.total_seconds(),
-            "proxy_ip": analyze.get('ip'),
-            "proxy_score": analyze.get('score'),
-            "proxy_quality": analyze.get('quality')
-        }
+        finally:
+            if resp is not None:
+                resp.close()
 
     # --- Первая проверка ---
     result = _single_check()

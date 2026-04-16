@@ -1,10 +1,9 @@
 import asyncio
 import json
 import time
-import telebot
-import traceback
 from dataclasses import dataclass, asdict
 from typing import Any, Dict, Optional, Set, List, Callable, Union
+from urllib.parse import urlparse, parse_qs, unquote_plus
 
 import mycdp
 from seleniumbase.undetected import cdp_driver
@@ -32,8 +31,8 @@ def parse_payload(raw: Optional[str]) -> Dict[str, Any]:
 
     raw = raw.strip()
 
-    # JSON
-    if raw.startswith("{") and raw.endswith("}"):
+    # JSON object / array
+    if (raw.startswith("{") and raw.endswith("}")) or (raw.startswith("[") and raw.endswith("]")):
         try:
             return json.loads(raw)
         except Exception:
@@ -45,11 +44,39 @@ def parse_payload(raw: Optional[str]) -> Dict[str, Any]:
         for part in raw.split("&"):
             if "=" in part:
                 k, v = part.split("=", 1)
-                out[k] = v
+                out[unquote_plus(k).lower()] = unquote_plus(v)
         return out
+
+    # single k=v
+    if "=" in raw and "&" not in raw:
+        try:
+            k, v = raw.split("=", 1)
+            return {unquote_plus(k).lower(): unquote_plus(v)}
+        except Exception:
+            pass
 
     # raw fallback
     return {"__raw__": raw}
+
+
+def parse_url_params(url: Optional[str]) -> Dict[str, Any]:
+    """
+    Parse query params from URL into a lowercase dict.
+    Single values become strings, repeated params become lists.
+    """
+    if not url:
+        return {}
+
+    try:
+        parsed = urlparse(url)
+        qs = parse_qs(parsed.query, keep_blank_values=True)
+        out = {}
+        for k, v in qs.items():
+            key = str(k).lower()
+            out[key] = v[0] if len(v) == 1 else v
+        return out
+    except Exception:
+        return {}
 
 
 @dataclass
@@ -68,7 +95,7 @@ class HeaderSniffer:
     def __init__(
         self,
         watch: Set[str],
-        search_mode: str = "headers",  # headers | payload
+        search_mode: str = "headers",  # headers | payload | url | all
         match_url_substr: Optional[str] = None,
         only_types: Optional[Set[str]] = None,
         phases: Set[str] = frozenset({"request", "extra"}),
@@ -76,10 +103,11 @@ class HeaderSniffer:
         on_match: Optional[Callable[[SniffMatch], None]] = None,
         stop_on_first: bool = False,
         debug: bool = False,
-        debug_payload_limit: int = 2000
+        debug_payload_limit: int = 2000,
+        required_url_params: Optional[Dict[str, Any]] = None
     ):
         self.watch = {w.lower() for w in watch}
-        self.search_mode = search_mode
+        self.search_mode = search_mode.lower().strip()
         self.match_url_substr = match_url_substr.lower() if match_url_substr else None
         self.only_types = {t.lower() for t in (only_types or set())}
         self.phases = {p.lower() for p in phases}
@@ -89,11 +117,20 @@ class HeaderSniffer:
         self.debug = debug
         self.debug_payload_limit = debug_payload_limit
 
+        self.required_url_params = {
+            str(k).lower(): str(v).lower()
+            for k, v in (required_url_params or {}).items()
+        }
+
         self._req_meta: Dict[str, Dict[str, Any]] = {}
         self._matches: List[SniffMatch] = []
         self._stop_event = asyncio.Event()
 
         self._fh = open(out_jsonl, "a", encoding="utf-8") if out_jsonl else None
+
+        allowed_modes = {"headers", "payload", "url", "all"}
+        if self.search_mode not in allowed_modes:
+            raise ValueError(f"Unsupported search_mode={self.search_mode!r}. Allowed: {sorted(allowed_modes)}")
 
     def close(self):
         if self._fh:
@@ -125,14 +162,15 @@ class HeaderSniffer:
     def _pick_headers(self, headers: Dict[str, str]) -> Dict[str, str]:
         return {k: headers[k] for k in self.watch if k in headers}
 
-    def _pick_payload(self, payload: Any) -> dict:
+    def _pick_nested_keys(self, payload: Any) -> Dict[str, Any]:
         found = {}
 
         def walk(obj):
             if isinstance(obj, dict):
                 for k, v in obj.items():
-                    if k in self.watch:
-                        found[k] = v
+                    key_l = str(k).lower()
+                    if key_l in self.watch and key_l not in found:
+                        found[key_l] = v
                     walk(v)
 
             elif isinstance(obj, list):
@@ -142,12 +180,44 @@ class HeaderSniffer:
         walk(payload)
         return found
 
+    def _collect_matches(
+        self,
+        *,
+        url: Optional[str],
+        headers_raw: Any,
+        payload_raw: Optional[str]
+    ) -> Dict[str, Any]:
+        """
+        Collect watched keys according to search_mode.
+        In `all` mode, later sources do not overwrite earlier found values.
+        Priority:
+          headers -> payload -> url
+        """
+        matched: Dict[str, Any] = {}
+
+        if self.search_mode in {"headers", "all"}:
+            headers = norm_headers(headers_raw)
+            for k, v in self._pick_headers(headers).items():
+                matched.setdefault(k, v)
+
+        if self.search_mode in {"payload", "all"}:
+            payload = parse_payload(payload_raw)
+            for k, v in self._pick_nested_keys(payload).items():
+                matched.setdefault(k, v)
+
+        if self.search_mode in {"url", "all"}:
+            url_params = parse_url_params(url)
+            for k, v in self._pick_nested_keys(url_params).items():
+                matched.setdefault(k, v)
+
+        return matched
+
     def attach(self, page):
 
         async def on_req(evt: mycdp.network.RequestWillBeSent):
             url = evt.request.url
             method = evt.request.method
-            rtype = str(evt.type_).split('.')[-1]
+            rtype = str(evt.type_).split('.')[-1].lower()
 
             self._req_meta[evt.request_id] = {
                 "url": url,
@@ -155,38 +225,27 @@ class HeaderSniffer:
                 "rtype": rtype,
             }
 
+            if self.debug:
+                debug_print_request(
+                    method=method,
+                    url=url,
+                    headers=evt.request.headers,
+                    payload=evt.request.post_data,
+                    limit=self.debug_payload_limit
+                )
+
             if "request" not in self.phases:
                 return
             if not self._type_ok(rtype) or not self._url_ok(url):
                 return
+            if not self._url_params_match(url):
+                return
 
-            matched = {}
-
-            if self.search_mode == "headers":
-                # 🧪 DEBUG MODE
-                if self.debug:
-                    debug_print_request(
-                        method=method,
-                        url=url,
-                        headers=evt.request.headers,
-                        payload=evt.request.post_data,
-                        limit=self.debug_payload_limit
-                    )
-                headers = norm_headers(evt.request.headers)
-                matched = self._pick_headers(headers)
-
-            elif self.search_mode == "payload":
-                # 🧪 DEBUG MODE
-                if self.debug:
-                    debug_print_request(
-                        method=method,
-                        url=url,
-                        headers=evt.request.headers,
-                        payload=evt.request.post_data,
-                        limit=self.debug_payload_limit
-                    )
-                payload = parse_payload(evt.request.post_data)
-                matched = self._pick_payload(payload)
+            matched = self._collect_matches(
+                url=url,
+                headers_raw=evt.request.headers,
+                payload_raw=evt.request.post_data
+            )
 
             if matched:
                 self._emit(SniffMatch(
@@ -200,19 +259,20 @@ class HeaderSniffer:
                 ))
 
         async def on_extra(evt: mycdp.network.RequestWillBeSentExtraInfo):
-            if self.search_mode != "headers":
+            if self.search_mode not in {"headers", "all"}:
                 return
             if "extra" not in self.phases:
                 return
 
+            meta = self._req_meta.get(evt.request_id, {})
+
             if self.debug:
                 debug_print_request(
-                    method='EXTRA',
-                    url='UNKNOWN',
+                    method="EXTRA",
+                    url=meta.get("url") or "UNKNOWN",
                     headers=evt.headers,
                 )
 
-            meta = self._req_meta.get(evt.request_id, {})
             headers = norm_headers(evt.headers)
             matched = self._pick_headers(headers)
 
@@ -230,6 +290,28 @@ class HeaderSniffer:
         page.add_handler(mycdp.network.RequestWillBeSent, on_req)
         page.add_handler(mycdp.network.RequestWillBeSentExtraInfo, on_extra)
 
+    def _url_params_match(self, url: Optional[str]) -> bool:
+        if not self.required_url_params:
+            return True
+
+        params = parse_url_params(url)
+
+        for k, expected in self.required_url_params.items():
+            if k not in params:
+                return False
+
+            value = params[k]
+
+            if isinstance(value, list):
+                values = [str(x).lower() for x in value]
+                if expected not in values:
+                    return False
+            else:
+                if str(value).lower() != expected:
+                    return False
+
+        return True
+
     async def wait(self, timeout: int):
         try:
             await asyncio.wait_for(self._stop_event.wait(), timeout)
@@ -242,8 +324,9 @@ async def sniff_headers(
     watch: Union[Set[str], List[str]],
     duration: int = 300,
     proxy: Optional[str] = None,
-    search_mode: str = "headers",        # 🔥 headers | payload
+    search_mode: str = "headers",        # headers | payload | url | all
     match_url_substr: Optional[str] = None,
+    required_url_params: Optional[Dict[str, Any]] = None,
     only_types: Optional[Set[str]] = None,
     phases: Set[str] = frozenset({"request", "extra"}),
     out_jsonl: Optional[str] = None,
@@ -256,14 +339,15 @@ async def sniff_headers(
     Supports:
       - header sniffing
       - payload sniffing (POST body)
+      - url query param sniffing
+      - all at once
     """
 
     watch_set = set(watch) if not isinstance(watch, set) else watch
     watch_set = {w.lower().strip() for w in watch_set if w and w.strip()}
     if not watch_set:
-        return []
+        return {}
 
-    # --- start chrome ---
     driver = (
         await cdp_driver.cdp_util.start_async(proxy=proxy)
         if proxy else
@@ -282,51 +366,27 @@ async def sniff_headers(
         out_jsonl=out_jsonl,
         on_match=on_match,
         stop_on_first=stop_on_first,
-        debug=debug
+        debug=debug,
+        required_url_params=required_url_params
     )
 
     sniffer.attach(tab)
 
-    # --- navigate ---
     tab = await driver.get(url)
-    if 'castle_token' in watch:
-        await asyncio.sleep(1000)
-        try:
-            await tab.type("input[name='text']", 'SunitaY78668883', timeout=40)
-        except:
-            await tab.save_screenshot('ss_test.png')
-            # sb.cdp.save_screenshot('ss_test.png')
-            web_audit_vip_user_message_with_photo(
-                '680688412',
-                'ss_test.png',
-                f"❌ [CDP_SNIFFER] Ошибка ввода логина"
-            )
-        next_btn = await tab.find_element_by_text('Далее', best_match=True)
-        await next_btn.click_async()
+
     try:
         await tab.send(mycdp.network.enable())
         sniffer.attach(tab)
     except Exception:
         pass
 
-    # --- wait ---
     await sniffer.wait(duration)
 
     matches = sniffer.matches
     sniffer.close()
     driver.quit()
-    return collapse_matches(matches, watch)
+    return collapse_matches(matches, watch_set)
 
-def web_audit_vip_user_message_with_photo(user, path_to_photo, text):
-    WebAuditBot = telebot.TeleBot('6408330846:AAFZLrHOqaTYveAlbeO8CzNdth_fTrbRGac')
-    for i in range(3):
-        try:
-            with open(path_to_photo, 'rb') as photo:
-                WebAuditBot.send_photo(user, photo=photo, caption=text, parse_mode='html')
-            break
-        except Exception:
-            if 'PHOTO_INVALID_DIMENSIONS' in traceback.format_exc():
-                time.sleep(15)
 
 def collapse_matches(matches: list, required: set[str] | None = None) -> dict:
     result = {}
@@ -356,20 +416,23 @@ def debug_print_request(
 
     if payload:
         print("---- PAYLOAD ----")
-        payload = payload
-        print(payload)
+        if len(payload) > limit:
+            print(payload[:limit] + f"\n... [truncated {len(payload) - limit} chars]")
+        else:
+            print(payload)
 
     print("=" * 80)
 
 
 if __name__ == '__main__':
     res = asyncio.run(sniff_headers(
-        url="https://x.com",
+        url="https://dexscreener.com/solana/fpyosqzp5ijfrxqqbvnm67rfam7vsbvnam7puf8yvt1c",
         proxy='vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-ba0ce33d7cdc1-filter-medium:e3ibl6cpq4@gate.nodemaven.com:8080',
-        watch={"castle_token"},
-        search_mode="payload",
-        only_types={"xhr", "fetch"},
-        # stop_on_first=True,
+        watch={"type", "rid", "sid"},
+        search_mode="url",
+        required_url_params={"type": "terminate"},
+        only_types={"xhr", "fetch", "ping"},
+        stop_on_first=True,
         debug=True
     ))
     print(res)

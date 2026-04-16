@@ -622,23 +622,23 @@ class xFerma:
                                     x_working_acc["regen_sess"] = True
 
                     # планируем немного задач
-                    try:
-                        self.schedule_follows_tick(
-                            influencers_file="influencers.jsonl",
-                            per_tick=2,  # 1–2 задачи за тик на аккаунт
-                            quota_min=3,
-                            quota_max=10
-                        )
-                    except Exception:
-                        logger.exception("[LIFE] ошибка schedule_follows_tick")
-
-                    # обрабатываем очередь фоллов (можно в отдельном воркере)
-                    try:
-                        processed = self.process_follow_edges(batch_size=200, sleep_sec=1.0)
-                        if processed:
-                            self.finalize_new_flags()
-                    except Exception:
-                        logger.exception("[LIFE] ошибка process_follow_edges")
+                    # try:
+                    #     self.schedule_follows_tick(
+                    #         influencers_file="influencers.jsonl",
+                    #         per_tick=2,  # 1–2 задачи за тик на аккаунт
+                    #         quota_min=3,
+                    #         quota_max=10
+                    #     )
+                    # except Exception:
+                    #     logger.exception("[LIFE] ошибка schedule_follows_tick")
+                    #
+                    # # обрабатываем очередь фоллов (можно в отдельном воркере)
+                    # try:
+                    #     processed = self.process_follow_edges(batch_size=200, sleep_sec=1.0)
+                    #     if processed:
+                    #         self.finalize_new_flags()
+                    # except Exception:
+                    #     logger.exception("[LIFE] ошибка process_follow_edges")
 
                 else:
                     logger.info(f"[SLEEP] Ночь в MOSCOW ({now}), ферма отдыхает")

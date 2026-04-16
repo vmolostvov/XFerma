@@ -4,7 +4,7 @@ import multiprocessing as mp
 from tweeterpy import TweeterPy
 
 from config import parse_accounts_to_list, get_random_mob_proxy, nodemaven_proxy_rotating
-# from requests.exceptions import ConnectionError, MissingSchema, ReadTimeout
+# from requests.exceptions import ConnectionError, MissingSchema
 
 from curl_cffi.requests.exceptions import ProxyError
 
@@ -572,10 +572,9 @@ def get_user_data(username, tw_cl=None):
         try:
             user_data = tw_cl.get_user_data(username)
             break
-        except (OSError, ProxyError, ConnectionError, MissingSchema):
+        except (OSError, ProxyError, ConnectionError):
             logger.exception(f"Account {username}, error {i} with proxy!")
             time.sleep(3)
-
     if user_data:
         user_data = {
             'is_def_ava': user_data['legacy']['default_profile_image'], # false if not default

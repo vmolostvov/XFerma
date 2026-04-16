@@ -26,7 +26,7 @@ nodemaven_proxy_server = 'gate.nodemaven.com'
 nodemaven_proxy_port = '8080'
 nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-{}-filter-medium'
 # nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-ef1acc02baa1f-filter-medium'
-# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-a2f4d7ace4cae-filter-medium'
+# nodemaven_proxy_login = 'vmolostvov96_gmail_com-country-us-type-mobile-ipv4-true-sid-1fb6c89cf4adf-filter-medium'
 nodemaven_proxy_pw = os.getenv("NODEMAVEN_PW")
 
 nodemaven_proxy_rotating = {'http': f'https://vmolostvov96_gmail_com-country-any-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080', 'https': f'http://vmolostvov96_gmail_com-country-any-filter-medium:{nodemaven_proxy_pw}@gate.nodemaven.com:8080/'}
@@ -130,11 +130,16 @@ def parse_accounts_to_list(file_path='x_accs.txt'):
 
                 # --- Парсим аккаунт ---
                 account_split = account_part.split(':')
-                if len(account_split) < 5:
-                    raise ValueError("Недостаточно данных в account_part")
+                # if len(account_split) < 5:
+                #     raise ValueError("Недостаточно данных в account_part")
 
                 # Берём только первые 5 элемента, остальное игнорируем
-                screen_name, password, email, email_pw, auth_token = account_split[:5]
+                screen_name = account_split[0]
+                password = account_split[1]
+                email = account_split[2]
+                email_pw = account_split[3]
+                phone = account_split[4]
+                auth_token = account_split[6]
 
                 # --- Парсим прокси ---
                 proxy_split = proxy_part.split(':')
@@ -314,3 +319,82 @@ def append_user_agents(file_path: str, mobile_ratio: float = 0.8, desktop_chrome
 def make_main_file_with_accs():
     merge_files_with_delimiter('x_accs.txt', 'proxy.txt')
     append_user_agents('x_accs.txt')
+
+
+from pathlib import Path
+import shutil
+
+
+def copy_accounts_files(
+    x_accs_txt: str = "x_accs.txt",
+    cookies_src_dir: str = "x_accs_cookies",
+    sessions_src_dir: str = "x_accs_pkl_sessions",
+    cookies_dst_dir: str = "new_accs_cookies",
+    sessions_dst_dir: str = "new_accs_sess",
+) -> None:
+    """
+    Читает x_accs.txt, берет из каждой строки screen_name (до первого ':'),
+    и копирует:
+      - x_accs_cookies/{screen_name}.json -> new_accs_cookies/
+      - x_accs_pkl_sessions/{screen_name}.pkl -> new_accs_sess/
+
+    Пустые строки пропускаются.
+    Если какого-то файла нет, просто выводит сообщение.
+    """
+
+    x_accs_path = Path(x_accs_txt)
+    cookies_src = Path(cookies_src_dir)
+    sessions_src = Path(sessions_src_dir)
+    cookies_dst = Path(cookies_dst_dir)
+    sessions_dst = Path(sessions_dst_dir)
+
+    if not x_accs_path.exists():
+        raise FileNotFoundError(f"Файл не найден: {x_accs_path}")
+
+    cookies_dst.mkdir(parents=True, exist_ok=True)
+    sessions_dst.mkdir(parents=True, exist_ok=True)
+
+    copied_json = 0
+    copied_pkl = 0
+    missing_json = 0
+    missing_pkl = 0
+
+    with x_accs_path.open("r", encoding="utf-8") as f:
+        for line_num, raw_line in enumerate(f, start=1):
+            line = raw_line.strip()
+            if not line:
+                continue
+
+            parts = line.split(":")
+            if not parts or not parts[0].strip():
+                print(f"[line {line_num}] Не удалось распарсить screen_name: {line}")
+                continue
+
+            screen_name = parts[0].strip()
+
+            json_src = cookies_src / f"{screen_name}.json"
+            pkl_src = sessions_src / f"{screen_name}.pkl"
+
+            json_dst = cookies_dst / json_src.name
+            pkl_dst = sessions_dst / pkl_src.name
+
+            if json_src.exists():
+                shutil.copy2(json_src, json_dst)
+                copied_json += 1
+            else:
+                print(f"[MISSING JSON] {json_src}")
+                missing_json += 1
+
+            if pkl_src.exists():
+                shutil.copy2(pkl_src, pkl_dst)
+                copied_pkl += 1
+            else:
+                print(f"[MISSING PKL] {pkl_src}")
+                missing_pkl += 1
+
+    print(f"Готово.")
+    print(f"Скопировано JSON: {copied_json}")
+    print(f"Скопировано PKL:  {copied_pkl}")
+    print(f"Отсутствует JSON: {missing_json}")
+    print(f"Отсутствует PKL:  {missing_pkl}")
+

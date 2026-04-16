@@ -499,12 +499,15 @@ class Database:
 
         # --- 2. Режим обычной выборки аккаунтов ---
         else:
+            # TODO: REMOVE THE TIMESTAMP CONDITION
             base_sql = """
                 SELECT uid, username AS screen_name, ua, proxy, auth_token, pass
                 FROM X_FERMA
                 WHERE is_banned IS NOT TRUE
                   AND is_influencer IS NOT TRUE
                   AND is_locked IS NOT TRUE
+                  AND addition_date >= TIMESTAMP '2026-04-16 00:00:00'
+                  AND addition_date <  TIMESTAMP '2026-04-17 00:00:00'
             """
             params = []
 
@@ -912,4 +915,5 @@ class Database:
 
 if __name__ == '__main__':
     db = Database()
-    print(db.get_scraper_accounts(needed=1))
+    # print(db.get_working_accounts())
+    print(len(db.get_working_accounts()))

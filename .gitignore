@@ -1,0 +1,46 @@
+# Системные файлы
+.DS_Store
+Thumbs.db
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Логи
+loggers/xferma.log
+tweeterpy.log
+loggers/xferma_selen.log
+loggers/flow_login.log
+regen_stats.json
+outlook_headers.json
+
+# Секреты и ключи
+*.env
+
+# Компилированные пакеты
+build/
+dist/
+*.egg-info/
+
+# Some folders
+nft_ava_pack/
+twitter_ava_pack/
+twitter_ava_pack_new/
+downloaded_files/
+#email_cookies/
+x_accs_cookies/
+x_accs_pkl_sessions/
+
+# test scripts
+sb_test.py
+
+# images
+outlook_captcha_ss.png
+ss_test.png
